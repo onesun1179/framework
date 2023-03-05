@@ -8,6 +8,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum FrontComponentIdEnum {
+    login = "login",
+    home = "home"
+}
+
 export interface CodeTree {
     childId: number;
     parentId: number;
@@ -36,7 +41,7 @@ export interface FrontComponentType {
 }
 
 export interface FrontComponent {
-    id: string;
+    id: FrontComponentIdEnum;
     value: string;
     initialValue: string;
     frontComponentType: FrontComponentType;
@@ -48,7 +53,7 @@ export interface Route {
     frontComponent?: Nullable<FrontComponent>;
     children: Route[];
     parent?: Nullable<Route>;
-    routesAuthsList?: Nullable<RoutesAuths[]>;
+    routesAuthsList: RoutesAuths[];
 }
 
 export interface RoutesAuths {

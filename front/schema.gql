@@ -2,33 +2,102 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""경로"""
-type Path {
-  """경로 id"""
-  id: Int!
-
-  """경로 명"""
-  title: String
-
-  """경로 path"""
-  pathname: String!
-
-  """컴포넌트 path"""
-  componentPath: String
-
-  """자식 경로들"""
-  children: [Path!]!
+type CodeTree {
+  childId: Int!
+  parentId: Int!
+  child: Code!
+  parent: Code!
 }
 
-"""권한"""
+type Code {
+  id: Int!
+  name: String!
+  childList: [CodeTree!]!
+  parentList: [CodeTree!]!
+}
+
+type AuthTree {
+  childId: Int!
+  parentId: Int!
+  child: Auth!
+  parent: Auth!
+}
+
+type FrontComponentType {
+  id: Int!
+  name: String!
+  frontComponentList: [FrontComponent!]!
+}
+
+type FrontComponent {
+  id: FrontComponentIdEnum!
+  value: String!
+  initialValue: String!
+  frontComponentType: FrontComponentType!
+}
+
+enum FrontComponentIdEnum {
+  login
+  home
+}
+
+type Route {
+  id: Int!
+  path: String!
+  frontComponent: FrontComponent
+  children: [Route!]!
+  parent: Route
+  routesAuthsList: [RoutesAuths!]!
+}
+
+type RoutesAuths {
+  routeId: Int!
+  authId: Int!
+  route: Route!
+  auth: Auth!
+}
+
+type MenuTree {
+  child: Menu!
+  parent: Menu!
+}
+
+type Menu {
+  id: Int!
+  name: String!
+  childList: [MenuTree!]!
+  parentList: [MenuTree!]!
+  menusByAuthsList: [MenusAuths!]!
+}
+
+type MenusAuths {
+  menu: Menu!
+  auth: Auth!
+}
+
 type Auth {
   id: Int!
   name: String!
   identifier: String
-  children: [Auth!]!
+  childList: [AuthTree!]!
+  parentList: [AuthTree!]!
+  userList: [User!]!
+  menusByAuthsList: [MenusAuths!]!
+  routesByAuthsList: [RoutesAuths!]!
+}
+
+type User {
+  id: String!
+  auth: Auth!
+}
+
+type Message {
+  id: Int!
+  msg: String!
+  messageGroupId: String!
 }
 
 type Query {
   getAuthList: [Auth!]!
-  pathList: [Path!]!
+  pathList: [Route!]!
 }

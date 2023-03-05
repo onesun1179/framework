@@ -20,7 +20,6 @@ import { AppConfigService } from './app-config/app-config.service';
 import { ConfigModule } from '@nestjs/config';
 import { RouteService } from './route/route.service';
 import { FrontComponentModule } from './front-component/front-component.module';
-
 // const dropSchema = true;
 const dropSchema = false;
 @Module({
