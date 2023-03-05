@@ -1,20 +1,8 @@
 import "./App.css";
-import { gql, useQuery } from "@apollo/client";
-
-const gqlPathList = gql`
-    query GetLocations {
-        pathList {
-            children {
-                title
-            }
-        }
-    }
-`;
+import ApiRoutes from "@src/component/layout/ApiRoutes";
 
 function App() {
-    const { loading, error, data } = useQuery(gqlPathList);
-    console.log(data, error);
-    return null;
+	return <ApiRoutes />;
 }
 
 export default App;

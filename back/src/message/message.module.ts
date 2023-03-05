@@ -2,13 +2,13 @@ import { Global, Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MessageResolver } from './message.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessageEntity } from './entity/message.entity';
-import { MessageGroupEntity } from './entity/messageGroup.entity';
+import { Message } from './model/Message';
+import { MessageGroup } from './model/MessageGroup';
 
 @Global()
 @Module({
   exports: [MessageService],
-  imports: [TypeOrmModule.forFeature([MessageEntity, MessageGroupEntity])],
+  imports: [TypeOrmModule.forFeature([Message, MessageGroup])],
   providers: [MessageResolver, MessageService],
 })
 export class MessageModule {}

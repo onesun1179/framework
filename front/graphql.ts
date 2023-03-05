@@ -8,25 +8,24 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export class Path {
+export interface Path {
     id: number;
-    title: string;
-    path: string;
+    title?: Nullable<string>;
+    pathname: string;
     componentPath?: Nullable<string>;
     children: Path[];
 }
 
-export class Auth {
+export interface Auth {
     id: number;
     name: string;
     identifier?: Nullable<string>;
     children: Auth[];
 }
 
-export abstract class IQuery {
-    abstract getAuthList(): Auth[] | Promise<Auth[]>;
-
-    abstract pathList(): Path[] | Promise<Path[]>;
+export interface IQuery {
+    getAuthList(): Auth[] | Promise<Auth[]>;
+    pathList(): Path[] | Promise<Path[]>;
 }
 
 type Nullable<T> = T | null;

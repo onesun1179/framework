@@ -1,19 +1,20 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { GoogleStrategy } from './strategy/google.strategy';
+import { Global, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from '../user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthTreeEntity } from './entity/authTree.entity';
-import { AuthEntity } from './entity/auth.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { GoogleStrategy } from './strategy/google.strategy';
+import { GoogleAuthController } from './controller/google-auth.controller';
+import { AuthService } from './auth.service';
+import { AuthTree } from './model/AuthTree';
+import { Auth } from './model/Auth';
 import { JWT_SECRET } from './auth.constant';
 import { AuthResolver } from './auth.resolver';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
+import { UserModule } from '../user/user.module';
+import { AuthController } from './auth.controller';
 
-// @Global()
+@Global()
 @Module({
   imports: [
     PassportModule,
@@ -22,16 +23,16 @@ import { GqlAuthGuard } from './guard/gql-auth.guard';
       signOptions: { expiresIn: '1day' },
     }),
     UserModule,
-    TypeOrmModule.forFeature([AuthEntity, AuthTreeEntity]),
+    TypeOrmModule.forFeature([Auth, AuthTree]),
   ],
   exports: [AuthService],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleAuthController],
   providers: [
     AuthService,
-    GoogleStrategy,
     AuthResolver,
     JwtStrategy,
     GqlAuthGuard,
+    GoogleStrategy,
   ],
 })
 export class AuthModule {}

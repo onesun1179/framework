@@ -1,35 +1,37 @@
 import { CacheModule, Module, OnModuleInit } from '@nestjs/common';
+import { resolve } from 'path';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { CodeModule } from './code/code.module';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-import { UserEntity } from './user/entity/user.entity';
 import { MenuModule } from './menu/menu.module';
-import { PathModule } from './path/path.module';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { GraphQLModule } from '@nestjs/graphql';
+import { RouteModule } from './route/route.module';
+
 import { AuthModule } from './auth/auth.module';
-import { resolve } from 'path';
-import { DEVELOPER_AUTH, INITIAL_AUTH_LIST } from './auth/auth.constant';
-import { Builder } from 'builder-pattern';
 import { MessageModule } from './message/message.module';
-import { MessageGroupEntity } from './message/entity/messageGroup.entity';
-import { MessageEntity } from './message/entity/message.entity';
-import { PathEntity } from './path/entity/path.entity';
-import { PathsByAuthsEntity } from './path/entity/pathsByAuths.entity';
+import { AppConfigModule } from './app-config/app-config.module';
+import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
+import { AppConfigService } from './app-config/app-config.service';
+import { ConfigModule } from '@nestjs/config';
+import { RouteService } from './route/route.service';
+import { FrontComponentModule } from './front-component/front-component.module';
 
 // const dropSchema = true;
 const dropSchema = false;
 @Module({
   imports: [
-    CacheModule.register(),
+    ConfigModule.forRoot(),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     // DevtoolsModule.register({
     //   http: process.env.NODE_ENV !== 'production',
     // }),
-    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       namingStrategy: new SnakeNamingStrategy(),
       type: 'mariadb',
@@ -47,8 +49,9 @@ const dropSchema = false;
     CodeModule,
     UserModule,
     MenuModule,
-    PathModule,
+    RouteModule,
     MessageModule,
+    AppConfigModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,
@@ -57,7 +60,6 @@ const dropSchema = false;
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
         path: resolve(process.cwd(), 'src', 'graphql.ts'),
-        outputAs: 'class',
       },
       formatError: (e) => {
         delete e.extensions.exception;
@@ -65,60 +67,25 @@ const dropSchema = false;
         return e;
       },
     }),
+    FrontComponentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private appConfigService: AppConfigService,
+    private routeService: RouteService,
+  ) {}
+
   async onModuleInit() {
     if (dropSchema) {
-      await Promise.all([
-        (async () => {
-          const authList = await Promise.all(
-            INITIAL_AUTH_LIST.map((o) => o.save()),
-          );
-
-          const devAuth = authList.find(
-            (o) => o.identifier === DEVELOPER_AUTH.identifier,
-          )!;
-
-          await Builder(UserEntity, {
-            id: '102494101026679318764',
-            auth: devAuth,
-          })
-            .build()
-            .save();
-
-          const rootPath = await Builder(PathEntity, {
-            path: '/',
-            title: 'root',
-            componentPath: './root',
-          })
-            .build()
-            .save();
-
-          await Builder(PathsByAuthsEntity, {
-            path: rootPath,
-            auth: devAuth,
-          })
-            .build()
-            .save();
-        })(),
-        (async () => {
-          const groupMsg = await Builder(MessageGroupEntity, {
-            id: 'E',
-            name: '에러메세지',
-          })
-            .build()
-            .save();
-          const a = await Builder(MessageEntity, {
-            messageGroup: groupMsg,
-            msg: '안녕2',
-          })
-            .build()
-            .save();
-        })(),
-      ]);
+      await this.authService.whenDbInit();
+      await this.userService.whenDbInit();
+      await this.appConfigService.whenDbInit();
+      await this.routeService.whenDbInit();
     }
   }
 }

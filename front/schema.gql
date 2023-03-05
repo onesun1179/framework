@@ -8,10 +8,10 @@ type Path {
   id: Int!
 
   """경로 명"""
-  title: String!
+  title: String
 
   """경로 path"""
-  path: String!
+  pathname: String!
 
   """컴포넌트 path"""
   componentPath: String

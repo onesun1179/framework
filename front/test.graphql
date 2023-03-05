@@ -1,0 +1,21 @@
+fragment SubPath on Path {
+    id
+    title
+    pathname
+    children {
+        id
+        title
+        pathname
+    }
+}
+
+fragment ParentPath on Path {
+    id
+}
+
+query {
+
+    pathList {
+        ...PathRec
+    }
+}

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MessageEntity } from './entity/message.entity';
-import { MessageGroupEntity } from './entity/messageGroup.entity';
+import { Message } from './model/Message';
+import { MessageGroup } from './model/MessageGroup';
 
 @Injectable()
 export class MessageService {
   constructor(
-    @InjectRepository(MessageEntity)
-    private messageEntityRepository: Repository<MessageEntity>,
-    @InjectRepository(MessageGroupEntity)
-    private messageGroupEntityRepository: Repository<MessageGroupEntity>,
+    @InjectRepository(Message)
+    private messageEntityRepository: Repository<Message>,
+    @InjectRepository(MessageGroup)
+    private messageGroupEntityRepository: Repository<MessageGroup>,
   ) {}
 
-  getMessageById(id: MessageEntity['id']) {
+  getMessageById(id: Message['id']) {
     return this.messageEntityRepository;
   }
 }

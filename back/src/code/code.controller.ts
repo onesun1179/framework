@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { CodeEntity } from './entity/code.entity';
+import { Code } from './model/Code';
 import { CodeService } from './code.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CodeTreeEntity } from './entity/codeTree.entity';
+import { CodeTree } from './model/CodeTree';
 
 @Controller({
   path: 'code',
@@ -12,23 +12,23 @@ import { CodeTreeEntity } from './entity/codeTree.entity';
 export class CodeController {
   constructor(
     private readonly codeService: CodeService,
-    @InjectRepository(CodeEntity)
-    private codeEntityRepository: Repository<CodeEntity>,
-    @InjectRepository(CodeTreeEntity)
-    private codeTreeEntityRepository: Repository<CodeTreeEntity>,
+    @InjectRepository(Code)
+    private codeEntityRepository: Repository<Code>,
+    @InjectRepository(CodeTree)
+    private codeTreeEntityRepository: Repository<CodeTree>,
   ) {}
 
   @Get('getCode')
-  async getCode(): Promise<CodeEntity[]> {
+  async getCode(): Promise<Code[]> {
     return await this.codeService.getCodeList({});
   }
 
   @Get('saveCode')
-  async saveCode(): Promise<CodeTreeEntity> {
-    const c = new CodeEntity();
+  async saveCode(): Promise<CodeTree> {
+    const c = new Code();
     c.name = 'test';
     await this.codeEntityRepository.save(c);
-    const b = new CodeEntity();
+    const b = new Code();
     b.name = 'test2';
     await this.codeEntityRepository.save(b);
     await this.codeTreeEntityRepository.save({

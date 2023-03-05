@@ -168,10 +168,10 @@ _ReSharper*/
 # TeamCity is a build add-in
 _TeamCity*
 
-# DotCover is a CodeEntity Coverage Tool
+# DotCover is a Code Coverage Tool
 *.dotCover
 
-# AxoCover is a CodeEntity Coverage Tool
+# AxoCover is a Code Coverage Tool
 .axoCover/*
 !.axoCover/settings.json
 

@@ -1,9 +1,9 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { Auth } from './model/auth.model';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
 import { CurrentUser } from '../common/docorator/CurrentUser';
+import { Auth } from './model/Auth';
 
 @Resolver()
 export class AuthResolver {

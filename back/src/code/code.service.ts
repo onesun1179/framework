@@ -1,49 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CodeEntity } from './entity/code.entity';
+import { Code } from './model/Code';
 import { FindManyOptions, Repository } from 'typeorm';
-import { CodeTreeEntity } from './entity/codeTree.entity';
+import { CodeTree } from './model/CodeTree';
 
 @Injectable()
 export class CodeService {
   constructor(
-    @InjectRepository(CodeEntity)
-    private codeRepository: Repository<CodeEntity>,
-    @InjectRepository(CodeTreeEntity)
-    private codeTreeRepository: Repository<CodeTreeEntity>,
+    @InjectRepository(Code)
+    private codeRepository: Repository<Code>,
+    @InjectRepository(CodeTree)
+    private codeTreeRepository: Repository<CodeTree>,
   ) {}
 
-  getCode(id: CodeEntity['id']): Promise<CodeEntity | null> {
+  getCode(id: Code['id']): Promise<Code | null> {
     return this.codeRepository.findOneBy({
       id,
     });
   }
 
   getCodeTree(
-    childId: CodeEntity['id'],
-    parentId: CodeEntity['id'],
-  ): Promise<CodeTreeEntity | null> {
+    childId: Code['id'],
+    parentId: Code['id'],
+  ): Promise<CodeTree | null> {
     return this.codeTreeRepository.findOneBy({
       childId,
       parentId,
     });
   }
 
-  getCodeTreeList(
-    option: FindManyOptions<CodeTreeEntity>,
-  ): Promise<CodeTreeEntity[]> {
+  getCodeTreeList(option: FindManyOptions<CodeTree>): Promise<CodeTree[]> {
     return this.codeTreeRepository.find(option);
   }
 
-  getCodeList(option: FindManyOptions<CodeEntity>): Promise<CodeEntity[]> {
+  getCodeList(option: FindManyOptions<Code>): Promise<Code[]> {
     return this.codeRepository.find(option);
   }
 
-  saveCode(code: CodeEntity): Promise<CodeEntity> {
+  saveCode(code: Code): Promise<Code> {
     return this.codeRepository.save(code);
   }
 
-  saveCodeTree(codeTree: CodeTreeEntity): Promise<CodeTreeEntity> {
+  saveCodeTree(codeTree: CodeTree): Promise<CodeTree> {
     return this.codeTreeRepository.save(codeTree);
   }
 }

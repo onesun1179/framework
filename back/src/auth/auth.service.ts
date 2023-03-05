@@ -4,10 +4,11 @@ import { LoginUser } from '../user/user.type';
 import { UserService } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthEntity } from './entity/auth.entity';
-import { AuthTreeEntity } from './entity/authTree.entity';
-import { Auth } from './model/auth.model';
-import { AccessToken } from './model/accessToken.model';
+import { Auth } from './model/Auth';
+import { AuthTree } from './model/AuthTree';
+
+import { AccessToken } from './model/AccessToken';
+import { INITIAL_AUTH_LIST } from './auth.constant';
 
 @Injectable()
 export class AuthService {
@@ -15,29 +16,34 @@ export class AuthService {
     private jwtService: JwtService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
-    @InjectRepository(AuthEntity)
-    private authEntityRepository: Repository<AuthEntity>,
-    @InjectRepository(AuthTreeEntity)
-    private authTreeEntityRepository: Repository<AuthTreeEntity>,
+    @InjectRepository(Auth)
+    private authEntityRepository: Repository<Auth>,
+    @InjectRepository(AuthTree)
+    private authTreeEntityRepository: Repository<AuthTree>,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
-  async save(authEntity: AuthEntity[]) {
+  async whenDbInit() {
+    await Promise.all(INITIAL_AUTH_LIST.map((o) => o.save()));
+  }
+
+  async save(authEntity: Auth[]) {
     return this.authEntityRepository.save(authEntity);
   }
 
   async login(loginUser: LoginUser) {
+    this.logger.log('loginUser', loginUser);
     const user = await this.userService
       .getUser(loginUser.id)
       .then(async (u) => {
         if (!u) {
-          return await this.userService.saveByLoginUser(loginUser);
+          return await this.userService.saveLoginUser(loginUser);
         } else {
           return u;
         }
       });
 
-    this.logger.log(JSON.stringify(user));
+    this.logger.log('user', JSON.stringify(user));
     return {
       access_token: this.jwtService.sign({
         authId: user.auth.id,
@@ -47,22 +53,18 @@ export class AuthService {
   }
 
   async getAuthList(): Promise<Auth[]> {
-    const o = await this.authEntityRepository.find();
-
-    return o.map((oo) => oo.toAuth());
+    return await this.authEntityRepository.find();
   }
 
-  async getAuthEntityById(id: AuthEntity['id']): Promise<AuthEntity> {
+  async getAuthEntityById(id: Auth['id']): Promise<Auth> {
     return await this.authEntityRepository.findOneBy({
       id,
     });
   }
 
-  async getAuthEntityByIdentifier(identifier: AuthEntity['identifier']) {
-    const t = await this.authEntityRepository.find();
-    const a = await this.authEntityRepository.findOneBy({
+  async getAuthEntityByIdentifier(identifier: Auth['identifier']) {
+    return await this.authEntityRepository.findOneBy({
       identifier,
     });
-    return a;
   }
 }

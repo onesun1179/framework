@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    "typeRoots": [
+      "./src/declare/*.d.ts"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": [ "src/*" ],
+      "@gqlType": [ "graphql.ts" ]
+    },
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
