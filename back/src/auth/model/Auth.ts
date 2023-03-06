@@ -1,10 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
-import { AuthTree } from './AuthTree';
 import { User } from '../../user/entity/User';
-import { RoutesAuths } from '../../route/model/RoutesAuths';
+import { FullRoutesAuths } from '../../route/model/FullRoutesAuths';
 import { MenusAuths } from '../../menu/model/MenusAuths';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { AuthGroup } from './AuthGroup';
 
 @Entity()
 @ObjectType()
@@ -28,13 +34,13 @@ export class Auth extends CommonEntity {
   })
   identifier?: string;
 
-  @OneToMany(() => AuthTree, (o) => o.child)
-  @Field(() => [AuthTree])
-  childList: AuthTree[];
-
-  @OneToMany(() => AuthTree, (o) => o.parent)
-  @Field(() => [AuthTree])
-  parentList: AuthTree[];
+  @ManyToOne(() => AuthGroup, (o) => o.authList, {
+    nullable: false,
+  })
+  @Field(() => AuthGroup, {
+    nullable: false,
+  })
+  authGroup: AuthGroup;
 
   @OneToMany(() => User, (o) => o.auth)
   @Field(() => [User])
@@ -42,9 +48,9 @@ export class Auth extends CommonEntity {
 
   @OneToMany(() => MenusAuths, (o) => o.menu)
   @Field(() => [MenusAuths])
-  menusByAuthsList: MenusAuths[];
+  menusAuths: MenusAuths[];
 
-  @OneToMany(() => RoutesAuths, (o) => o.route)
-  @Field(() => [RoutesAuths])
-  routesByAuthsList: RoutesAuths[];
+  @OneToMany(() => FullRoutesAuths, (o) => o.fullRoute)
+  @Field(() => [FullRoutesAuths])
+  fullRoutesAuths: FullRoutesAuths[];
 }

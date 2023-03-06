@@ -7,11 +7,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
-
-export enum FrontComponentIdEnum {
-    login = "login",
-    home = "home"
-}
+export type FrontComponentId = "login" | "home";
 
 export interface CodeTree {
     childId: number;
@@ -27,13 +23,6 @@ export interface Code {
     parentList: CodeTree[];
 }
 
-export interface AuthTree {
-    childId: number;
-    parentId: number;
-    child: Auth;
-    parent: Auth;
-}
-
 export interface FrontComponentType {
     id: number;
     name: string;
@@ -41,7 +30,7 @@ export interface FrontComponentType {
 }
 
 export interface FrontComponent {
-    id: FrontComponentIdEnum;
+    id: FrontComponentId;
     value: string;
     initialValue: string;
     frontComponentType: FrontComponentType;
@@ -51,15 +40,19 @@ export interface Route {
     id: number;
     path: string;
     frontComponent?: Nullable<FrontComponent>;
-    children: Route[];
+    children?: Nullable<Route[]>;
     parent?: Nullable<Route>;
-    routesAuthsList: RoutesAuths[];
 }
 
-export interface RoutesAuths {
-    routeId: number;
-    authId: number;
+export interface FullRoute {
+    path: string;
     route: Route;
+    frontRoute: FrontComponent;
+    fullRoutesAuths?: Nullable<FullRoutesAuths[]>;
+}
+
+export interface FullRoutesAuths {
+    fullRoute: FullRoute;
     auth: Auth;
 }
 
@@ -73,7 +66,7 @@ export interface Menu {
     name: string;
     childList: MenuTree[];
     parentList: MenuTree[];
-    menusByAuthsList: MenusAuths[];
+    menusAuths: MenusAuths[];
 }
 
 export interface MenusAuths {
@@ -81,15 +74,22 @@ export interface MenusAuths {
     auth: Auth;
 }
 
+export interface AuthGroup {
+    id: number;
+    name: string;
+    authList: Auth[];
+    children: AuthGroup[];
+    parent: AuthGroup;
+}
+
 export interface Auth {
     id: number;
     name: string;
     identifier?: Nullable<string>;
-    childList: AuthTree[];
-    parentList: AuthTree[];
+    authGroup: AuthGroup;
     userList: User[];
-    menusByAuthsList: MenusAuths[];
-    routesByAuthsList: RoutesAuths[];
+    menusAuths: MenusAuths[];
+    fullRoutesAuths: FullRoutesAuths[];
 }
 
 export interface User {
@@ -105,7 +105,7 @@ export interface Message {
 
 export interface IQuery {
     getAuthList(): Auth[] | Promise<Auth[]>;
-    pathList(): Route[] | Promise<Route[]>;
+    routeList(id?: Nullable<number>): Route[] | Promise<Route[]>;
 }
 
 type Nullable<T> = T | null;

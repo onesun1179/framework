@@ -16,13 +16,6 @@ type Code {
   parentList: [CodeTree!]!
 }
 
-type AuthTree {
-  childId: Int!
-  parentId: Int!
-  child: Auth!
-  parent: Auth!
-}
-
 type FrontComponentType {
   id: Int!
   name: String!
@@ -30,13 +23,13 @@ type FrontComponentType {
 }
 
 type FrontComponent {
-  id: FrontComponentIdEnum!
+  id: FrontComponentId!
   value: String!
   initialValue: String!
   frontComponentType: FrontComponentType!
 }
 
-enum FrontComponentIdEnum {
+enum FrontComponentId {
   login
   home
 }
@@ -45,15 +38,19 @@ type Route {
   id: Int!
   path: String!
   frontComponent: FrontComponent
-  children: [Route!]!
+  children: [Route!]
   parent: Route
-  routesAuthsList: [RoutesAuths!]!
 }
 
-type RoutesAuths {
-  routeId: Int!
-  authId: Int!
+type FullRoute {
+  path: String!
   route: Route!
+  frontRoute: FrontComponent!
+  fullRoutesAuths: [FullRoutesAuths!]
+}
+
+type FullRoutesAuths {
+  fullRoute: FullRoute!
   auth: Auth!
 }
 
@@ -67,7 +64,7 @@ type Menu {
   name: String!
   childList: [MenuTree!]!
   parentList: [MenuTree!]!
-  menusByAuthsList: [MenusAuths!]!
+  menusAuths: [MenusAuths!]!
 }
 
 type MenusAuths {
@@ -75,15 +72,22 @@ type MenusAuths {
   auth: Auth!
 }
 
+type AuthGroup {
+  id: Int!
+  name: String!
+  authList: [Auth!]!
+  children: [AuthGroup!]!
+  parent: AuthGroup!
+}
+
 type Auth {
   id: Int!
   name: String!
   identifier: String
-  childList: [AuthTree!]!
-  parentList: [AuthTree!]!
+  authGroup: AuthGroup!
   userList: [User!]!
-  menusByAuthsList: [MenusAuths!]!
-  routesByAuthsList: [RoutesAuths!]!
+  menusAuths: [MenusAuths!]!
+  fullRoutesAuths: [FullRoutesAuths!]!
 }
 
 type User {
@@ -99,5 +103,7 @@ type Message {
 
 type Query {
   getAuthList: [Auth!]!
-  pathList: [Route!]!
+
+  """경로리스트"""
+  routeList(id: Int): [Route!]!
 }

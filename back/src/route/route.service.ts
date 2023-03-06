@@ -2,33 +2,44 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Route } from './model/Route';
-import { RoutesAuths } from './model/RoutesAuths';
-import { AccessToken } from '../auth/model/AccessToken';
+import { FullRoutesAuths } from './model/FullRoutesAuths';
 import { WhenDbInit } from '../common/types/WhenDbInit';
-import { AppConfigService } from '../app-config/app-config.service';
+import { FullRoute } from './model/FullRoute';
 
 @Injectable()
 export class RouteService implements WhenDbInit {
   constructor(
     @InjectRepository(Route)
-    private pathEntityRepository: Repository<Route>,
-    @InjectRepository(RoutesAuths)
-    private pathsByAuthsEntityRepository: Repository<RoutesAuths>,
-
-    private appConfigService: AppConfigService,
+    private routeRepository: Repository<Route>,
+    @InjectRepository(FullRoute)
+    private fullRouteRepository: Repository<FullRoute>,
+    @InjectRepository(FullRoutesAuths)
+    private fullRoutesAuthsRepository: Repository<FullRoutesAuths>,
   ) {}
   private readonly logger = new Logger(RouteService.name);
 
   async whenDbInit() {}
 
-  async getPathList({ user }: { user?: AccessToken }) {
-    return await this.pathEntityRepository.find({
+  async getAllRouteList() {
+    return await this.routeRepository.find();
+  }
+
+  async getRouteById(id: Route['id']) {
+    return await this.routeRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async getChildrenByParent(parent: Route) {
+    return await this.routeRepository.find({
       relations: {
-        routesAuthsList: true,
+        parent: true,
       },
       where: {
-        routesAuthsList: {
-          authId: user?.authId,
+        parent: {
+          id: parent.id,
         },
       },
     });

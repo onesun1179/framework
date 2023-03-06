@@ -6,7 +6,6 @@ import {
 	ApolloClient,
 	ApolloLink,
 	ApolloProvider,
-	gql,
 	HttpLink,
 	InMemoryCache,
 } from "@apollo/client";
@@ -24,32 +23,6 @@ const client = new ApolloClient({
 		}),
 	]),
 });
-
-const gqlPathList = gql`
-	fragment PathRec on Path {
-		id
-		title
-		pathname
-		componentPath
-	}
-	query {
-		pathList {
-			...PathRec
-			children {
-				...PathRec
-				children {
-					...PathRec
-					children {
-						...PathRec
-						children {
-							...PathRec
-						}
-					}
-				}
-			}
-		}
-	}
-`;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={client}>

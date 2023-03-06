@@ -20,11 +20,26 @@ import { AppConfigService } from './app-config/app-config.service';
 import { ConfigModule } from '@nestjs/config';
 import { RouteService } from './route/route.service';
 import { FrontComponentModule } from './front-component/front-component.module';
+import { FrontComponentService } from './front-component/front-component.service';
+import * as process from 'process';
+import * as shell from 'shelljs';
+import * as Joi from 'joi';
+
 // const dropSchema = true;
 const dropSchema = false;
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+      }),
+    }),
     CacheModule.register({
       isGlobal: true,
     }),
@@ -34,11 +49,11 @@ const dropSchema = false;
     TypeOrmModule.forRoot({
       namingStrategy: new SnakeNamingStrategy(),
       type: 'mariadb',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '1234',
-      database: 'framework',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadEntities: true,
       dropSchema,
       synchronize: true,
@@ -59,6 +74,7 @@ const dropSchema = false;
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
         path: resolve(process.cwd(), 'src', 'graphql.ts'),
+        enumsAsTypes: true,
       },
       formatError: (e) => {
         delete e.extensions.exception;
@@ -77,6 +93,7 @@ export class AppModule implements OnModuleInit {
     private userService: UserService,
     private appConfigService: AppConfigService,
     private routeService: RouteService,
+    private frontComponentService: FrontComponentService,
   ) {}
 
   async onModuleInit() {
@@ -85,6 +102,11 @@ export class AppModule implements OnModuleInit {
       await this.userService.whenDbInit();
       await this.appConfigService.whenDbInit();
       await this.routeService.whenDbInit();
+      await this.frontComponentService.whenDbInit();
+    }
+
+    if (process.env.NODE_ENV === 'dev') {
+      shell.exec('npm run gql.cp');
     }
   }
 }

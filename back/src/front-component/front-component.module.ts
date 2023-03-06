@@ -6,6 +6,7 @@ import { FrontComponent } from './model/FrontComponent';
 import { FrontComponentType } from './model/FrontComponentType';
 
 @Module({
+  exports: [FrontComponentService],
   imports: [TypeOrmModule.forFeature([FrontComponent, FrontComponentType])],
   providers: [FrontComponentResolver, FrontComponentService],
 })

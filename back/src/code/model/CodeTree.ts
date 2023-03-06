@@ -1,11 +1,11 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Code } from './Code';
 import { CommonEntity } from '../../common/entity/common.entity';
-import { Auth } from './Auth';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @Entity()
 @ObjectType()
-export class AuthTree extends CommonEntity {
+export class CodeTree extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)
   childId: number;
@@ -14,17 +14,17 @@ export class AuthTree extends CommonEntity {
   @Field(() => Int)
   parentId: number;
 
-  @ManyToOne(() => Auth, (o) => o.childList)
+  @ManyToOne(() => Code, (o) => o.childList)
   @JoinColumn({
     name: 'child_id',
   })
-  @Field(() => Auth)
-  child: Auth;
+  @Field(() => Code)
+  child: Code;
 
-  @ManyToOne(() => Auth, (o) => o.parentList)
+  @ManyToOne(() => Code, (o) => o.parentList)
   @JoinColumn({
     name: 'parent_id',
   })
-  @Field(() => Auth)
-  parent: Auth;
+  @Field(() => Code)
+  parent: Code;
 }

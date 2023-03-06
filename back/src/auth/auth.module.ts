@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { GoogleAuthController } from './controller/google-auth.controller';
 import { AuthService } from './auth.service';
-import { AuthTree } from './model/AuthTree';
 import { Auth } from './model/Auth';
 import { JWT_SECRET } from './auth.constant';
 import { AuthResolver } from './auth.resolver';
@@ -13,6 +12,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
+import { AuthGroup } from './model/AuthGroup';
 
 @Global()
 @Module({
@@ -23,7 +23,7 @@ import { AuthController } from './auth.controller';
       signOptions: { expiresIn: '1day' },
     }),
     UserModule,
-    TypeOrmModule.forFeature([Auth, AuthTree]),
+    TypeOrmModule.forFeature([Auth, AuthGroup]),
   ],
   exports: [AuthService],
   controllers: [AuthController, GoogleAuthController],

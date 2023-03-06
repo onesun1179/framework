@@ -13,5 +13,5 @@ export const FRONT_COMPONENT_TYPE_GROUP_MAP: {
 };
 
 registerEnumType(FRONT_COMPONENT_MAP, {
-  name: 'FrontComponentIdEnum',
+  name: 'FrontComponentId',
 });

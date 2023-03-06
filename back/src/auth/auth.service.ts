@@ -5,10 +5,11 @@ import { UserService } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Auth } from './model/Auth';
-import { AuthTree } from './model/AuthTree';
 
 import { AccessToken } from './model/AccessToken';
 import { INITIAL_AUTH_LIST } from './auth.constant';
+import { AuthGroup } from './model/AuthGroup';
+import { Builder } from 'builder-pattern';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +19,25 @@ export class AuthService {
     private userService: UserService,
     @InjectRepository(Auth)
     private authEntityRepository: Repository<Auth>,
-    @InjectRepository(AuthTree)
-    private authTreeEntityRepository: Repository<AuthTree>,
+    @InjectRepository(AuthGroup)
+    private authGroupRepository: Repository<AuthGroup>,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
   async whenDbInit() {
-    await Promise.all(INITIAL_AUTH_LIST.map((o) => o.save()));
+    const authGroup = await Builder(AuthGroup, {
+      name: '조직명',
+    })
+      .build()
+      .save();
+    await Promise.all(
+      INITIAL_AUTH_LIST.map((o) => {
+        o.authGroup = authGroup;
+        return (async () => {
+          await o.save();
+        })();
+      }),
+    );
   }
 
   async save(authEntity: Auth[]) {

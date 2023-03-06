@@ -1,30 +1,11 @@
 import { FC } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Path } from "@gqlType";
 import { Route, Routes } from "react-router-dom";
 
 const gqlPathList = gql`
-	fragment PathRec on Path {
-		id
-		title
-		pathname
-		componentPath
-	}
-	query {
-		pathList {
-			...PathRec
-			children {
-				...PathRec
-				children {
-					...PathRec
-					children {
-						...PathRec
-						children {
-							...PathRec
-						}
-					}
-				}
-			}
+	query ($test: Int) {
+		routeList(id: $test) {
+			id
 		}
 	}
 `;

@@ -1,21 +1,5 @@
-fragment SubPath on Path {
-    id
-    title
-    pathname
-    children {
+query Dog($test : Int) {
+    routeList(id: $test) {
         id
-        title
-        pathname
-    }
-}
-
-fragment ParentPath on Path {
-    id
-}
-
-query {
-
-    pathList {
-        ...PathRec
     }
 }
