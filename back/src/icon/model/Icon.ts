@@ -1,25 +1,48 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { IconGroup } from './IconGroup';
 import { Menu } from '../../menu/model/Menu';
 
 @Entity()
-@ObjectType()
+@ObjectType({
+  description: '아이콘',
+})
 export class Icon extends CommonEntity {
-  @PrimaryColumn()
-  @Field()
-  name: string;
+  @PrimaryColumn({
+    comment: '아이콘 식별자',
+  })
+  @Field({
+    description: '아이콘 식별자',
+  })
+  id: string;
 
-  @Column()
-  @Field()
+  @Column({
+    comment: '아이콘 파일경로',
+  })
+  @Field({
+    description: '아이콘 파일 경로',
+  })
   filePath: string;
 
-  @ManyToOne(() => IconGroup, (o) => o.iconList)
-  @Field(() => IconGroup)
+  @Column({
+    comment: '아이콘 그룹 일련번호',
+  })
+  @Field(() => Int)
+  iconGroupSeqNo: IconGroup['seqNo'];
+
+  @ManyToOne(() => IconGroup, (o) => o.icons)
+  @Field(() => IconGroup, {
+    description: '아이콘 그룹',
+  })
+  @JoinColumn({
+    name: 'icon_group_seq_no',
+  })
   iconGroup: IconGroup;
 
   @ManyToOne(() => Menu, (o) => o.icon)
-  @Field(() => [Menu])
-  menuList: Array<Menu>;
+  @Field(() => [Menu], {
+    description: '메뉴 목록',
+  })
+  menus: Array<Menu>;
 }

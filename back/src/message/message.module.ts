@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { MessageService } from './message.service';
-import { MessageResolver } from './message.resolver';
+import { MessageResolver } from './resolvers/message.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Message } from './model/Message';
-import { MessageGroup } from './model/MessageGroup';
+import { Message } from './models/Message';
+import { MessageGroup } from './models/MessageGroup';
 
 @Global()
 @Module({

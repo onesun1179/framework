@@ -8,22 +8,22 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 export class CodeTree extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)
-  childId: number;
+  childSeqNo: number;
 
   @PrimaryColumn()
   @Field(() => Int)
-  parentId: number;
+  parentSeqNo: number;
 
-  @ManyToOne(() => Code, (o) => o.childList)
+  @ManyToOne(() => Code, (o) => o.children)
   @JoinColumn({
-    name: 'child_id',
+    name: 'child_seq_no',
   })
   @Field(() => Code)
   child: Code;
 
-  @ManyToOne(() => Code, (o) => o.parentList)
+  @ManyToOne(() => Code, (o) => o.parents)
   @JoinColumn({
-    name: 'parent_id',
+    name: 'parent_seq_no',
   })
   @Field(() => Code)
   parent: Code;

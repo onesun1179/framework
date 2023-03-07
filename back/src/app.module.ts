@@ -13,14 +13,9 @@ import { RouteModule } from './route/route.module';
 
 import { AuthModule } from './auth/auth.module';
 import { MessageModule } from './message/message.module';
-import { AppConfigModule } from './app-config/app-config.module';
-import { AuthService } from './auth/auth.service';
-import { UserService } from './user/user.service';
-import { AppConfigService } from './app-config/app-config.service';
+import { AppMetadataModule } from './app-metadata/app-metadata.module';
 import { ConfigModule } from '@nestjs/config';
-import { RouteService } from './route/route.service';
 import { FrontComponentModule } from './front-component/front-component.module';
-import { FrontComponentService } from './front-component/front-component.service';
 import { IconModule } from './icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
@@ -66,7 +61,7 @@ const dropSchema = true;
     MenuModule,
     RouteModule,
     MessageModule,
-    AppConfigModule,
+    AppMetadataModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,
@@ -90,23 +85,7 @@ const dropSchema = true;
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private appConfigService: AppConfigService,
-    private routeService: RouteService,
-    private frontComponentService: FrontComponentService,
-  ) {}
-
   async onModuleInit() {
-    if (dropSchema) {
-      await this.authService.whenDbInit();
-      await this.userService.whenDbInit();
-      await this.appConfigService.whenDbInit();
-      await this.frontComponentService.whenDbInit();
-      await this.routeService.whenDbInit();
-    }
-
     if (process.env.NODE_ENV === 'dev') {
       shell.exec('npm run gql.cp');
     }

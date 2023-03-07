@@ -14,7 +14,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 export class AuthGroup extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  seqNo: number;
 
   @Column({
     nullable: false,
@@ -26,7 +26,7 @@ export class AuthGroup extends CommonEntity {
 
   @OneToMany(() => Auth, (o) => o.authGroup)
   @Field(() => [Auth])
-  authList: Auth[];
+  auths: Auth[];
 
   @OneToMany(() => AuthGroup, (o) => o.parent)
   @Field(() => [AuthGroup])

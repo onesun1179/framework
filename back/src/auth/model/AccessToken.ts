@@ -1,4 +1,4 @@
-import { User } from '../../user/entity/User';
+import { User } from '../../user/models/User';
 import { Auth } from './Auth';
 import { JwtStrategy } from '../strategy/jwt.strategy';
 
@@ -11,7 +11,7 @@ import { JwtStrategy } from '../strategy/jwt.strategy';
 //   jti: JWT의 고유 식별자로서, 주로 중복적인 처리를 방지하기 위하여 사용됩니다. 일회용 토큰에 사용하면 유용합니다.
 export class AccessToken extends JwtStrategy {
   userId: User['id'];
-  authId: Auth['id'];
+  authSeqNo: Auth['seqNo'];
   iat: number;
   exp: number;
   // 구글 토큰

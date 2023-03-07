@@ -5,25 +5,41 @@ import { Icon } from './Icon';
 import { IconGroupTree } from './IconGroupTree';
 
 @Entity()
-@ObjectType()
+@ObjectType({
+  description: '아이콘 그룹',
+})
 export class IconGroup extends CommonEntity {
-  @PrimaryGeneratedColumn()
-  @Field(() => Int)
-  id: string;
+  @PrimaryGeneratedColumn({
+    comment: '아이콘 그룹 일련번호',
+  })
+  @Field(() => Int, {
+    description: '아이콘 그룹 일련번호',
+  })
+  seqNo: number;
 
-  @Column()
-  @Field()
+  @Column({
+    comment: '아이콘 그룹 명',
+  })
+  @Field({
+    description: '아이콘 그룹 명',
+  })
   name: string;
 
   @OneToMany(() => Icon, (o) => o.iconGroup)
-  @Field(() => [Icon])
-  iconList: Icon[];
+  @Field(() => [Icon], {
+    description: '아이콘 목록',
+  })
+  icons: Icon[];
 
   @OneToMany(() => IconGroupTree, (o) => o.child)
-  @Field(() => [IconGroupTree])
-  childList: IconGroupTree[];
+  @Field(() => [IconGroupTree], {
+    description: '자식들',
+  })
+  children: IconGroupTree[];
 
   @OneToMany(() => IconGroupTree, (o) => o.parent)
-  @Field(() => [IconGroupTree])
-  parentList: IconGroupTree[];
+  @Field(() => [IconGroupTree], {
+    description: '부모들',
+  })
+  parents: IconGroupTree[];
 }

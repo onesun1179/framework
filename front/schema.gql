@@ -3,131 +3,233 @@
 # ------------------------------------------------------
 
 type CodeTree {
-  childId: Int!
-  parentId: Int!
+  childSeqNo: Int!
+  parentSeqNo: Int!
   child: Code!
   parent: Code!
 }
 
 type Code {
-  id: Int!
+  seqNo: Int!
   name: String!
-  childList: [CodeTree!]!
-  parentList: [CodeTree!]!
+  children: [CodeTree!]!
+  parents: [CodeTree!]!
 }
 
+"""컴포넌트 타입"""
 type FrontComponentType {
-  id: Int!
+  """컴포넌트 타입 일련번호"""
+  seqNo: Int!
+
+  """컴포넌트 타입 명"""
   name: String!
-  frontComponentList: [FrontComponent!]!
+
+  """컴포넌트 목록"""
+  frontComponents: [FrontComponent!]!
 }
 
+"""컴포넌트"""
 type FrontComponent {
-  id: FrontComponentId!
-  value: String!
-  initialValue: String!
+  """컴포넌트 일련번호"""
+  seqNo: Int!
+
+  """컴포넌트 명"""
+  name: String!
+
+  """컴포넌트 타입 일련번호"""
+  frontComponentTypeSeqNo: Float!
+
+  """컴포넌트 타입"""
   frontComponentType: FrontComponentType!
-  routeList: [Route!]!
+
+  """라우트 목록"""
+  routes: [Route!]!
 }
 
-enum FrontComponentId {
-  login
-  home
-}
-
+"""라우트"""
 type Route {
-  id: Int!
+  """라우트 일련번호"""
+  seqNo: Int!
+
+  """라우트 경로"""
   path: String!
+
+  """컴포넌트 일련번호"""
+  frontComponentSeqNo: Int
+
+  """컴포넌트"""
   frontComponent: FrontComponent
-  children: [Route!]
-  parent: Route
+
+  """자식들"""
+  children: [Route!]!
+
+  """부모들"""
+  parents: [Route!]!
+
+  """최종 여부"""
+  leafYn: Boolean!
 }
 
-type FullRoute {
-  id: Int!
-  route: Route!
-  fullRoutesAuths: [FullRoutesAuths!]!
-}
-
-type FullRoutesAuths {
-  fullRouteId: Int!
-  authId: Int!
-  fullRoute: FullRoute!
-  auth: Auth!
-}
-
-type MenuTree {
-  child: Menu!
-  parent: Menu!
-}
-
+"""아이콘 그룹 트리"""
 type IconGroupTree {
-  childId: Int!
-  parentId: Int!
+  """자식 일련번호"""
+  childSeqNo: Int!
+
+  """부모 일련번호"""
+  parentSeqNo: Int!
+
+  """자식"""
   child: IconGroup!
+
+  """부모"""
   parent: IconGroup!
 }
 
+"""아이콘 그룹"""
 type IconGroup {
-  id: Int!
+  """아이콘 그룹 일련번호"""
+  seqNo: Int!
+
+  """아이콘 그룹 명"""
   name: String!
-  iconList: [Icon!]!
-  childList: [IconGroupTree!]!
-  parentList: [IconGroupTree!]!
+
+  """아이콘 목록"""
+  icons: [Icon!]!
+
+  """자식들"""
+  children: [IconGroupTree!]!
+
+  """부모들"""
+  parents: [IconGroupTree!]!
 }
 
+"""아이콘"""
 type Icon {
-  name: String!
+  """아이콘 식별자"""
+  id: String!
+
+  """아이콘 파일 경로"""
   filePath: String!
+  iconGroupSeqNo: Int!
+
+  """아이콘 그룹"""
   iconGroup: IconGroup!
-  menuList: [Menu!]!
+
+  """메뉴 목록"""
+  menus: [Menu!]!
 }
 
+"""메뉴"""
 type Menu {
-  id: Int!
+  """메뉴 일련번호"""
+  seqNo: Int!
+
+  """메뉴 명"""
   name: String!
-  childList: [MenuTree!]!
-  parentList: [MenuTree!]!
-  menusAuths: [MenusAuths!]!
+
+  """자식메뉴 목록"""
+  children: [Menu!]!
+
+  """부모메뉴 목록"""
+  parents: [Menu!]!
+
+  """권한 목록"""
+  auths: [Auth!]!
+
+  """아이콘 식별자"""
+  iconId: String!
+
+  """아이콘"""
   icon: Icon!
 }
 
-type MenusAuths {
-  menu: Menu!
-  auth: Auth!
-}
-
 type AuthGroup {
-  id: Int!
+  seqNo: Int!
   name: String!
-  authList: [Auth!]!
+  auths: [Auth!]!
   children: [AuthGroup!]!
   parent: AuthGroup!
 }
 
+"""권한"""
 type Auth {
-  id: Int!
+  """권한 일련번호"""
+  seqNo: Int!
+
+  """권한 명"""
   name: String!
+
+  """권한 식별자"""
   identifier: String
+
+  """권한 그룹 일련번호"""
+  authGroupSeqNo: Int!
+
+  """권한 그룹"""
   authGroup: AuthGroup!
-  userList: [User!]!
-  menusAuths: [MenusAuths!]!
-  fullRoutesAuths: [FullRoutesAuths!]!
+
+  """사용자 목록"""
+  users: [User!]!
+
+  """메뉴 목록"""
+  menus: [Menu!]!
+
+  """경로 목록"""
+  routes: [Route!]!
 }
 
+"""사용자"""
 type User {
+  """사용자 식별자"""
   id: String!
+
+  """권한 일련번호"""
+  authSeqNo: Int!
+
+  """권한"""
   auth: Auth!
 }
 
+"""앱 메타 데이터"""
+type AppMetadata {
+  """앱 메타 데이터 명"""
+  name: String!
+
+  """앱 메타 데이터 값"""
+  value: String!
+}
+
+"""메세지 그룹"""
+type MessageGroup {
+  """메세지 그룹 코드"""
+  code: String!
+
+  """메세지 그룹명"""
+  name: String!
+
+  """메세지 목록"""
+  messages: [Message!]!
+}
+
+"""메세지"""
 type Message {
-  id: Int!
+  """메세지 일련번호"""
+  seqNo: Int!
+
+  """메세지 내용"""
   msg: String!
-  messageGroupId: String!
+
+  """메세지 그룹 코드"""
+  messageGroupCode: String!
+
+  """메세지 그룹"""
+  messageGroup: MessageGroup!
 }
 
 type Query {
-  getAuthList: [Auth!]!
-  route(id: Int!): Route!
-  routes(id: Int): [Route!]!
+  auth(seqNo: Int!): Auth
+  route(seqNo: Int!): Route!
+  rootRoutes: [Route!]!
+  message(seqNo: Int!): Message!
+  appMetaData(name: String!): AppMetadata!
 }

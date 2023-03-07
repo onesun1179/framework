@@ -7,131 +7,127 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export type FrontComponentId = "login" | "home";
 
 export interface CodeTree {
-    childId: number;
-    parentId: number;
+    childSeqNo: number;
+    parentSeqNo: number;
     child: Code;
     parent: Code;
 }
 
 export interface Code {
-    id: number;
+    seqNo: number;
     name: string;
-    childList: CodeTree[];
-    parentList: CodeTree[];
+    children: CodeTree[];
+    parents: CodeTree[];
 }
 
 export interface FrontComponentType {
-    id: number;
+    seqNo: number;
     name: string;
-    frontComponentList: FrontComponent[];
+    frontComponents: FrontComponent[];
 }
 
 export interface FrontComponent {
-    id: FrontComponentId;
-    value: string;
-    initialValue: string;
+    seqNo: number;
+    name: string;
+    frontComponentTypeSeqNo: number;
     frontComponentType: FrontComponentType;
-    routeList: Route[];
+    routes: Route[];
 }
 
 export interface Route {
-    id: number;
+    seqNo: number;
     path: string;
+    frontComponentSeqNo?: Nullable<number>;
     frontComponent?: Nullable<FrontComponent>;
-    children?: Nullable<Route[]>;
-    parent?: Nullable<Route>;
-}
-
-export interface FullRoute {
-    id: number;
-    route: Route;
-    fullRoutesAuths: FullRoutesAuths[];
-}
-
-export interface FullRoutesAuths {
-    fullRouteId: number;
-    authId: number;
-    fullRoute: FullRoute;
-    auth: Auth;
-}
-
-export interface MenuTree {
-    child: Menu;
-    parent: Menu;
+    children: Route[];
+    parents: Route[];
+    leafYn: boolean;
 }
 
 export interface IconGroupTree {
-    childId: number;
-    parentId: number;
+    childSeqNo: number;
+    parentSeqNo: number;
     child: IconGroup;
     parent: IconGroup;
 }
 
 export interface IconGroup {
-    id: number;
+    seqNo: number;
     name: string;
-    iconList: Icon[];
-    childList: IconGroupTree[];
-    parentList: IconGroupTree[];
+    icons: Icon[];
+    children: IconGroupTree[];
+    parents: IconGroupTree[];
 }
 
 export interface Icon {
-    name: string;
+    id: string;
     filePath: string;
+    iconGroupSeqNo: number;
     iconGroup: IconGroup;
-    menuList: Menu[];
+    menus: Menu[];
 }
 
 export interface Menu {
-    id: number;
+    seqNo: number;
     name: string;
-    childList: MenuTree[];
-    parentList: MenuTree[];
-    menusAuths: MenusAuths[];
+    children: Menu[];
+    parents: Menu[];
+    auths: Auth[];
+    iconId: string;
     icon: Icon;
 }
 
-export interface MenusAuths {
-    menu: Menu;
-    auth: Auth;
-}
-
 export interface AuthGroup {
-    id: number;
+    seqNo: number;
     name: string;
-    authList: Auth[];
+    auths: Auth[];
     children: AuthGroup[];
     parent: AuthGroup;
 }
 
 export interface Auth {
-    id: number;
+    seqNo: number;
     name: string;
     identifier?: Nullable<string>;
+    authGroupSeqNo: number;
     authGroup: AuthGroup;
-    userList: User[];
-    menusAuths: MenusAuths[];
-    fullRoutesAuths: FullRoutesAuths[];
+    users: User[];
+    menus: Menu[];
+    routes: Route[];
 }
 
 export interface User {
     id: string;
+    authSeqNo: number;
     auth: Auth;
 }
 
+export interface AppMetadata {
+    name: string;
+    value: string;
+}
+
+export interface MessageGroup {
+    code: string;
+    name: string;
+    messages: Message[];
+}
+
 export interface Message {
-    id: number;
+    seqNo: number;
     msg: string;
-    messageGroupId: string;
+    messageGroupCode: string;
+    messageGroup: MessageGroup;
 }
 
 export interface IQuery {
-    getAuthList(): Auth[] | Promise<Auth[]>;
-    route(id: number): Route | Promise<Route>;
-    routes(id?: Nullable<number>): Route[] | Promise<Route[]>;
+    auth(seqNo: number): Nullable<Auth> | Promise<Nullable<Auth>>;
+    route(seqNo: number): Route | Promise<Route>;
+    rootRoutes(): Route[] | Promise<Route[]>;
+    message(seqNo: number): Message | Promise<Message>;
+    appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
 }
 
 type Nullable<T> = T | null;

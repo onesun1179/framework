@@ -1,35 +1,57 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FrontComponentType } from './FrontComponentType';
-import { Field, ObjectType } from '@nestjs/graphql';
-import { FRONT_COMPONENT_MAP } from '../front-component.constant';
-import { Route } from '../../route/model/Route';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Route } from '../../route/models/Route';
 
 @Entity()
-@ObjectType()
+@ObjectType({
+  description: '컴포넌트',
+})
 export class FrontComponent extends CommonEntity {
-  @PrimaryColumn({
-    type: 'enum',
-    enum: FRONT_COMPONENT_MAP,
+  @PrimaryGeneratedColumn({
+    comment: '컴포넌트 일련번호',
   })
-  @Field(() => FRONT_COMPONENT_MAP)
-  id: keyof typeof FRONT_COMPONENT_MAP;
+  @Field(() => Int, {
+    description: '컴포넌트 일련번호',
+  })
+  seqNo: number;
 
-  @Column()
-  @Field()
-  value: string;
+  @Column({
+    comment: '컴포넌트 명',
+  })
+  @Field({
+    description: '컴포넌트 명',
+  })
+  name: string;
 
-  @Column()
-  @Field()
-  initialValue: string;
+  @Column({
+    comment: '컴포넌트 타입 일련번호',
+  })
+  @Field({
+    description: '컴포넌트 타입 일련번호',
+  })
+  frontComponentTypeSeqNo: number;
 
-  @ManyToOne(() => FrontComponentType, (o) => o.frontComponentList)
-  @Field(() => FrontComponentType)
+  @ManyToOne(() => FrontComponentType, (o) => o.frontComponents)
+  @Field(() => FrontComponentType, {
+    description: '컴포넌트 타입',
+  })
+  @JoinColumn({
+    name: 'front_component_type_seq_no',
+  })
   frontComponentType: FrontComponentType;
 
   @OneToMany(() => Route, (o) => o.frontComponent)
   @Field(() => [Route], {
-    defaultValue: [],
+    description: '라우트 목록',
   })
-  routeList: Array<Route>;
+  routes: Route[];
 }

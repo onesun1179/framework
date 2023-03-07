@@ -7,9 +7,7 @@ import { Repository } from 'typeorm';
 import { Auth } from './model/Auth';
 
 import { AccessToken } from './model/AccessToken';
-import { INITIAL_AUTH_LIST } from './auth.constant';
 import { AuthGroup } from './model/AuthGroup';
-import { Builder } from 'builder-pattern';
 
 @Injectable()
 export class AuthService {
@@ -18,36 +16,19 @@ export class AuthService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     @InjectRepository(Auth)
-    private authEntityRepository: Repository<Auth>,
+    private authRepository: Repository<Auth>,
     @InjectRepository(AuthGroup)
     private authGroupRepository: Repository<AuthGroup>,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
-  async whenDbInit() {
-    const authGroup = await Builder(AuthGroup, {
-      name: '조직명',
-    })
-      .build()
-      .save();
-    await Promise.all(
-      INITIAL_AUTH_LIST.map((o) => {
-        o.authGroup = authGroup;
-        return (async () => {
-          await o.save();
-        })();
-      }),
-    );
-  }
-
-  async save(authEntity: Auth[]) {
-    return this.authEntityRepository.save(authEntity);
-  }
-
   async login(loginUser: LoginUser) {
     this.logger.log('loginUser', loginUser);
     const user = await this.userService
-      .getUser(loginUser.id)
+      .getUserRepository()
+      .findOneBy({
+        id: loginUser.id,
+      })
       .then(async (u) => {
         if (!u) {
           return await this.userService.saveLoginUser(loginUser);
@@ -59,25 +40,17 @@ export class AuthService {
     this.logger.log('user', JSON.stringify(user));
     return {
       access_token: this.jwtService.sign({
-        authId: user.auth.id,
+        authSeqNo: user.auth.seqNo,
         userId: user.id,
       } as AccessToken),
     };
   }
 
-  async getAuthList(): Promise<Auth[]> {
-    return await this.authEntityRepository.find();
+  getAuthRepository() {
+    return this.authRepository;
   }
 
-  async getAuthEntityById(id: Auth['id']): Promise<Auth> {
-    return await this.authEntityRepository.findOneBy({
-      id,
-    });
-  }
-
-  async getAuthEntityByIdentifier(identifier: Auth['identifier']) {
-    return await this.authEntityRepository.findOneBy({
-      identifier,
-    });
+  getAuthGroupRepository() {
+    return this.authGroupRepository;
   }
 }

@@ -8,7 +8,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 export class Code extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  id: number;
+  seqNo: number;
 
   @Column()
   @Field()
@@ -16,9 +16,9 @@ export class Code extends CommonEntity {
 
   @OneToMany(() => CodeTree, (o) => o.child)
   @Field(() => [CodeTree])
-  childList: CodeTree[];
+  children: CodeTree[];
 
   @OneToMany(() => CodeTree, (o) => o.parent)
   @Field(() => [CodeTree])
-  parentList: CodeTree[];
+  parents: CodeTree[];
 }

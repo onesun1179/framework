@@ -7,7 +7,7 @@ import { GoogleAuthController } from './controller/google-auth.controller';
 import { AuthService } from './auth.service';
 import { Auth } from './model/Auth';
 import { JWT_SECRET } from './auth.constant';
-import { AuthResolver } from './auth.resolver';
+import { AuthResolver } from './resolvers/auth.resolver';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
 import { UserModule } from '../user/user.module';

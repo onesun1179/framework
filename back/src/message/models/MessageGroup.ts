@@ -4,20 +4,31 @@ import { Message } from './Message';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @Entity()
-@ObjectType()
+@ObjectType({
+  description: '메세지 그룹',
+})
 export class MessageGroup extends CommonEntity {
   @PrimaryColumn({
     type: 'varchar',
     length: 5,
+    comment: '메세지 그룹 코드',
   })
-  @Field()
-  id: string;
+  @Field({
+    description: '메세지 그룹 코드',
+  })
+  code: string;
 
-  @Column()
-  @Field()
+  @Column({
+    comment: '메세지 그룹명',
+  })
+  @Field({
+    description: '메세지 그룹명',
+  })
   name: string;
 
   @OneToMany(() => Message, (o) => o.messageGroup)
-  @Field(() => [Message])
-  messageList: Message[];
+  @Field(() => [Message], {
+    description: '메세지 목록',
+  })
+  messages: Message[];
 }
