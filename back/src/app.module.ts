@@ -21,12 +21,13 @@ import { ConfigModule } from '@nestjs/config';
 import { RouteService } from './route/route.service';
 import { FrontComponentModule } from './front-component/front-component.module';
 import { FrontComponentService } from './front-component/front-component.service';
+import { IconModule } from './icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
 
-// const dropSchema = true;
-const dropSchema = false;
+const dropSchema = true;
+// const dropSchema = false;
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -56,7 +57,7 @@ const dropSchema = false;
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       dropSchema,
-      synchronize: true,
+      synchronize: dropSchema,
       logging: true,
     }),
     AuthModule,
@@ -73,7 +74,7 @@ const dropSchema = false;
       autoTransformHttpErrors: true,
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
-        path: resolve(process.cwd(), 'src', 'graphql.ts'),
+        path: resolve(process.cwd(), 'src', '..', '..', 'front', 'graphql.ts'),
         enumsAsTypes: true,
       },
       formatError: (e) => {
@@ -83,6 +84,7 @@ const dropSchema = false;
       },
     }),
     FrontComponentModule,
+    IconModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -101,8 +103,8 @@ export class AppModule implements OnModuleInit {
       await this.authService.whenDbInit();
       await this.userService.whenDbInit();
       await this.appConfigService.whenDbInit();
-      await this.routeService.whenDbInit();
       await this.frontComponentService.whenDbInit();
+      await this.routeService.whenDbInit();
     }
 
     if (process.env.NODE_ENV === 'dev') {

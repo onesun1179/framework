@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createElement } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "antd/dist/reset.css";
@@ -6,12 +6,18 @@ import {
 	ApolloClient,
 	ApolloLink,
 	ApolloProvider,
+	gql,
 	HttpLink,
 	InMemoryCache,
 } from "@apollo/client";
-import { BrowserRouter } from "react-router-dom";
 import { onErrorLink } from "./graphql/errorHandling";
-import App from "@src/App";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { FrontComponent, Route as GqlRoute } from "@gqlType";
+import { COMPONENT, ROUTE_COMPONENT } from "@src/constants/component.constant";
+import {
+	IndexRouteObject,
+	NonIndexRouteObject,
+} from "react-router/dist/lib/context";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -24,10 +30,64 @@ const client = new ApolloClient({
 	]),
 });
 
+const ROUTES_QUERY = gql`
+	query {
+		routes {
+			path
+			id
+			frontComponent {
+				id
+			}
+			children {
+				path
+				id
+				frontComponent {
+					id
+				}
+				children {
+					path
+					id
+					frontComponent {
+						id
+					}
+					children {
+						path
+						id
+						frontComponent {
+							id
+						}
+					}
+				}
+			}
+		}
+	}
+`;
+
+type RouteType = Pick<GqlRoute, "path" | "id"> & {
+	frontComponent: Pick<FrontComponent, "id">;
+	children: Array<RouteType>;
+};
+
+const { data } = await client.query<{
+	routes: Array<RouteType>;
+}>({
+	query: ROUTES_QUERY,
+});
+function makeRouteObject(routeType: RouteType): IndexRouteObject;
+function makeRouteObject(routeType: RouteType): NonIndexRouteObject;
+function makeRouteObject(routeType: RouteType): any {
+	return {
+		...ROUTE_COMPONENT[routeType.frontComponent.id],
+		path: routeType.path,
+		element: createElement(COMPONENT[routeType.frontComponent.id]),
+		children: routeType.children.map((o) => makeRouteObject(o)),
+	};
+}
+const router = createBrowserRouter(data.routes.map((o) => makeRouteObject(o)));
+
+console.log({ router });
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={client}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
+		<RouterProvider router={router} />
 	</ApolloProvider>
 );

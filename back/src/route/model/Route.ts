@@ -3,7 +3,6 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
@@ -21,8 +20,9 @@ export class Route extends CommonEntity {
   @Field()
   path: string;
 
-  @OneToOne(() => FrontComponent, {
+  @ManyToOne(() => FrontComponent, (o) => o.routeList, {
     nullable: true,
+    lazy: true,
   })
   @Field(() => FrontComponent, {
     nullable: true,
@@ -31,17 +31,20 @@ export class Route extends CommonEntity {
 
   @OneToMany(() => Route, (o) => o.parent, {
     nullable: true,
+    lazy: true,
   })
   @Field(() => [Route], {
     nullable: true,
+    defaultValue: [],
   })
   children: Route[];
 
   @ManyToOne(() => Route, (o) => o.children, {
     nullable: true,
+    lazy: true,
   })
   @Field(() => Route, {
     nullable: true,
   })
-  parent: Route;
+  parent?: Route;
 }

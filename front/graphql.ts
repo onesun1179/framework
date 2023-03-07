@@ -34,6 +34,7 @@ export interface FrontComponent {
     value: string;
     initialValue: string;
     frontComponentType: FrontComponentType;
+    routeList: Route[];
 }
 
 export interface Route {
@@ -45,13 +46,14 @@ export interface Route {
 }
 
 export interface FullRoute {
-    path: string;
+    id: number;
     route: Route;
-    frontRoute: FrontComponent;
-    fullRoutesAuths?: Nullable<FullRoutesAuths[]>;
+    fullRoutesAuths: FullRoutesAuths[];
 }
 
 export interface FullRoutesAuths {
+    fullRouteId: number;
+    authId: number;
     fullRoute: FullRoute;
     auth: Auth;
 }
@@ -61,12 +63,35 @@ export interface MenuTree {
     parent: Menu;
 }
 
+export interface IconGroupTree {
+    childId: number;
+    parentId: number;
+    child: IconGroup;
+    parent: IconGroup;
+}
+
+export interface IconGroup {
+    id: number;
+    name: string;
+    iconList: Icon[];
+    childList: IconGroupTree[];
+    parentList: IconGroupTree[];
+}
+
+export interface Icon {
+    name: string;
+    filePath: string;
+    iconGroup: IconGroup;
+    menuList: Menu[];
+}
+
 export interface Menu {
     id: number;
     name: string;
     childList: MenuTree[];
     parentList: MenuTree[];
     menusAuths: MenusAuths[];
+    icon: Icon;
 }
 
 export interface MenusAuths {
@@ -105,7 +130,8 @@ export interface Message {
 
 export interface IQuery {
     getAuthList(): Auth[] | Promise<Auth[]>;
-    routeList(id?: Nullable<number>): Route[] | Promise<Route[]>;
+    route(id: number): Route | Promise<Route>;
+    routes(id?: Nullable<number>): Route[] | Promise<Route[]>;
 }
 
 type Nullable<T> = T | null;

@@ -1,8 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { MenuTree } from './MenuTree';
 import { MenusAuths } from './MenusAuths';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Icon } from '../../icon/model/Icon';
 
 @Entity()
 @ObjectType()
@@ -26,4 +33,8 @@ export class Menu extends CommonEntity {
   @OneToMany(() => MenusAuths, (o) => o.menu)
   @Field(() => [MenusAuths])
   menusAuths: MenusAuths[];
+
+  @ManyToOne(() => Icon, (o) => o.menuList)
+  @Field(() => Icon)
+  icon: Icon;
 }

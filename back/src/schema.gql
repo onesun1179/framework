@@ -27,6 +27,7 @@ type FrontComponent {
   value: String!
   initialValue: String!
   frontComponentType: FrontComponentType!
+  routeList: [Route!]!
 }
 
 enum FrontComponentId {
@@ -43,13 +44,14 @@ type Route {
 }
 
 type FullRoute {
-  path: String!
+  id: Int!
   route: Route!
-  frontRoute: FrontComponent!
-  fullRoutesAuths: [FullRoutesAuths!]
+  fullRoutesAuths: [FullRoutesAuths!]!
 }
 
 type FullRoutesAuths {
+  fullRouteId: Int!
+  authId: Int!
   fullRoute: FullRoute!
   auth: Auth!
 }
@@ -59,12 +61,35 @@ type MenuTree {
   parent: Menu!
 }
 
+type IconGroupTree {
+  childId: Int!
+  parentId: Int!
+  child: IconGroup!
+  parent: IconGroup!
+}
+
+type IconGroup {
+  id: Int!
+  name: String!
+  iconList: [Icon!]!
+  childList: [IconGroupTree!]!
+  parentList: [IconGroupTree!]!
+}
+
+type Icon {
+  name: String!
+  filePath: String!
+  iconGroup: IconGroup!
+  menuList: [Menu!]!
+}
+
 type Menu {
   id: Int!
   name: String!
   childList: [MenuTree!]!
   parentList: [MenuTree!]!
   menusAuths: [MenusAuths!]!
+  icon: Icon!
 }
 
 type MenusAuths {
@@ -103,7 +128,6 @@ type Message {
 
 type Query {
   getAuthList: [Auth!]!
-
-  """경로리스트"""
-  routeList(id: Int): [Route!]!
+  route(id: Int!): Route!
+  routes(id: Int): [Route!]!
 }

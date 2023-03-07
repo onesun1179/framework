@@ -1,31 +1,57 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Route } from './model/Route';
-import { FullRoutesAuths } from './model/FullRoutesAuths';
 import { WhenDbInit } from '../common/types/WhenDbInit';
 import { FullRoute } from './model/FullRoute';
+import { Builder } from 'builder-pattern';
+import { FrontComponent } from '../front-component/model/FrontComponent';
+import { FRONT_COMPONENT_MAP } from '../front-component/front-component.constant';
 
 @Injectable()
 export class RouteService implements WhenDbInit {
-  constructor(
-    @InjectRepository(Route)
-    private routeRepository: Repository<Route>,
-    @InjectRepository(FullRoute)
-    private fullRouteRepository: Repository<FullRoute>,
-    @InjectRepository(FullRoutesAuths)
-    private fullRoutesAuthsRepository: Repository<FullRoutesAuths>,
-  ) {}
   private readonly logger = new Logger(RouteService.name);
 
-  async whenDbInit() {}
+  async whenDbInit() {
+    const homeComponent = await FrontComponent.findOne({
+      where: {
+        id: FRONT_COMPONENT_MAP.home,
+      },
+    });
+    const loginComponent = await FrontComponent.findOne({
+      where: {
+        id: FRONT_COMPONENT_MAP.login,
+      },
+    });
+    const home = await Builder(Route, {
+      path: '/',
+      frontComponent: homeComponent,
+    })
+      .build()
+      .save();
+
+    const login = await Builder(Route, {
+      path: '/login',
+      frontComponent: loginComponent,
+    })
+      .build()
+      .save();
+    await Builder(FullRoute, {
+      route: home,
+    })
+      .build()
+      .save();
+    await Builder(FullRoute, {
+      route: login,
+    })
+      .build()
+      .save();
+  }
 
   async getAllRouteList() {
-    return await this.routeRepository.find();
+    return await Route.find();
   }
 
   async getRouteById(id: Route['id']) {
-    return await this.routeRepository.findOne({
+    return await Route.findOne({
       where: {
         id,
       },
@@ -33,7 +59,7 @@ export class RouteService implements WhenDbInit {
   }
 
   async getChildrenByParent(parent: Route) {
-    return await this.routeRepository.find({
+    return await Route.find({
       relations: {
         parent: true,
       },

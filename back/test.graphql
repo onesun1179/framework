@@ -1,0 +1,14 @@
+query {
+    routes {
+        id
+        frontComponent {
+            id
+        }
+        parent {
+            id
+        }
+        children {
+            id
+        }
+    }
+}

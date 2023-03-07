@@ -1,5 +1,4 @@
 import {
-  Column,
   Entity,
   JoinColumn,
   OneToMany,
@@ -8,42 +7,30 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FullRoutesAuths } from './FullRoutesAuths';
-import { FrontComponent } from '../../front-component/model/FrontComponent';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Route } from './Route';
 
 @Entity()
 @ObjectType()
 export class FullRoute extends CommonEntity {
   @PrimaryColumn()
+  @Field(() => Int)
   id: number;
 
-  @Column({
-    nullable: true,
-  })
-  @Field()
-  path?: string;
-
   @OneToOne(() => Route, {
-    nullable: false,
+    lazy: true,
   })
-  @Field(() => Route, {
-    nullable: false,
-  })
+  @Field(() => Route)
   @JoinColumn({
     name: 'id',
   })
   route: Route;
 
-  @OneToOne(() => FrontComponent)
-  @Field(() => FrontComponent)
-  frontRoute: FrontComponent;
-
   @OneToMany(() => FullRoutesAuths, (o) => o.fullRoute, {
-    nullable: true,
+    lazy: true,
   })
   @Field(() => [FullRoutesAuths], {
-    nullable: true,
+    defaultValue: [],
   })
-  fullRoutesAuths?: FullRoutesAuths[];
+  fullRoutesAuths: FullRoutesAuths[];
 }

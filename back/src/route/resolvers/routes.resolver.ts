@@ -1,14 +1,12 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
-import { RouteService } from './route.service';
-import { Route } from './model/Route';
+import { RouteService } from '../route.service';
+import { Route } from '../model/Route';
 
-@Resolver()
-export class RouteResolver {
+@Resolver(() => [Route])
+export class RoutesResolver {
   constructor(private routeService: RouteService) {}
-  @Query(() => [Route], {
-    description: '경로리스트',
-  })
-  async routeList(
+  @Query(() => [Route])
+  async routes(
     @Args('id', {
       type: () => Int,
       nullable: true,
