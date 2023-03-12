@@ -8,14 +8,14 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
-import { Route } from '../models/Route';
+import { Route } from '../models/route';
 import { Logger } from '@nestjs/common';
-import { FrontComponent } from '../../front-component/model/FrontComponent';
+import { FrontComponent } from '@modules/front-component/model/front-component';
 import { UtilField } from '@util/Util.field';
-import { Role } from '../../role/model/Role';
-import { InsertRouteRequest } from '../models/request/InsertRoute.request';
-import { UpdateRouteRequest } from '@modules/route/models/request/UpdateRoute.request';
-import { RouteRouteMap } from '@modules/route/models/RouteRouteMap';
+import { Role } from '@modules/role/model/role';
+import { InsertRouteRequest } from '../models/request/insert-route.request';
+import { UpdateRouteRequest } from '@modules/route/models/request/update-route.request';
+import { RouteRouteMap } from '@modules/route/models/route-route-map';
 
 @Resolver(() => Route)
 export class RouteResolver {
@@ -38,11 +38,11 @@ export class RouteResolver {
     nullable: true,
   })
   frontComponent(
-    @Parent() { frontComponentSeqNo }: Route,
+    @Parent() { frontComponentId }: Route,
   ): Promise<FrontComponent | null> {
-    if (frontComponentSeqNo) {
+    if (frontComponentId) {
       return FrontComponent.findOneBy({
-        seqNo: frontComponentSeqNo,
+        id: frontComponentId,
       });
     }
     return null;
@@ -82,7 +82,6 @@ export class RouteResolver {
 
   @ResolveField(() => [Role], {
     description: UtilField.getFieldComment('role', 's'),
-    defaultValue: [],
   })
   async roles(@Parent() { seqNo }: Route): Promise<Role[]> {
     return await Route.findOne({

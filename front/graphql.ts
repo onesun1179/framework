@@ -26,7 +26,7 @@ export interface SaveRoleGroupRequest {
 
 export interface InsertRouteRequest {
     path: string;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -35,7 +35,7 @@ export interface InsertRouteRequest {
 export interface UpdateRouteRequest {
     seqNo: number;
     path?: Nullable<string>;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -61,6 +61,27 @@ export interface UpdateMessageGroupRequest {
 export interface InsertMessageGroupRequest {
     name: string;
     messageSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertFrontComponentTypeRequest {
+    name: string;
+    frontComponentIds?: Nullable<string[]>;
+}
+
+export interface UpdateFrontComponentTypeRequest {
+    seqNo: number;
+    name?: Nullable<string>;
+    frontComponentIds?: Nullable<string[]>;
+}
+
+export interface InsertAllFrontComponentRequest {
+    id: string;
+    frontComponentId: string;
+}
+
+export interface UpdateAllFrontComponentRequest {
+    id: string;
+    frontComponentId?: Nullable<string>;
 }
 
 export interface CodeTree {
@@ -89,20 +110,38 @@ export interface RoleGroup {
 export interface FrontComponentType {
     seqNo: number;
     name: string;
+    frontComponents: FrontComponent[];
+}
+
+export interface AllFrontComponent {
+    id: string;
+    frontComponentId: string;
+    frontComponent: FrontComponent;
+}
+
+export interface RoleFrontComponentMap {
+    roleSeqNo: number;
+    frontComponentId: number;
+    role: Role;
+    frontComponent: FrontComponent;
+    allFrontComponent: AllFrontComponent;
 }
 
 export interface FrontComponent {
-    seqNo: number;
-    name: string;
+    id: string;
     frontComponentTypeSeqNo: number;
+    initialFrontComponentId: string;
     frontComponentType: FrontComponentType;
+    allFrontComponents: AllFrontComponent[];
+    initialFrontComponent: AllFrontComponent;
+    roles: Role[];
     routes: Route[];
 }
 
 export interface Route {
     seqNo: number;
     path: string;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<number>;
     frontComponent?: Nullable<FrontComponent>;
     children: Route[];
     parents: Route[];
@@ -150,6 +189,7 @@ export interface Role {
     users: User[];
     menus: Menu[];
     routes: Route[];
+    frontComponents: FrontComponent[];
 }
 
 export interface User {
@@ -179,11 +219,15 @@ export interface AppMetadata {
 export interface IQuery {
     user(id: string): User | Promise<User>;
     role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
+    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
     message(seqNo: number): Message | Promise<Message>;
     route(seqNo: number): Route | Promise<Route>;
     rootRoutes(): Route[] | Promise<Route[]>;
     messageGroup(code: string): MessageGroup | Promise<MessageGroup>;
     appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
+    frontComponent(id: string): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
+    frontComponentType(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
+    allFrontComponent(id: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
     icon(id: string): Icon | Promise<Icon>;
 }
 
@@ -197,6 +241,10 @@ export interface IMutation {
     insertMessage(InsertMessageRequest: InsertMessageRequest): Message | Promise<Message>;
     updateMessageGroup(UpdateMessageGroupRequest: UpdateMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
     insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
+    insertFrontComponentType(insertFrontComponentTypeRequest: InsertFrontComponentTypeRequest): FrontComponentType | Promise<FrontComponentType>;
+    updateFrontComponentType(updateFrontComponentTypeRequest: UpdateFrontComponentTypeRequest): FrontComponentType | Promise<FrontComponentType>;
+    insertAllFrontComponent(insertAllFrontComponentRequest: InsertAllFrontComponentRequest): AllFrontComponent | Promise<AllFrontComponent>;
+    updateAllFrontComponent(updateAllFrontComponentRequest: UpdateAllFrontComponentRequest): AllFrontComponent | Promise<AllFrontComponent>;
 }
 
 type Nullable<T> = T | null;

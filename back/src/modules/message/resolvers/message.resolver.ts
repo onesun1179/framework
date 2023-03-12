@@ -8,11 +8,11 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { MessageService } from '../message.service';
-import { Message } from '../models/Message';
+import { Message } from '../models/message';
 import { Logger } from '@nestjs/common';
-import { MessageGroup } from '../models/MessageGroup';
-import { UpdateMessageRequest } from '../models/request/UpdateMessage.request';
-import { InsertMessageRequest } from '../models/request/InsertMessage.request';
+import { MessageGroup } from '../models/message-group';
+import { UpdateMessageRequest } from '../models/request/update-message.request';
+import { InsertMessageRequest } from '../models/request/insert-message.request';
 import { UtilField } from '@util/Util.field';
 
 @Resolver(() => Message)

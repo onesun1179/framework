@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { AppMetadataService } from './app-metadata.service';
 import { AppMetadataResolver } from './resolvers/app-metadata.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppMetadata } from './model/AppMetadata';
+import { AppMetadata } from './model/app-metadata';
 
 @Global()
 @Module({

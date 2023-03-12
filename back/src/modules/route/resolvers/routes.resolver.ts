@@ -1,6 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
-import { Route } from '../models/Route';
+import { Route } from '../models/route';
 import { DataSource } from 'typeorm';
 
 @Resolver(() => [Route])
@@ -11,12 +11,10 @@ export class RoutesResolver {
   ) {}
   @Query(() => [Route])
   async rootRoutes() {
-    return await this.dataSource.manager.transaction(async (r) => {
-      return await r.find(Route, {
-        where: {
-          parents: [],
-        },
-      });
+    return await Route.find({
+      where: {
+        parentRouteRouteMap: [],
+      },
     });
   }
 }

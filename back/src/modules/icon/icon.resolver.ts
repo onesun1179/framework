@@ -1,8 +1,8 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { IconService } from './icon.service';
 import { Logger } from '@nestjs/common';
-import { Icon } from './model/Icon';
-import { Menu } from '../menu/model/Menu';
+import { Icon } from './model/icon';
+import { Menu } from '@modules/menu/model/menu';
 
 @Resolver(() => Icon)
 export class IconResolver {

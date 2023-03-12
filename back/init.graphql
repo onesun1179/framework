@@ -1,8 +1,18 @@
 # parent
 mutation {
-    insertMessageGroup(InsertMessageGroupRequest: {
-
+    insertFrontComponentType(insertFrontComponentTypeRequest: {
+        name: "route"
     }) {
+        __typename
+    }
 
+}
+
+# child
+mutation {
+    insertFrontComponentType(insertFrontComponentTypeRequest: {
+        name: "route"
+    }) {
+        __typename
     }
 }

@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InsertMessageGroupRequest } from './models/request/InsertMessageGroup.request';
-import { UpdateMessageGroupRequest } from './models/request/UpdateMessageGroup.request';
-import { Message } from './models/Message';
+import { InsertMessageGroupRequest } from './models/request/insert-message-group.request';
+import { UpdateMessageGroupRequest } from './models/request/update-message-group.request';
+import { Message } from './models/message';
 import { DataSource, In } from 'typeorm';
-import { MessageGroup } from './models/MessageGroup';
-import { InsertMessageRequest } from './models/request/InsertMessage.request';
-import { UpdateMessageRequest } from './models/request/UpdateMessage.request';
+import { MessageGroup } from './models/message-group';
+import { InsertMessageRequest } from './models/request/insert-message.request';
+import { UpdateMessageRequest } from './models/request/update-message.request';
 
 @Injectable()
 export class MessageService {

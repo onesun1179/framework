@@ -1,5 +1,5 @@
-import { User } from '../../modules/user/models/User';
-import { Role } from '../../modules/role/model/Role';
+import { User } from '@modules/user/models/user';
+import { Role } from '@modules/role/model/role';
 import { JwtStrategy } from '../strategy/jwt.strategy';
 
 // iss: 토큰 발급자 (issuer)

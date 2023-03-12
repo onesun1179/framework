@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Code } from './model/Code';
+import { Code } from './model/code';
 import { Repository } from 'typeorm';
-import { CodeTree } from './model/CodeTree';
+import { CodeTree } from './model/code-tree';
 
 @Injectable()
 export class CodeService {

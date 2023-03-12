@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Route } from './models/Route';
+import { Route } from './models/route';
 import { DataSource, In } from 'typeorm';
-import { InsertRouteRequest } from './models/request/InsertRoute.request';
-import { UpdateRouteRequest } from './models/request/UpdateRoute.request';
-import { RouteRouteMap } from '@modules/route/models/RouteRouteMap';
-import { RoleRouteMap } from '@modules/role/model/RoleRouteMap';
+import { InsertRouteRequest } from './models/request/insert-route.request';
+import { UpdateRouteRequest } from './models/request/update-route.request';
+import { RouteRouteMap } from '@modules/route/models/route-route-map';
+import { RoleRouteMap } from '@modules/role/model/role-route-map';
 import { difference, isNil } from 'lodash';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class RouteService {
       const savedRoute = await entityManager.save(Route, {
         seqNo: route instanceof UpdateRouteRequest ? route.seqNo : undefined,
         path: route.path,
-        frontComponentSeqNo: route.frontComponentSeqNo,
+        frontComponentId: route.frontComponentId,
       });
 
       if (!isNil(route.childSeqNos)) {

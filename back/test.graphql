@@ -5,13 +5,9 @@ mutation {
 }
 
 query {
-    route(seqNo: 1) {
+    rootRoutes {
+        path
         seqNo
-        parents {
-            seqNo
-        }
-        children {
-            seqNo
-        }
+        frontComponentId
     }
 }

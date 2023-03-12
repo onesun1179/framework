@@ -5,6 +5,7 @@ export const FieldCommentConstant = {
   identifier: '식별자',
   id: '식별자',
   group: '그룹',
+  all: '전체',
   user: '사용자',
   s: '목록',
   list: '목록',
@@ -30,6 +31,8 @@ export const FieldCommentConstant = {
   component: '컴포넌트',
   front: '앞단',
   map: '매핑',
+  key: '키',
   _: '_',
+  initial: '초깃값',
   type: '타입',
 } as const;

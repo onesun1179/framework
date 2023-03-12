@@ -8,15 +8,17 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { RoleService } from '../role.service';
-import { Role } from '../model/Role';
-import { RoleGroup } from '../model/RoleGroup';
-import { User } from '../../user/models/User';
-import { Menu } from '../../menu/model/Menu';
-import { Route } from '../../route/models/Route';
+import { Role } from '../model/role';
+import { RoleGroup } from '../model/role-group';
+import { User } from '@modules/user/models/user';
+import { Menu } from '@modules/menu/model/menu';
+import { Route } from '@modules/route/models/route';
 import { Logger } from '@nestjs/common';
 import { RolesResolver } from './roles.resolver';
-import { InsertRoleIn } from '../model/request/insertRole.in';
+import { InsertRoleRequest } from '../model/request/insert-role.request';
 import { UtilField } from '@util/Util.field';
+import { FrontComponent } from '@modules/front-component/model/front-component';
+import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 
 @Resolver(() => Role)
 export class RoleResolver {
@@ -91,10 +93,27 @@ export class RoleResolver {
   })
   insertRole(
     @Args('role', {
-      type: () => InsertRoleIn,
+      type: () => InsertRoleRequest,
     })
-    insertRoleIn: InsertRoleIn,
+    insertRoleIn: InsertRoleRequest,
   ) {
     // return this.roleService.getRoleRepository().save(role);
+  }
+
+  @ResolveField(() => [FrontComponent], {
+    description: UtilField.getFieldComment('front', 'component', 's'),
+  })
+  async frontComponents(
+    @Parent() { seqNo }: Role,
+  ): Promise<Array<FrontComponent>> {
+    return await RoleFrontComponentMap.find({
+      select: ['frontComponent'],
+      relations: {
+        frontComponent: true,
+      },
+      where: {
+        roleSeqNo: seqNo,
+      },
+    }).then((r) => r?.map((o) => o.frontComponent));
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Icon } from './model/Icon';
+import { Icon } from './model/icon';
 
 @Injectable()
 export class IconService {

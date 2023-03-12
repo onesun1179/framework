@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AppMetadataService } from '../app-metadata.service';
-import { AppMetadata } from '../model/AppMetadata';
+import { AppMetadata } from '../model/app-metadata';
 
 @Resolver(() => AppMetadata)
 export class AppMetadataResolver {

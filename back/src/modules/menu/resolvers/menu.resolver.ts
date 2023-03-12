@@ -7,10 +7,10 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
-import { Menu } from '../model/Menu';
+import { Menu } from '../model/menu';
 import { MenuService } from '../menu.service';
-import { Role } from '../../role/model/Role';
-import { Icon } from '../../icon/model/Icon';
+import { Role } from '@modules/role/model/role';
+import { Icon } from '@modules/icon/model/icon';
 
 @Resolver(() => Menu)
 export class MenuResolver {

@@ -1,8 +1,8 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
-import { User } from '../models/User';
+import { User } from '../models/user';
 import { UserService } from '../user.service';
-import { Role } from '../../role/model/Role';
+import { Role } from '@modules/role/model/role';
 
 @Resolver(() => User)
 export class UserResolver {
