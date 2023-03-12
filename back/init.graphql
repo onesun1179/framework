@@ -1,7 +1,8 @@
-query {
-    auth(seqNo: 1) {
-        users {
-            id
-        }
+# parent
+mutation {
+    insertMessageGroup(InsertMessageGroupRequest: {
+
+    }) {
+
     }
 }

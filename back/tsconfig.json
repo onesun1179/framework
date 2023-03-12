@@ -14,7 +14,20 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-
+    "paths": {
+      "@common/*" : ["./src/common/*"],
+      "@util/*" : ["./src/common/util/*"],
+      "@modules/code/*" : ["./src/modules/code/*"],
+      "@modules/auth/*" : ["./src/modules/auth/*"],
+      "@modules/app-metadata/*" : ["./src/modules/app-metadata/*"],
+      "@modules/front-component/*" : ["./src/modules/front-component/*"],
+      "@modules/icon/*" : ["./src/modules/icon/*"],
+      "@modules/menu/*" : ["./src/modules/menu/*"],
+      "@modules/message/*" : ["./src/modules/message/*"],
+      "@modules/role/*" : ["./src/modules/role/*"],
+      "@modules/route/*" : ["./src/modules/route/*"],
+      "@modules/user/*" : ["./src/modules/user/*"]
+    },
     "incremental": true,
     "skipLibCheck": true
   }

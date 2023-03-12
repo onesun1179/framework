@@ -16,30 +16,48 @@ type Code {
   parents: [CodeTree!]!
 }
 
-"""컴포넌트 타입"""
-type FrontComponentType {
-  """컴포넌트 타입 일련번호"""
+"""권한 그룹"""
+type RoleGroup {
+  """권한 그룹 일련번호"""
   seqNo: Int!
 
-  """컴포넌트 타입 명"""
+  """권한 그룹 이름"""
   name: String!
 
-  """컴포넌트 목록"""
-  frontComponents: [FrontComponent!]!
+  """권한 그룹 부모 일련번호"""
+  parentSeqNo: Int
+
+  """권한 목록"""
+  roles: [Role!]!
+
+  """자식 목록"""
+  children: [RoleGroup!]!
+
+  """부모"""
+  parent: RoleGroup
 }
 
-"""컴포넌트"""
-type FrontComponent {
-  """컴포넌트 일련번호"""
+"""앞단 컴포넌트 타입"""
+type FrontComponentType {
+  """앞단 컴포넌트 타입 일련번호"""
   seqNo: Int!
 
-  """컴포넌트 명"""
+  """앞단 컴포넌트 타입 이름"""
+  name: String!
+}
+
+"""앞단 컴포넌트"""
+type FrontComponent {
+  """앞단 컴포넌트 일련번호"""
+  seqNo: Int!
+
+  """앞단 컴포넌트 이름"""
   name: String!
 
-  """컴포넌트 타입 일련번호"""
+  """앞단 컴포넌트 타입 일련번호"""
   frontComponentTypeSeqNo: Float!
 
-  """컴포넌트 타입"""
+  """앞단 컴포넌트 타입"""
   frontComponentType: FrontComponentType!
 
   """라우트 목록"""
@@ -54,20 +72,20 @@ type Route {
   """라우트 경로"""
   path: String!
 
-  """컴포넌트 일련번호"""
+  """앞단 컴포넌트 일련번호"""
   frontComponentSeqNo: Int
 
-  """컴포넌트"""
+  """앞단 컴포넌트"""
   frontComponent: FrontComponent
 
-  """자식들"""
+  """자식 목록"""
   children: [Route!]!
 
-  """부모들"""
+  """부모 목록"""
   parents: [Route!]!
 
-  """최종 여부"""
-  leafYn: Boolean!
+  """권한 목록"""
+  roles: [Role!]!
 }
 
 """아이콘 그룹 트리"""
@@ -116,7 +134,7 @@ type Icon {
   iconGroup: IconGroup!
 
   """메뉴 목록"""
-  menus: [Menu!]!
+  menus: [Menu!]
 }
 
 """메뉴"""
@@ -124,49 +142,36 @@ type Menu {
   """메뉴 일련번호"""
   seqNo: Int!
 
-  """메뉴 명"""
+  """메뉴 이름"""
   name: String!
 
-  """자식메뉴 목록"""
+  """자식 목록"""
   children: [Menu!]!
 
-  """부모메뉴 목록"""
+  """부모 목록"""
   parents: [Menu!]!
 
   """권한 목록"""
-  auths: [Auth!]!
+  roles: [Role!]!
 
   """아이콘 식별자"""
-  iconId: String!
+  iconId: String
 
   """아이콘"""
-  icon: Icon!
-}
-
-type AuthGroup {
-  seqNo: Int!
-  name: String!
-  auths: [Auth!]!
-  children: [AuthGroup!]!
-  parent: AuthGroup!
+  icon: Icon
 }
 
 """권한"""
-type Auth {
+type Role {
   """권한 일련번호"""
   seqNo: Int!
 
-  """권한 명"""
+  """권한 이름"""
   name: String!
 
-  """권한 식별자"""
-  identifier: String
-
   """권한 그룹 일련번호"""
-  authGroupSeqNo: Int!
-
-  """권한 그룹"""
-  authGroup: AuthGroup!
+  roleGroupSeqNo: Int!
+  roleGroup: RoleGroup!
 
   """사용자 목록"""
   users: [User!]!
@@ -174,7 +179,7 @@ type Auth {
   """메뉴 목록"""
   menus: [Menu!]!
 
-  """경로 목록"""
+  """라우트 목록"""
   routes: [Route!]!
 }
 
@@ -184,27 +189,18 @@ type User {
   id: String!
 
   """권한 일련번호"""
-  authSeqNo: Int!
+  roleSeqNo: Int!
 
   """권한"""
-  auth: Auth!
-}
-
-"""앱 메타 데이터"""
-type AppMetadata {
-  """앱 메타 데이터 명"""
-  name: String!
-
-  """앱 메타 데이터 값"""
-  value: String!
+  role: Role!
 }
 
 """메세지 그룹"""
 type MessageGroup {
   """메세지 그룹 코드"""
-  code: String!
+  seqNo: String!
 
-  """메세지 그룹명"""
+  """메세지 그룹 이름"""
   name: String!
 
   """메세지 목록"""
@@ -217,7 +213,7 @@ type Message {
   seqNo: Int!
 
   """메세지 내용"""
-  msg: String!
+  text: String!
 
   """메세지 그룹 코드"""
   messageGroupCode: String!
@@ -226,10 +222,166 @@ type Message {
   messageGroup: MessageGroup!
 }
 
+"""앱 메타 데이터"""
+type AppMetadata {
+  """앱 메타 데이터 명"""
+  name: String!
+
+  """앱 메타 데이터 값"""
+  value: String!
+}
+
 type Query {
-  auth(seqNo: Int!): Auth
+  user(id: String!): User!
+  role(seqNo: Int!): RoleGroup
+  message(seqNo: Int!): Message!
   route(seqNo: Int!): Route!
   rootRoutes: [Route!]!
-  message(seqNo: Int!): Message!
+  messageGroup(code: String!): MessageGroup!
   appMetaData(name: String!): AppMetadata!
+  icon(id: String!): Icon!
+}
+
+type Mutation {
+  insertRole(role: InsertRoleIn!): Role
+
+  """권한 그룹 저장"""
+  saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest!): RoleGroup!
+
+  """권한 그룹 삭제"""
+  removeRoleGroup(seqNo: Int!): RoleGroup!
+
+  """라우트 삽입"""
+  insertRoute(insertRouteRequest: InsertRouteRequest!): Route!
+
+  """라우트 수정"""
+  updateRoute(updateRouteRequest: UpdateRouteRequest!): Route!
+
+  """메세지 수정"""
+  updateMessage(UpdateMessageRequest: UpdateMessageRequest!): Message!
+
+  """메세지 삽입"""
+  insertMessage(InsertMessageRequest: InsertMessageRequest!): Message!
+
+  """메세지 그룹 수정"""
+  updateMessageGroup(UpdateMessageGroupRequest: UpdateMessageGroupRequest!): MessageGroup!
+
+  """메세지 그룹 삽입"""
+  insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest!): MessageGroup!
+}
+
+input InsertRoleIn {
+  """권한 이름"""
+  name: String!
+
+  """권한 그룹 일련번호"""
+  roleGroupSeqNo: Int!
+
+  """사용자 일련번호 목록"""
+  userIds: String
+
+  """메뉴 일련번호 목록"""
+  menuSeqNos: [Int!]
+
+  """라우트 일련번호 목록"""
+  routeSeqNos: [Int!]
+}
+
+"""권한 그룹 저장 인자"""
+input SaveRoleGroupRequest {
+  """권한 그룹 이름"""
+  name: String!
+
+  """권한 그룹 부모 일련번호"""
+  parentSeqNo: Int
+
+  """권한 그룹 일련번호"""
+  seqNo: Int
+
+  """권한 일련번호 목록"""
+  roleSeqNos: [Int!] = []
+
+  """자식 일련번호 목록"""
+  childSeqNos: [Int!] = []
+}
+
+"""라우트 삽입 인자"""
+input InsertRouteRequest {
+  """라우트 경로"""
+  path: String!
+
+  """앞단 컴포넌트 일련번호"""
+  frontComponentSeqNo: Int
+
+  """자식 일련번호 목록"""
+  childSeqNos: [Int!]
+
+  """부모 일련번호 목록"""
+  parentSeqNos: [Int!]
+
+  """권한 일련번호 목록"""
+  roleSeqNos: [Int!]
+}
+
+"""라우트 수정 인자"""
+input UpdateRouteRequest {
+  """라우트 일련번호"""
+  seqNo: Int!
+
+  """라우트 경로"""
+  path: String
+
+  """앞단 컴포넌트 일련번호"""
+  frontComponentSeqNo: Int
+
+  """자식 일련번호 목록"""
+  childSeqNos: [Int!]
+
+  """부모 일련번호 목록"""
+  parentSeqNos: [Int!]
+
+  """권한 일련번호 목록"""
+  roleSeqNos: [Int!]
+}
+
+"""메세지 삽입 인자"""
+input UpdateMessageRequest {
+  """메세지 일련번호"""
+  seqNo: Int!
+
+  """메세지 내용"""
+  text: String
+
+  """메세지 그룹 코드"""
+  messageGroupCode: String
+}
+
+"""메세지 삽입 인자"""
+input InsertMessageRequest {
+  """메세지 내용"""
+  text: String!
+
+  """메세지 그룹 코드"""
+  messageGroupCode: String!
+}
+
+"""메세지 그룹 수정 인자"""
+input UpdateMessageGroupRequest {
+  """메세지 그룹 코드"""
+  seqNo: String!
+
+  """메세지 그룹 이름"""
+  name: String!
+
+  """메세지 일련번호 목록"""
+  messageSeqNos: [Int!] = []
+}
+
+"""메세지 그룹 삽입 인자"""
+input InsertMessageGroupRequest {
+  """메세지 그룹 이름"""
+  name: String!
+
+  """메세지 일련번호 목록"""
+  messageSeqNos: [Int!] = []
 }

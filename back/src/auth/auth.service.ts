@@ -1,24 +1,16 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUser } from '../user/user.type';
-import { UserService } from '../user/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Auth } from './model/Auth';
-
-import { AccessToken } from './model/AccessToken';
-import { AuthGroup } from './model/AuthGroup';
+import { UserService } from '../modules/user/user.service';
+import { LoginUser } from '../modules/user/user.type';
+import { AccessToken } from './interfaces/AccessToken';
+import { RoleService } from '../modules/role/role.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    @Inject(forwardRef(() => UserService))
     private userService: UserService,
-    @InjectRepository(Auth)
-    private authRepository: Repository<Auth>,
-    @InjectRepository(AuthGroup)
-    private authGroupRepository: Repository<AuthGroup>,
+    private roleService: RoleService,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
@@ -40,17 +32,9 @@ export class AuthService {
     this.logger.log('user', JSON.stringify(user));
     return {
       access_token: this.jwtService.sign({
-        authSeqNo: user.auth.seqNo,
+        roleSeqNo: user.role.seqNo,
         userId: user.id,
       } as AccessToken),
     };
-  }
-
-  getAuthRepository() {
-    return this.authRepository;
-  }
-
-  getAuthGroupRepository() {
-    return this.authGroupRepository;
   }
 }

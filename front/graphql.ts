@@ -8,6 +8,61 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface InsertRoleIn {
+    name: string;
+    roleGroupSeqNo: number;
+    userIds?: Nullable<string>;
+    menuSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
+export interface SaveRoleGroupRequest {
+    name: string;
+    parentSeqNo?: Nullable<number>;
+    seqNo?: Nullable<number>;
+    roleSeqNos?: Nullable<number[]>;
+    childSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertRouteRequest {
+    path: string;
+    frontComponentSeqNo?: Nullable<number>;
+    childSeqNos?: Nullable<number[]>;
+    parentSeqNos?: Nullable<number[]>;
+    roleSeqNos?: Nullable<number[]>;
+}
+
+export interface UpdateRouteRequest {
+    seqNo: number;
+    path?: Nullable<string>;
+    frontComponentSeqNo?: Nullable<number>;
+    childSeqNos?: Nullable<number[]>;
+    parentSeqNos?: Nullable<number[]>;
+    roleSeqNos?: Nullable<number[]>;
+}
+
+export interface UpdateMessageRequest {
+    seqNo: number;
+    text?: Nullable<string>;
+    messageGroupCode?: Nullable<string>;
+}
+
+export interface InsertMessageRequest {
+    text: string;
+    messageGroupCode: string;
+}
+
+export interface UpdateMessageGroupRequest {
+    seqNo: string;
+    name: string;
+    messageSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertMessageGroupRequest {
+    name: string;
+    messageSeqNos?: Nullable<number[]>;
+}
+
 export interface CodeTree {
     childSeqNo: number;
     parentSeqNo: number;
@@ -22,10 +77,18 @@ export interface Code {
     parents: CodeTree[];
 }
 
+export interface RoleGroup {
+    seqNo: number;
+    name: string;
+    parentSeqNo?: Nullable<number>;
+    roles: Role[];
+    children: RoleGroup[];
+    parent?: Nullable<RoleGroup>;
+}
+
 export interface FrontComponentType {
     seqNo: number;
     name: string;
-    frontComponents: FrontComponent[];
 }
 
 export interface FrontComponent {
@@ -43,7 +106,7 @@ export interface Route {
     frontComponent?: Nullable<FrontComponent>;
     children: Route[];
     parents: Route[];
-    leafYn: boolean;
+    roles: Role[];
 }
 
 export interface IconGroupTree {
@@ -66,7 +129,7 @@ export interface Icon {
     filePath: string;
     iconGroupSeqNo: number;
     iconGroup: IconGroup;
-    menus: Menu[];
+    menus?: Nullable<Menu[]>;
 }
 
 export interface Menu {
@@ -74,25 +137,16 @@ export interface Menu {
     name: string;
     children: Menu[];
     parents: Menu[];
-    auths: Auth[];
-    iconId: string;
-    icon: Icon;
+    roles: Role[];
+    iconId?: Nullable<string>;
+    icon?: Nullable<Icon>;
 }
 
-export interface AuthGroup {
+export interface Role {
     seqNo: number;
     name: string;
-    auths: Auth[];
-    children: AuthGroup[];
-    parent: AuthGroup;
-}
-
-export interface Auth {
-    seqNo: number;
-    name: string;
-    identifier?: Nullable<string>;
-    authGroupSeqNo: number;
-    authGroup: AuthGroup;
+    roleGroupSeqNo: number;
+    roleGroup: RoleGroup;
     users: User[];
     menus: Menu[];
     routes: Route[];
@@ -100,8 +154,21 @@ export interface Auth {
 
 export interface User {
     id: string;
-    authSeqNo: number;
-    auth: Auth;
+    roleSeqNo: number;
+    role: Role;
+}
+
+export interface MessageGroup {
+    seqNo: string;
+    name: string;
+    messages: Message[];
+}
+
+export interface Message {
+    seqNo: number;
+    text: string;
+    messageGroupCode: string;
+    messageGroup: MessageGroup;
 }
 
 export interface AppMetadata {
@@ -109,25 +176,27 @@ export interface AppMetadata {
     value: string;
 }
 
-export interface MessageGroup {
-    code: string;
-    name: string;
-    messages: Message[];
-}
-
-export interface Message {
-    seqNo: number;
-    msg: string;
-    messageGroupCode: string;
-    messageGroup: MessageGroup;
-}
-
 export interface IQuery {
-    auth(seqNo: number): Nullable<Auth> | Promise<Nullable<Auth>>;
+    user(id: string): User | Promise<User>;
+    role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
+    message(seqNo: number): Message | Promise<Message>;
     route(seqNo: number): Route | Promise<Route>;
     rootRoutes(): Route[] | Promise<Route[]>;
-    message(seqNo: number): Message | Promise<Message>;
+    messageGroup(code: string): MessageGroup | Promise<MessageGroup>;
     appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
+    icon(id: string): Icon | Promise<Icon>;
+}
+
+export interface IMutation {
+    insertRole(role: InsertRoleIn): Nullable<Role> | Promise<Nullable<Role>>;
+    saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest): RoleGroup | Promise<RoleGroup>;
+    removeRoleGroup(seqNo: number): RoleGroup | Promise<RoleGroup>;
+    insertRoute(insertRouteRequest: InsertRouteRequest): Route | Promise<Route>;
+    updateRoute(updateRouteRequest: UpdateRouteRequest): Route | Promise<Route>;
+    updateMessage(UpdateMessageRequest: UpdateMessageRequest): Message | Promise<Message>;
+    insertMessage(InsertMessageRequest: InsertMessageRequest): Message | Promise<Message>;
+    updateMessageGroup(UpdateMessageGroupRequest: UpdateMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
+    insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
 }
 
 type Nullable<T> = T | null;

@@ -6,23 +6,22 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CodeModule } from './code/code.module';
-import { UserModule } from './user/user.module';
-import { MenuModule } from './menu/menu.module';
-import { RouteModule } from './route/route.module';
+import { CodeModule } from '@modules/code/code.module';
+import { UserModule } from '@modules/user/user.module';
+import { MenuModule } from '@modules/menu/menu.module';
+import { RouteModule } from '@modules/route/route.module';
 
-import { AuthModule } from './auth/auth.module';
-import { MessageModule } from './message/message.module';
-import { AppMetadataModule } from './app-metadata/app-metadata.module';
+import { RoleModule } from '@modules/role/role.module';
+import { MessageModule } from '@modules/message/message.module';
+import { AppMetadataModule } from '@modules/app-metadata/app-metadata.module';
 import { ConfigModule } from '@nestjs/config';
-import { FrontComponentModule } from './front-component/front-component.module';
-import { IconModule } from './icon/icon.module';
+import { FrontComponentModule } from '@modules/front-component/front-component.module';
+import { IconModule } from '@modules/icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
+import { AuthModule } from './auth/auth.module';
 
-const dropSchema = true;
-// const dropSchema = false;
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,6 +41,7 @@ const dropSchema = true;
     // DevtoolsModule.register({
     //   http: process.env.NODE_ENV !== 'production',
     // }),
+
     TypeOrmModule.forRoot({
       namingStrategy: new SnakeNamingStrategy(),
       type: 'mariadb',
@@ -51,17 +51,22 @@ const dropSchema = true;
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      dropSchema,
-      synchronize: dropSchema,
+      // dropSchema: true,
+      dropSchema: false,
+      // synchronize: true,
+      synchronize: false,
       logging: true,
     }),
     AuthModule,
+    RoleModule,
     CodeModule,
     UserModule,
     MenuModule,
     RouteModule,
     MessageModule,
     AppMetadataModule,
+    FrontComponentModule,
+    IconModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,
@@ -78,8 +83,6 @@ const dropSchema = true;
         return e;
       },
     }),
-    FrontComponentModule,
-    IconModule,
   ],
   controllers: [AppController],
   providers: [AppService],

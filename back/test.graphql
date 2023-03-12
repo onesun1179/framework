@@ -1,7 +1,17 @@
+mutation {
+    insertRoute(insertRouteRequest: {
+        path: "/"
+    })
+}
+
 query {
-    auth(seqNo: 1) {
-        users {
-            id
+    route(seqNo: 1) {
+        seqNo
+        parents {
+            seqNo
+        }
+        children {
+            seqNo
         }
     }
 }

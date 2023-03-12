@@ -1,9 +1,9 @@
 import { Controller, Get, Logger, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
+import { LoginUser } from '../../modules/user/user.type';
+import { AppMetadataService } from '../../modules/app-metadata/app-metadata.service';
 import { AuthService } from '../auth.service';
-import { LoginUser } from '../../user/user.type';
-import { AppMetadataService } from '../../app-metadata/app-metadata.service';
 
 @Controller('auth/google')
 export class GoogleAuthController {
