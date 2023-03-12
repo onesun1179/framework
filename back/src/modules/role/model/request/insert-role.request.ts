@@ -6,7 +6,10 @@ import { Route } from '@modules/route/models/route';
 import { UtilField } from '@util/Util.field';
 
 @InputType()
-export class InsertRoleRequest extends PickType(Role, ['name', 'roleGroupSeqNo']) {
+export class InsertRoleRequest extends PickType(Role, [
+  'name',
+  'roleGroupSeqNo',
+]) {
   @Field(() => String, {
     description: UtilField.getFieldComment('user', 'seqNo', 's'),
     nullable: true,
