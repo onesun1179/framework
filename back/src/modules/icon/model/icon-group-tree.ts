@@ -6,43 +6,28 @@ import { IconGroup } from './icon-group';
 @Entity()
 @InputType({
   isAbstract: true,
-  description: '아이콘 그룹 트리',
 })
-@ObjectType({
-  description: '아이콘 그룹 트리',
-})
+@ObjectType()
 export class IconGroupTree extends CommonEntity {
-  @PrimaryColumn({
-    comment: '자식 일련번호',
-  })
-  @Field(() => Int, {
-    description: '자식 일련번호',
-  })
+  @PrimaryColumn()
+  @Field(() => Int)
   childSeqNo: number;
 
-  @PrimaryColumn({
-    comment: '부모 일련번호',
-  })
-  @Field(() => Int, {
-    description: '부모 일련번호',
-  })
+  @PrimaryColumn()
+  @Field(() => Int)
   parentSeqNo: number;
 
   @ManyToOne(() => IconGroup, (o) => o.children)
   @JoinColumn({
     name: 'child_seq_no',
   })
-  @Field(() => IconGroup, {
-    description: '자식',
-  })
+  @Field(() => IconGroup)
   child: IconGroup;
 
   @ManyToOne(() => IconGroup, (o) => o.parents)
   @JoinColumn({
     name: 'parent_seq_no',
   })
-  @Field(() => IconGroup, {
-    description: '부모',
-  })
+  @Field(() => IconGroup)
   parent: IconGroup;
 }

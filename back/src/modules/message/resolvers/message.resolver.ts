@@ -13,7 +13,6 @@ import { Logger } from '@nestjs/common';
 import { MessageGroup } from '../models/message-group';
 import { UpdateMessageRequest } from '../models/request/update-message.request';
 import { InsertMessageRequest } from '../models/request/insert-message.request';
-import { UtilField } from '@util/Util.field';
 
 @Resolver(() => Message)
 export class MessageResolver {
@@ -32,9 +31,7 @@ export class MessageResolver {
     });
   }
 
-  @ResolveField(() => MessageGroup, {
-    description: UtilField.getFieldComment('message', 'group'),
-  })
+  @ResolveField(() => MessageGroup)
   messageGroup(@Parent() { seqNo }: Message) {
     return Message.findOne({
       select: ['messageGroup'],
@@ -47,9 +44,7 @@ export class MessageResolver {
     }).then((r) => r?.messageGroup);
   }
 
-  @Mutation(() => Message, {
-    description: UtilField.getFieldComment('msg', 'update'),
-  })
+  @Mutation(() => Message)
   async updateMessage(
     @Args('UpdateMessageRequest', {
       type: () => UpdateMessageRequest,
@@ -67,9 +62,7 @@ export class MessageResolver {
     return this.messageService.saveMessage(updateMessageRequest);
   }
 
-  @Mutation(() => Message, {
-    description: UtilField.getFieldComment('msg', 'insert'),
-  })
+  @Mutation(() => Message)
   async insertMessage(
     @Args('InsertMessageRequest', {
       type: () => InsertMessageRequest,

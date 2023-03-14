@@ -9,7 +9,6 @@ import {
 import { CommonEntity } from '../../../common/entity/common.entity';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 import { Role } from '@modules/role/model/role';
 import { RouteRouteMap } from '@modules/route/models/route-route-map';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
@@ -17,11 +16,8 @@ import { RoleRouteMap } from '@modules/role/model/role-route-map';
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('route'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('route'),
-})
+@ObjectType()
 export class Route extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

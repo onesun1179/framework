@@ -1,25 +1,20 @@
 import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
 import { RoleGroup } from '../role-group';
 import { Role } from '../role';
-import { UtilField } from '@util/Util.field';
 
-@InputType({
-  description: UtilField.getFieldComment('role', 'group', 'insert', 'req'),
-})
+@InputType()
 @ArgsType()
 export class InsertRoleGroupRequest extends PickType(RoleGroup, [
   'name',
   'parentSeqNo',
 ]) {
   @Field(() => [Int], {
-    description: UtilField.getFieldComment('role', 'seqNo', 's'),
     nullable: true,
     defaultValue: [],
   })
   roleSeqNos: Array<Role['seqNo']>;
 
   @Field(() => [Int], {
-    description: UtilField.getFieldComment('child', 'seqNo', 's'),
     nullable: true,
     defaultValue: [],
   })

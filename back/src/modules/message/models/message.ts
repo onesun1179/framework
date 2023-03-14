@@ -8,39 +8,23 @@ import {
 import { CommonEntity } from '../../../common/entity/common.entity';
 import { MessageGroup } from './message-group';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('msg'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('msg'),
-})
+@ObjectType()
 export class Message extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('msg', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('msg', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
 
-  @Column({
-    comment: UtilField.getFieldComment('msg', 'content'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('msg', 'content'),
-  })
+  @Column()
+  @Field()
   text: string;
 
-  @Column({
-    comment: UtilField.getFieldComment('msg', 'group', 'code'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('msg', 'group', 'code'),
-  })
+  @Column()
+  @Field()
   messageGroupCode: string;
 
   @ManyToOne(() => MessageGroup, (o) => o.messages)

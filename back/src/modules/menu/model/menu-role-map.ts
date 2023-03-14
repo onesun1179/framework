@@ -3,46 +3,30 @@ import { Role } from '@modules/role/model/role';
 import { CommonEntity } from '../../../common/entity/common.entity';
 import { Menu } from './menu';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('menu', 'role', 'map'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('menu', 'role', 'map'),
-})
+@ObjectType()
 export class MenuRoleMap extends CommonEntity {
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('menu', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('menu', 'seqNo'),
-  })
+  @PrimaryColumn()
+  @Field(() => Int)
   menuSeqNo: number;
 
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('role', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('role', 'seqNo'),
-  })
+  @PrimaryColumn()
+  @Field(() => Int)
   roleSeqNo: number;
 
   @ManyToOne(() => Menu, (o) => o.menuRoleMaps)
-  @Field(() => Menu, {
-    description: UtilField.getFieldComment('menu'),
-  })
+  @Field(() => Menu)
   @JoinColumn({
     name: 'menu_seq_no',
   })
   menu: Menu;
 
   @ManyToOne(() => Role, (o) => o.menuRoleMaps)
-  @Field(() => Role, {
-    description: UtilField.getFieldComment('role'),
-  })
+  @Field(() => Role)
   @JoinColumn({
     name: 'role_seq_no',
   })

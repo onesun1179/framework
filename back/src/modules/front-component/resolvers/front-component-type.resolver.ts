@@ -10,7 +10,6 @@ import {
 import { FrontComponentService } from '../front-component.service';
 import { FrontComponentType } from '@modules/front-component/model/front-component-type';
 import { FrontComponent } from '@modules/front-component/model/front-component';
-import { UtilField } from '@util/Util.field';
 import { InsertFrontComponentTypeRequest } from '@modules/front-component/model/requests/insert-front-component-type.request';
 import { UpdateFrontComponentTypeRequest } from '@modules/front-component/model/requests/update-front-component-type.request';
 
@@ -32,9 +31,7 @@ export class FrontComponentTypeResolver {
     });
   }
 
-  @ResolveField(() => [FrontComponent], {
-    description: UtilField.getFieldComment('front', 'component', 's'),
-  })
+  @ResolveField(() => [FrontComponent])
   async frontComponents(@Parent() { seqNo }: FrontComponentType) {
     return await FrontComponentType.findOne({
       select: ['frontComponents'],
@@ -47,14 +44,7 @@ export class FrontComponentTypeResolver {
     }).then((r) => r?.frontComponents);
   }
 
-  @Mutation(() => FrontComponentType, {
-    description: UtilField.getFieldComment(
-      'front',
-      'component',
-      'type',
-      'insert',
-    ),
-  })
+  @Mutation(() => FrontComponentType)
   async insertFrontComponentType(
     @Args('insertFrontComponentTypeRequest', {
       type: () => InsertFrontComponentTypeRequest,
@@ -66,14 +56,7 @@ export class FrontComponentTypeResolver {
     );
   }
 
-  @Mutation(() => FrontComponentType, {
-    description: UtilField.getFieldComment(
-      'front',
-      'component',
-      'type',
-      'update',
-    ),
-  })
+  @Mutation(() => FrontComponentType)
   async updateFrontComponentType(
     @Args('updateFrontComponentTypeRequest', {
       type: () => UpdateFrontComponentTypeRequest,

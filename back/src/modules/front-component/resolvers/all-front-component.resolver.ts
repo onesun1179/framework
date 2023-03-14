@@ -8,7 +8,6 @@ import {
 } from '@nestjs/graphql';
 import { FrontComponentService } from '../front-component.service';
 import { FrontComponent } from '@modules/front-component/model/front-component';
-import { UtilField } from '@util/Util.field';
 import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
 import { InsertAllFrontComponentRequest } from '@modules/front-component/model/requests/insert-all-front-component.request';
 import { UpdateAllFrontComponentRequest } from '@modules/front-component/model/requests/update-all-front-component.request';
@@ -84,15 +83,7 @@ export class AllFrontComponentResolver {
   /**************************************
    *           MUTATION
    ***************************************/
-  @Mutation(() => AllFrontComponent, {
-    description: UtilField.getFieldComment(
-      'all',
-      'front',
-      'component',
-      'insert',
-      'req',
-    ),
-  })
+  @Mutation(() => AllFrontComponent)
   async insertAllFrontComponent(
     @Args('insertAllFrontComponentRequest', {
       type: () => InsertAllFrontComponentRequest,
@@ -104,15 +95,7 @@ export class AllFrontComponentResolver {
     );
   }
 
-  @Mutation(() => AllFrontComponent, {
-    description: UtilField.getFieldComment(
-      'all',
-      'front',
-      'component',
-      'update',
-      'req',
-    ),
-  })
+  @Mutation(() => AllFrontComponent)
   async updateAllFrontComponent(
     @Args('updateAllFrontComponentRequest', {
       type: () => UpdateAllFrontComponentRequest,

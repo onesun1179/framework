@@ -1,49 +1,32 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { Icon } from './icon';
 import { IconGroupTree } from './icon-group-tree';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: '아이콘 그룹',
 })
-@ObjectType({
-  description: '아이콘 그룹',
-})
+@ObjectType()
 export class IconGroup extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: '아이콘 그룹 일련번호',
-  })
-  @Field(() => Int, {
-    description: '아이콘 그룹 일련번호',
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
 
-  @Column({
-    comment: '아이콘 그룹 명',
-  })
-  @Field({
-    description: '아이콘 그룹 명',
-  })
+  @Column()
+  @Field()
   name: string;
 
   @OneToMany(() => Icon, (o) => o.iconGroup)
-  @Field(() => [Icon], {
-    description: '아이콘 목록',
-  })
+  @Field(() => [Icon])
   icons: Icon[];
 
   @OneToMany(() => IconGroupTree, (o) => o.child)
-  @Field(() => [IconGroupTree], {
-    description: '자식들',
-  })
+  @Field(() => [IconGroupTree])
   children: IconGroupTree[];
 
   @OneToMany(() => IconGroupTree, (o) => o.parent)
-  @Field(() => [IconGroupTree], {
-    description: '부모들',
-  })
+  @Field(() => [IconGroupTree])
   parents: IconGroupTree[];
 }

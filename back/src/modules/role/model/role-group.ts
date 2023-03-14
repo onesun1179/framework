@@ -9,31 +9,21 @@ import {
 import { CommonEntity } from '@common/entity/common.entity';
 import { Role } from './role';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('role', 'group'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('role', 'group'),
-})
+@ObjectType()
 export class RoleGroup extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('role', 'group', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('role', 'group', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
 
   @Column({
     nullable: false,
-    comment: UtilField.getFieldComment('role', 'group', 'name'),
   })
   @Field({
-    description: UtilField.getFieldComment('role', 'group', 'name'),
     nullable: false,
   })
   name: string;
@@ -46,12 +36,9 @@ export class RoleGroup extends CommonEntity {
   @OneToMany(() => RoleGroup, (o) => o.parent)
   children: RoleGroup[];
 
-  @Column({
-    comment: UtilField.getFieldComment('role', 'group', 'parent', 'seqNo'),
-  })
+  @Column()
   @Field(() => Int, {
     nullable: true,
-    description: UtilField.getFieldComment('role', 'group', 'parent', 'seqNo'),
   })
   parentSeqNo?: number;
 

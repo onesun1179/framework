@@ -16,7 +16,6 @@ import { Route } from '@modules/route/models/route';
 import { Logger } from '@nestjs/common';
 import { RolesResolver } from './roles.resolver';
 import { InsertRoleRequest } from '../model/request/insert-role.request';
-import { UtilField } from '@util/Util.field';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 
@@ -43,9 +42,7 @@ export class RoleResolver {
     });
   }
 
-  @ResolveField(() => [User], {
-    description: UtilField.getFieldComment('user', 's'),
-  })
+  @ResolveField(() => [User])
   async users(@Parent() { seqNo }: Role): Promise<User[]> {
     return await Role.findOne({
       select: ['users'],
@@ -58,9 +55,7 @@ export class RoleResolver {
     }).then((r) => r?.users);
   }
 
-  @ResolveField(() => [Menu], {
-    description: UtilField.getFieldComment('menu', 's'),
-  })
+  @ResolveField(() => [Menu])
   async menus(@Parent() { seqNo }: Role) {
     return await Role.findOne({
       select: ['menuRoleMaps'],
@@ -73,9 +68,7 @@ export class RoleResolver {
     }).then((r) => r?.menuRoleMaps.map((o) => o.menu));
   }
 
-  @ResolveField(() => [Route], {
-    description: UtilField.getFieldComment('route', 's'),
-  })
+  @ResolveField(() => [Route])
   async routes(@Parent() { seqNo }: Role): Promise<Route[]> {
     return await Role.findOne({
       select: ['roleRouteMaps'],
@@ -100,9 +93,7 @@ export class RoleResolver {
     // return this.roleService.getRoleRepository().save(role);
   }
 
-  @ResolveField(() => [FrontComponent], {
-    description: UtilField.getFieldComment('front', 'component', 's'),
-  })
+  @ResolveField(() => [FrontComponent])
   async frontComponents(
     @Parent() { seqNo }: Role,
   ): Promise<Array<FrontComponent>> {

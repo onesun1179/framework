@@ -7,38 +7,23 @@ import { Menu } from '@modules/menu/model/menu';
 @Entity()
 @InputType({
   isAbstract: true,
-  description: '아이콘',
 })
-@ObjectType({
-  description: '아이콘',
-})
+@ObjectType()
 export class Icon extends CommonEntity {
-  @PrimaryColumn({
-    comment: '아이콘 식별자',
-  })
-  @Field({
-    description: '아이콘 식별자',
-  })
+  @PrimaryColumn()
+  @Field()
   id: string;
 
-  @Column({
-    comment: '아이콘 파일경로',
-  })
-  @Field({
-    description: '아이콘 파일 경로',
-  })
+  @Column()
+  @Field()
   filePath: string;
 
-  @Column({
-    comment: '아이콘 그룹 일련번호',
-  })
+  @Column()
   @Field(() => Int)
   iconGroupSeqNo: IconGroup['seqNo'];
 
   @ManyToOne(() => IconGroup, (o) => o.icons)
-  @Field(() => IconGroup, {
-    description: '아이콘 그룹',
-  })
+  @Field(() => IconGroup)
   @JoinColumn({
     name: 'icon_group_seq_no',
   })
@@ -48,7 +33,6 @@ export class Icon extends CommonEntity {
     nullable: true,
   })
   @Field(() => [Menu], {
-    description: '메뉴 목록',
     nullable: true,
   })
   menus: Array<Menu>;

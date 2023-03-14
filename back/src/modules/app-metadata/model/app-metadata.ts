@@ -1,25 +1,15 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @Entity()
-@ObjectType({
-  description: '앱 메타 데이터',
-})
+@ObjectType()
 export class AppMetadata extends CommonEntity {
-  @PrimaryColumn({
-    comment: '앱 메타 데이터 명',
-  })
-  @Field(() => String, {
-    description: '앱 메타 데이터 명',
-  })
+  @PrimaryColumn()
+  @Field(() => String)
   name: string;
 
-  @Column({
-    comment: '앱 메타 데이터 값',
-  })
-  @Field(() => String, {
-    description: '앱 메타 데이터 값',
-  })
+  @Column()
+  @Field(() => String)
   value: string;
 }

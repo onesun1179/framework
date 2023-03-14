@@ -12,60 +12,40 @@ import { MenuRoleMap } from './menu-role-map';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Icon } from '@modules/icon/model/icon';
 import { Role } from '@modules/role/model/role';
-import { UtilField } from '@util/Util.field';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('menu'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('menu'),
-})
+@ObjectType()
 export class Menu extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('menu', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('menu', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
 
-  @Column({
-    comment: UtilField.getFieldComment('menu', 'name'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('menu', 'name'),
-  })
+  @Column()
+  @Field()
   name: string;
 
   @OneToMany(() => MenuTree, (o) => o.childMenu)
   childMenuTrees: MenuTree[];
 
-  @Field(() => [Menu], {
-    description: UtilField.getFieldComment('child', 's'),
-  })
+  @Field(() => [Menu])
   children: Menu[];
 
   @OneToMany(() => MenuTree, (o) => o.parentMenu)
   parentMenuTrees: MenuTree[];
 
-  @Field(() => [Menu], {
-    description: UtilField.getFieldComment('parent', 's'),
-  })
+  @Field(() => [Menu])
   parents: Menu[];
 
-  @Field(() => [Role], {
-    description: UtilField.getFieldComment('role', 's'),
-  })
+  @Field(() => [Role])
   roles: Role[];
 
   @Column({
-    comment: UtilField.getFieldComment('icon', 'id'),
     nullable: true,
   })
   @Field({
-    description: UtilField.getFieldComment('icon', 'id'),
     nullable: true,
   })
   iconId?: string;
@@ -74,7 +54,6 @@ export class Menu extends CommonEntity {
     nullable: true,
   })
   @Field(() => Icon, {
-    description: UtilField.getFieldComment('icon'),
     nullable: true,
   })
   @JoinColumn({

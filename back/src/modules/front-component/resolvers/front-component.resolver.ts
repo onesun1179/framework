@@ -9,7 +9,6 @@ import {
 import { FrontComponentService } from '../front-component.service';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 import { FrontComponentType } from '@modules/front-component/model/front-component-type';
-import { UtilField } from '@util/Util.field';
 import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
 import { Role } from '@modules/role/model/role';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
@@ -45,9 +44,6 @@ export class FrontComponentResolver {
    ***************************************/
   @ResolveField(() => AllFrontComponent, {
     nullable: true,
-    description:
-      UtilField.getFieldComment('auth', 'by', 'all', 'front', 'component') +
-      `토큰 없으면 비회원 컴포넌트`,
   })
   async allFrontComponentByCurrentUser(
     @CurrentUser() currentUser: AfterAT,
@@ -62,9 +58,7 @@ export class FrontComponentResolver {
     }).then((r) => r?.allFrontComponent);
   }
 
-  @ResolveField(() => FrontComponentType, {
-    description: UtilField.getFieldComment('front', 'component', 'type'),
-  })
+  @ResolveField(() => FrontComponentType)
   async frontComponentType(
     @Parent() { frontComponentTypeSeqNo }: FrontComponent,
   ) {
@@ -73,9 +67,7 @@ export class FrontComponentResolver {
     });
   }
 
-  @ResolveField(() => [AllFrontComponent], {
-    description: UtilField.getFieldComment('all', 'front', 'component', 's'),
-  })
+  @ResolveField(() => [AllFrontComponent])
   async allFrontComponents(
     @Parent() { id }: FrontComponent,
   ): Promise<Array<AllFrontComponent>> {
@@ -90,9 +82,7 @@ export class FrontComponentResolver {
     }).then((r) => r?.allFrontComponents);
   }
 
-  @ResolveField(() => AllFrontComponent, {
-    description: UtilField.getFieldComment('front', 'component', 'initial'),
-  })
+  @ResolveField(() => AllFrontComponent)
   async initialFrontComponent(
     @Parent() { initialFrontComponentId }: FrontComponent,
   ): Promise<AllFrontComponent> {
@@ -101,9 +91,7 @@ export class FrontComponentResolver {
     });
   }
 
-  @ResolveField(() => [Role], {
-    description: UtilField.getFieldComment('role', 's'),
-  })
+  @ResolveField(() => [Role])
   async roles(@Parent() { id }: FrontComponent): Promise<Array<Role>> {
     return await RoleFrontComponentMap.find({
       select: ['role'],
@@ -132,14 +120,7 @@ export class FrontComponentResolver {
   /**************************************
    *           MUTATION
    ***************************************/
-  @Mutation(() => FrontComponent, {
-    description: UtilField.getFieldComment(
-      'front',
-      'component',
-      'insert',
-      'req',
-    ),
-  })
+  @Mutation(() => FrontComponent)
   async insertFrontComponent(
     @Args('insertFrontComponentRequest', {
       type: () => InsertFrontComponentRequest,
@@ -151,14 +132,7 @@ export class FrontComponentResolver {
     );
   }
 
-  @Mutation(() => FrontComponent, {
-    description: UtilField.getFieldComment(
-      'front',
-      'component',
-      'update',
-      'req',
-    ),
-  })
+  @Mutation(() => FrontComponent)
   async updateFrontComponent(
     @Args('updateFrontComponentRequest', {
       type: () => UpdateFrontComponentRequest,

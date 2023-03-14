@@ -11,7 +11,6 @@ import { RouteService } from '../route.service';
 import { Route } from '../models/route';
 import { Logger } from '@nestjs/common';
 import { FrontComponent } from '@modules/front-component/model/front-component';
-import { UtilField } from '@util/Util.field';
 import { Role } from '@modules/role/model/role';
 import { InsertRouteRequest } from '../models/request/insert-route.request';
 import { UpdateRouteRequest } from '@modules/route/models/request/update-route.request';
@@ -56,7 +55,6 @@ export class RouteResolver {
   }
 
   @ResolveField(() => [Route], {
-    description: UtilField.getFieldComment('child', 's'),
     defaultValue: [],
   })
   async children(@Parent() { seqNo }: Route): Promise<Route[]> {
@@ -72,7 +70,6 @@ export class RouteResolver {
   }
 
   @ResolveField(() => [Route], {
-    description: UtilField.getFieldComment('parent', 's'),
     defaultValue: [],
   })
   async parents(@Parent() { seqNo }: Route): Promise<Route[]> {
@@ -87,9 +84,7 @@ export class RouteResolver {
     }).then((r) => r?.map((o) => o.parentRoute));
   }
 
-  @ResolveField(() => [Role], {
-    description: UtilField.getFieldComment('role', 's'),
-  })
+  @ResolveField(() => [Role])
   async roles(@Parent() { seqNo }: Route): Promise<Role[]> {
     return await Route.findOne({
       select: ['roleRouteMaps'],
@@ -105,9 +100,7 @@ export class RouteResolver {
   /**************************************
    *           MUTATION
    ***************************************/
-  @Mutation(() => Route, {
-    description: UtilField.getFieldComment('route', 'insert'),
-  })
+  @Mutation(() => Route)
   async insertRoute(
     @Args('insertRouteRequest', {
       type: () => InsertRouteRequest,
@@ -120,9 +113,7 @@ export class RouteResolver {
     return await this.routeService.saveRoute(insertRouteRequest);
   }
 
-  @Mutation(() => Route, {
-    description: UtilField.getFieldComment('route', 'update'),
-  })
+  @Mutation(() => Route)
   async updateRoute(
     @Args('updateRouteRequest', {
       type: () => UpdateRouteRequest,

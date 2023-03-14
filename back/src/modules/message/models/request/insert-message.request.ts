@@ -1,10 +1,7 @@
 import { ArgsType, InputType, PickType } from '@nestjs/graphql';
 import { Message } from '../message';
-import { UtilField } from '@util/Util.field';
 
-@InputType({
-  description: UtilField.getFieldComment('message', 'insert', 'req'),
-})
+@InputType()
 @ArgsType()
 export class InsertMessageRequest extends PickType(Message, [
   'text',

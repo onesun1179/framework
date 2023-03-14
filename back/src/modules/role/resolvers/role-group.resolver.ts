@@ -13,7 +13,6 @@ import { Logger } from '@nestjs/common';
 import { Role } from '../model/role';
 import { SaveRoleGroupRequest } from '../model/request/save-role-group.request';
 import { In } from 'typeorm';
-import { UtilField } from '@util/Util.field';
 
 @Resolver(() => RoleGroup)
 export class RoleGroupResolver {
@@ -28,7 +27,6 @@ export class RoleGroupResolver {
   }
 
   @ResolveField(() => [Role], {
-    description: UtilField.getFieldComment('role', 's'),
     defaultValue: [],
   })
   async roles(@Parent() { seqNo }: RoleGroup): Promise<Array<Role>> {
@@ -44,7 +42,6 @@ export class RoleGroupResolver {
   }
 
   @ResolveField(() => [RoleGroup], {
-    description: UtilField.getFieldComment('child', 's'),
     defaultValue: [],
   })
   async children(@Parent() { seqNo }: RoleGroup): Promise<Array<RoleGroup>> {
@@ -60,7 +57,6 @@ export class RoleGroupResolver {
   }
 
   @ResolveField(() => RoleGroup, {
-    description: UtilField.getFieldComment('parent'),
     nullable: true,
   })
   async parent(@Parent() { seqNo }: RoleGroup): Promise<RoleGroup | null> {
@@ -75,9 +71,7 @@ export class RoleGroupResolver {
     }).then((r) => r?.parent);
   }
 
-  @Mutation(() => RoleGroup, {
-    description: UtilField.getFieldComment('role', 'group', 'save'),
-  })
+  @Mutation(() => RoleGroup)
   async saveRoleGroup(
     @Args('SaveRoleGroupRequest', {
       type: () => SaveRoleGroupRequest,
@@ -116,9 +110,7 @@ export class RoleGroupResolver {
     return roleGroup;
   }
 
-  @Mutation(() => RoleGroup, {
-    description: UtilField.getFieldComment('role', 'group', 'delete'),
-  })
+  @Mutation(() => RoleGroup)
   async removeRoleGroup(
     @Args('seqNo', {
       type: () => Int,

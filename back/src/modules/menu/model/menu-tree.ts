@@ -4,18 +4,12 @@ import { Menu } from './menu';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @Entity()
-@ObjectType({
-  description: '메뉴 트리',
-})
+@ObjectType()
 export class MenuTree extends CommonEntity {
-  @PrimaryColumn({
-    comment: '자식 일련번호',
-  })
+  @PrimaryColumn()
   childMenuSeqNo: number;
 
-  @PrimaryColumn({
-    comment: '부모 일련번호',
-  })
+  @PrimaryColumn()
   parentMenuSeqNo: number;
 
   @ManyToOne(() => Menu, (o) => o.children)

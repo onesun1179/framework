@@ -1,26 +1,19 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { Role } from '@modules/role/model/role';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('user'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('user'),
-})
+@ObjectType()
 export class User extends CommonEntity {
   @PrimaryColumn({
     type: 'varchar',
     length: 50,
-    comment: UtilField.getFieldComment('user', 'id'),
   })
-  @Field({
-    description: UtilField.getFieldComment('user', 'id'),
-  })
+  @Field({})
   id: string;
 
   @Column()
