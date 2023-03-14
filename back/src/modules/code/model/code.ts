@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { CodeTree } from './code-tree';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 

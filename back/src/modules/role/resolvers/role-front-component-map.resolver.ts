@@ -22,12 +22,12 @@ export class RoleFrontComponentMapResolver {
   })
   async roleFrontComponentMap(
     @Args('roleSeqNo', { type: () => Int }) roleSeqNo: Role['seqNo'],
-    @Args('frontComponentSeqNo', { type: () => Int })
-    frontComponentSeqNo: FrontComponent['seqNo'],
+    @Args('frontComponentId', { type: () => String })
+    frontComponentId: FrontComponent['id'],
   ): Promise<RoleFrontComponentMap> {
     return await RoleFrontComponentMap.findOneBy({
       roleSeqNo,
-      frontComponentSeqNo,
+      frontComponentId,
     });
   }
   @ResolveField(() => Role)
@@ -39,19 +39,19 @@ export class RoleFrontComponentMapResolver {
 
   @ResolveField(() => FrontComponent)
   async frontComponent(
-    @Parent() { frontComponentSeqNo }: RoleFrontComponentMap,
+    @Parent() { frontComponentId }: RoleFrontComponentMap,
   ): Promise<FrontComponent> {
     return await FrontComponent.findOneBy({
-      seqNo: frontComponentSeqNo,
+      id: frontComponentId,
     });
   }
 
   @ResolveField(() => AllFrontComponent)
   async allFrontComponent(
-    @Parent() { allFrontComponentSeqNo }: RoleFrontComponentMap,
+    @Parent() { allFrontComponentId }: RoleFrontComponentMap,
   ): Promise<AllFrontComponent> {
     return await AllFrontComponent.findOneBy({
-      seqNo: allFrontComponentSeqNo,
+      id: allFrontComponentId,
     });
   }
 }

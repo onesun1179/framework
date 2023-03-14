@@ -46,29 +46,27 @@ type FrontComponentType {
   frontComponents: [FrontComponent!]!
 }
 
-"""전체 앞단 컴포넌트"""
 type AllFrontComponent {
-  seqNo: Int!
-  name: String!
-  frontComponentSeqNo: Int
-
-  """앞단 컴포넌트"""
+  id: String!
+  frontComponentId: String
   frontComponent: FrontComponent!
 }
 
 type RoleFrontComponentMap {
   roleSeqNo: Int!
-  frontComponentSeqNo: Int!
+  frontComponentId: String!
   role: Role!
   frontComponent: FrontComponent!
   allFrontComponent: AllFrontComponent!
 }
 
 type FrontComponent {
-  seqNo: Int!
-  name: String!
+  id: String!
   frontComponentTypeSeqNo: Int!
-  initialFrontComponentSeqNo: Int!
+  initialFrontComponentId: String!
+
+  """권한 별 전체 앞단 컴포넌트토큰 없으면 비회원 컴포넌트"""
+  allFrontComponentByCurrentUser: AllFrontComponent
 
   """앞단 컴포넌트 타입"""
   frontComponentType: FrontComponentType!
@@ -86,12 +84,9 @@ type FrontComponent {
 
 """라우트"""
 type Route {
-  """라우트 일련번호"""
   seqNo: Int!
-
-  """라우트 경로"""
   path: String!
-  frontComponentSeqNo: Int
+  frontComponentId: String
   frontComponent: FrontComponent
 
   """자식 목록"""
@@ -177,16 +172,11 @@ type Menu {
   icon: Icon
 }
 
-"""권한"""
 type Role {
-  """권한 일련번호"""
   seqNo: Int!
-
-  """권한 이름"""
   name: String!
-
-  """권한 그룹 일련번호"""
-  roleGroupSeqNo: Int!
+  identifier: String
+  roleGroupSeqNo: Int
   roleGroup: RoleGroup!
 
   """사용자 목록"""
@@ -206,11 +196,7 @@ type Role {
 type User {
   """사용자 식별자"""
   id: String!
-
-  """권한 일련번호"""
   roleSeqNo: Int!
-
-  """권한"""
   role: Role!
 }
 
@@ -251,17 +237,19 @@ type AppMetadata {
 }
 
 type Query {
+  authCheck: Boolean!
   user(id: String!): User!
   role(seqNo: Int!): RoleGroup
-  roleFrontComponentMap(roleSeqNo: Int!, frontComponentSeqNo: Int!): RoleFrontComponentMap
+  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMap
   message(seqNo: Int!): Message!
   route(seqNo: Int!): Route!
   rootRoutes: [Route!]!
   messageGroup(code: String!): MessageGroup!
   appMetaData(name: String!): AppMetadata!
-  frontComponent(seqNo: Int!): FrontComponent
+  frontComponent(id: String!): FrontComponent
   frontComponentType(seqNo: Int!): FrontComponent
-  allFrontComponent(seqNo: Int!): AllFrontComponent
+  allFrontComponent(id: String!): AllFrontComponent
+  allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: String!): AllFrontComponent
   icon(id: String!): Icon!
 }
 
@@ -312,11 +300,8 @@ type Mutation {
 }
 
 input InsertRoleRequest {
-  """권한 이름"""
   name: String!
-
-  """권한 그룹 일련번호"""
-  roleGroupSeqNo: Int!
+  roleGroupSeqNo: Int
 
   """사용자 일련번호 목록"""
   userIds: String
@@ -348,9 +333,8 @@ input SaveRoleGroupRequest {
 
 """라우트 삽입 인자"""
 input InsertRouteRequest {
-  """라우트 경로"""
   path: String!
-  frontComponentSeqNo: Int
+  frontComponentId: String
 
   """자식 일련번호 목록"""
   childSeqNos: [Int!]
@@ -364,12 +348,9 @@ input InsertRouteRequest {
 
 """라우트 수정 인자"""
 input UpdateRouteRequest {
-  """라우트 일련번호"""
   seqNo: Int!
-
-  """라우트 경로"""
   path: String
-  frontComponentSeqNo: Int
+  frontComponentId: String
 
   """자식 일련번호 목록"""
   childSeqNos: [Int!]
@@ -424,39 +405,39 @@ input InsertMessageGroupRequest {
 }
 
 input InsertFrontComponentRequest {
-  seqNo: Int!
+  id: String!
   frontComponentTypeSeqNo: Int!
-  initialFrontComponentSeqNo: Int!
+  initialFrontComponentId: String!
   roleSeqNos: [Int!]
   routeSeqNos: [Int!]
 }
 
 input UpdateFrontComponentRequest {
-  seqNo: Int!
+  id: String!
   frontComponentTypeSeqNo: Int
-  initialFrontComponentSeqNo: Int
+  initialFrontComponentId: String
   roleSeqNos: [Int!]
   routeSeqNos: [Int!]
 }
 
 input InsertFrontComponentTypeRequest {
   name: String!
-  frontComponentSeqNos: [Int!] = null
+  frontComponentIds: [String!] = null
 }
 
 input UpdateFrontComponentTypeRequest {
   """앞단 컴포넌트 타입 일련번호"""
   seqNo: Int!
   name: String
-  frontComponentSeqNos: [Int!] = null
+  frontComponentIds: [String!] = null
 }
 
 input InsertAllFrontComponentRequest {
-  seqNo: Int!
-  frontComponentSeqNo: Int = null
+  id: String!
+  frontComponentId: String
 }
 
 input UpdateAllFrontComponentRequest {
-  seqNo: Int!
-  frontComponentSeqNo: Int = null
+  id: String!
+  frontComponentId: String
 }

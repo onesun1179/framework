@@ -1,6 +1,5 @@
 import {
   Args,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -13,10 +12,17 @@ import { UtilField } from '@util/Util.field';
 import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
 import { InsertAllFrontComponentRequest } from '@modules/front-component/model/requests/insert-all-front-component.request';
 import { UpdateAllFrontComponentRequest } from '@modules/front-component/model/requests/update-all-front-component.request';
+import { Logger, UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
+import { CurrentUser } from '@common/docorator/CurrentUser';
+import { AfterAT } from '../../../auth/interfaces/AfterAT';
+import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 
+@UseGuards(GqlAuthGuard)
 @Resolver(() => AllFrontComponent)
 export class AllFrontComponentResolver {
   constructor(private readonly frontComponentService: FrontComponentService) {}
+  private readonly logger = new Logger(AllFrontComponentResolver.name);
 
   /**************************************
    *              QUERY
@@ -25,28 +31,53 @@ export class AllFrontComponentResolver {
     nullable: true,
   })
   async allFrontComponent(
-    @Args('seqNo', {
-      type: () => Int,
+    @Args('id', {
+      type: () => String,
     })
-    seqNo: number,
+    id: string,
   ): Promise<AllFrontComponent> {
     return await AllFrontComponent.findOneBy({
-      seqNo,
+      id,
     });
+  }
+
+  @Query(() => AllFrontComponent, {
+    nullable: true,
+  })
+  async allFrontComponentByCurrentUserAndFrontComponentId(
+    @Args('frontComponentId', {
+      type: () => String,
+    })
+    frontComponentId: string,
+    @CurrentUser() user: AfterAT,
+  ): Promise<AllFrontComponent> {
+    this.logger.log({
+      ...user,
+    });
+    const a = await RoleFrontComponentMap.findOne({
+      select: ['allFrontComponent'],
+      relations: {
+        allFrontComponent: true,
+      },
+      where: {
+        roleSeqNo: user.roleSeqNo,
+        frontComponentId,
+      },
+    }).then((r) => r?.allFrontComponent);
+    console.log(a);
+    return a;
   }
 
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
 
-  @ResolveField(() => FrontComponent, {
-    description: UtilField.getFieldComment('front', 'component'),
-  })
+  @ResolveField(() => FrontComponent)
   async frontComponent(
-    @Parent() { frontComponentSeqNo }: AllFrontComponent,
+    @Parent() { frontComponentId }: AllFrontComponent,
   ): Promise<FrontComponent> {
     return await FrontComponent.findOneBy({
-      seqNo: frontComponentSeqNo,
+      id: frontComponentId,
     });
   }
 

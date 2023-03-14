@@ -30,37 +30,37 @@ export class FrontComponentService {
         }),
       );
 
-      if (p.frontComponentSeqNos) {
+      if (p.frontComponentIds) {
         if (
           (await entityManager.countBy(FrontComponent, {
-            seqNo: In(p.frontComponentSeqNos),
-          })) !== p.frontComponentSeqNos.length
+            id: In(p.frontComponentIds),
+          })) !== p.frontComponentIds.length
         ) {
           throw new Error('갯수 다름');
         }
-        const frontComponentSeqNos = await entityManager
+        const frontComponentIds = await entityManager
           .find(FrontComponent, {
-            select: ['seqNo'],
+            select: ['id'],
             where: {
               frontComponentTypeSeqNo: frontComponentType.seqNo,
             },
           })
-          .then((o) => o?.map((oo) => oo.seqNo));
+          .then((o) => o?.map((oo) => oo.id));
 
-        const willDeleteFrontComponentSeqNos = difference(
-          frontComponentSeqNos,
-          p.frontComponentSeqNos,
+        const willDeleteFrontComponentIds = difference(
+          frontComponentIds,
+          p.frontComponentIds,
         );
-        const willSaveFrontComponentSeqNos = difference(
-          p.frontComponentSeqNos,
-          willDeleteFrontComponentSeqNos,
+        const willSaveFrontComponentIds = difference(
+          p.frontComponentIds,
+          willDeleteFrontComponentIds,
         );
 
-        if (willDeleteFrontComponentSeqNos.length > 0) {
+        if (willDeleteFrontComponentIds.length > 0) {
           await entityManager.update(
             FrontComponent,
             {
-              seqNo: In(willDeleteFrontComponentSeqNos),
+              seqNo: In(willDeleteFrontComponentIds),
             },
             {
               frontComponentTypeSeqNo: null,
@@ -68,11 +68,11 @@ export class FrontComponentService {
           );
         }
 
-        if (willSaveFrontComponentSeqNos.length > 0) {
+        if (willSaveFrontComponentIds.length > 0) {
           await entityManager.update(
             FrontComponent,
             {
-              seqNo: In(willSaveFrontComponentSeqNos),
+              seqNo: In(willSaveFrontComponentIds),
             },
             {
               frontComponentTypeSeqNo: frontComponentType.seqNo,
@@ -91,8 +91,8 @@ export class FrontComponentService {
       console.log({ ...p });
       return await r.save(
         AllFrontComponent.create({
-          seqNo: p.seqNo,
-          frontComponentSeqNo: p.frontComponentSeqNo,
+          id: p.id,
+          frontComponentId: p.frontComponentId,
         }),
       );
     });
@@ -104,16 +104,16 @@ export class FrontComponentService {
     return this.dataSource.manager.transaction(async (r) => {
       const frontComponent = await r.save(
         FrontComponent.create({
-          seqNo: p instanceof UpdateFrontComponentRequest ? p.seqNo : undefined,
+          id: p.id,
           frontComponentTypeSeqNo: p.frontComponentTypeSeqNo,
-          initialFrontComponentSeqNo: p.initialFrontComponentSeqNo,
+          initialFrontComponentId: p.initialFrontComponentId,
         }),
       );
 
       if (!isNil(p.roleSeqNos)) {
         await this.saveRoleSeqNosToFrontComponent(
           r,
-          frontComponent.seqNo,
+          frontComponent.id,
           p.roleSeqNos,
         );
       }
@@ -121,7 +121,7 @@ export class FrontComponentService {
       if (!isNil(p.routeSeqNos)) {
         await this.saveRouteSeqNosToFrontComponent(
           r,
-          frontComponent.seqNo,
+          frontComponent.id,
           p.routeSeqNos,
         );
       }
@@ -132,14 +132,14 @@ export class FrontComponentService {
 
   async saveRoleSeqNosToFrontComponent(
     entityManager: EntityManager,
-    frontComponentSeqNo: number,
+    frontComponentId: string,
     roleSeqNos: Array<number>,
   ) {
     const foundRoleSeqNos = await entityManager
       .find(RoleFrontComponentMap, {
         select: ['roleSeqNo'],
         where: {
-          frontComponentSeqNo,
+          frontComponentId,
         },
       })
       .then((r) => r?.map((o) => o.roleSeqNo));
@@ -159,7 +159,7 @@ export class FrontComponentService {
         willSaveRoleSeqNos.map((o) =>
           RoleFrontComponentMap.create({
             roleSeqNo: o,
-            frontComponentSeqNo,
+            frontComponentId,
           }),
         ),
       );
@@ -168,14 +168,14 @@ export class FrontComponentService {
 
   async saveRouteSeqNosToFrontComponent(
     entityManager: EntityManager,
-    frontComponentSeqNo: number,
+    frontComponentId: string,
     routeSeqNos: Array<number>,
   ) {
     const foundRouteSeqNos = await entityManager
       .find(Route, {
         select: ['seqNo'],
         where: {
-          frontComponentSeqNo,
+          frontComponentId,
         },
       })
       .then((r) => r?.map((o) => o.seqNo));
@@ -191,7 +191,7 @@ export class FrontComponentService {
           seqNo: In(willDeleteRouteSeqNos),
         },
         {
-          frontComponentSeqNo: null,
+          frontComponentId: null,
         },
       );
     }
@@ -203,7 +203,7 @@ export class FrontComponentService {
           seqNo: In(willSaveRouteSeqNos),
         },
         {
-          frontComponentSeqNo,
+          frontComponentId,
         },
       );
     }

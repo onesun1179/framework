@@ -21,7 +21,10 @@ import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
+import { DataSource } from 'typeorm';
 
+const initYn = false;
+// const initYn = true;
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -51,10 +54,8 @@ import { AuthModule } from './auth/auth.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      dropSchema: true,
-      // dropSchema: false,
-      synchronize: true,
-      // synchronize: false,
+      dropSchema: initYn,
+      synchronize: initYn,
       logging: true,
     }),
     AuthModule,
@@ -82,13 +83,47 @@ import { AuthModule } from './auth/auth.module';
 
         return e;
       },
+      cors: {
+        credentials: true,
+        origin: process.env.CLIENT_DOMAIN,
+      },
     }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit {
+  constructor(private dataSource: DataSource) {}
   async onModuleInit() {
+    if (initYn) {
+      const query = `
+          INSERT INTO all_front_component(id)
+          VALUES ('Home');
+
+          INSERT INTO front_component_type(seq_no, name)
+          VALUES (1, 'route');
+          INSERT INTO front_component(id, front_component_type_seq_no, initial_front_component_id)
+          VALUES ('home', 1, 'Home');
+
+          UPDATE all_front_component
+          SET front_component_id = 'home'
+          WHERE id = 'Home';
+
+          INSERT INTO route(seq_no, path, front_component_id)
+          VALUES (1, '/', 'home');
+          INSERT INTO role(seq_no, name, identifier)
+          VALUES (1, '최초가입자', 'guest');
+          INSERT INTO user(id, role_seq_no)
+          VALUES ('102494101026679318764', 1);
+          INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
+          VALUES (1, 'home', 'Home')
+
+
+      `;
+      for await (const q of query.split(';')) {
+        await this.dataSource.query(q);
+      }
+    }
     if (process.env.NODE_ENV === 'dev') {
       shell.exec('npm run gql.cp');
     }

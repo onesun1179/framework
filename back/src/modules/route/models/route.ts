@@ -23,39 +23,27 @@ import { RoleRouteMap } from '@modules/role/model/role-route-map';
   description: UtilField.getFieldComment('route'),
 })
 export class Route extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('route', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('route', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
 
-  @Column({
-    comment: UtilField.getFieldComment('route', 'path'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('route', 'path'),
-  })
+  @Column()
+  @Field()
   path: string;
 
   @Column({
-    comment: UtilField.getFieldComment('front', 'component', 'seqNo'),
     nullable: true,
   })
-  @Field(() => Int, {
+  @Field(() => String, {
     nullable: true,
   })
-  frontComponentSeqNo?: number;
+  frontComponentId?: string;
 
   @ManyToOne(() => FrontComponent, (o) => o.routes, {
     nullable: true,
   })
-  @Field(() => FrontComponent, {
-    nullable: true,
-  })
   @JoinColumn({
-    name: 'front_component_seq_no',
+    name: 'front_component_id',
   })
   frontComponent?: FrontComponent;
 

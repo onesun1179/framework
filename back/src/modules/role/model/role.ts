@@ -11,7 +11,6 @@ import { User } from '@modules/user/models/user';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { RoleGroup } from './role-group';
 import { Menu } from '@modules/menu/model/menu';
-import { UtilField } from '@util/Util.field';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
@@ -20,37 +19,39 @@ import { FrontComponent } from '@modules/front-component/model/front-component';
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('role'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('role'),
-})
+@ObjectType()
 export class Role extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('role', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('role', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
   seqNo: number;
-  @Column({
-    comment: UtilField.getFieldComment('role', 'name'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('role', 'name'),
-  })
+  @Column()
+  @Field()
   name: string;
 
-  @Column()
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('role', 'group', 'seqNo'),
+  @Column({
+    nullable: true,
+    update: false,
   })
-  roleGroupSeqNo: number;
-  @ManyToOne(() => RoleGroup, (o) => o.roles)
+  @Field({
+    nullable: true,
+  })
+  identifier?: string;
+
+  @Column({
+    nullable: true,
+  })
+  @Field(() => Int, {
+    nullable: true,
+  })
+  roleGroupSeqNo?: number;
+  @ManyToOne(() => RoleGroup, (o) => o.roles, {
+    nullable: true,
+  })
   @JoinColumn({
     name: 'role_group_seq_no',
   })
-  roleGroup: RoleGroup;
+  roleGroup?: RoleGroup;
   @OneToMany(() => User, (o) => o.role)
   users: User[];
 

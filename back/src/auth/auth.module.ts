@@ -7,7 +7,8 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
 import { AuthService } from './auth.service';
-import { UserModule } from '../modules/user/user.module';
+import { UserModule } from '@modules/user/user.module';
+import { AuthResolver } from './resolvers/auth.resolver';
 
 @Global()
 @Module({
@@ -21,6 +22,12 @@ import { UserModule } from '../modules/user/user.module';
   ],
   exports: [AuthService],
   controllers: [GoogleAuthController],
-  providers: [AuthService, JwtStrategy, GqlAuthGuard, GoogleStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    GqlAuthGuard,
+    GoogleStrategy,
+    AuthResolver,
+  ],
 })
 export class AuthModule {}

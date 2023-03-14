@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './models/user';
 import { LoginUser } from './user.type';
-import { Builder } from 'builder-pattern';
+import { Role } from '@modules/role/model/role';
+import { AppMetadataConstant } from '@modules/app-metadata/app-metadata.constant';
 
 @Injectable()
 export class UserService {
@@ -12,28 +13,14 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  getUserRepository() {
-    return this.userRepository;
-  }
-
-  // async whenDbInit() {
-  //   const developerAuth = await this.authService.getAuthEntityByIdentifier(
-  //     DEVELOPER_AUTH.identifier,
-  //   );
-  //   // 이동원
-  //   await Builder(User, {
-  //     id: '102494101026679318764',
-  //     auth: developerAuth,
-  //   })
-  //     .build()
-  //     .save();
-  // }
-
-  async saveLoginUser(loginUser: LoginUser) {
-    return await this.userRepository.save(
-      Builder(User, {
-        ...loginUser,
-      }).build(),
+  async saveNewMember(loginUser: LoginUser): Promise<User> {
+    return await User.save(
+      User.create({
+        id: loginUser.id,
+        role: await Role.findOneBy({
+          identifier: AppMetadataConstant.guestId,
+        }),
+      }),
     );
   }
 }

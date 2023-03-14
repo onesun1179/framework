@@ -20,6 +20,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new GqlAuthGuard(reflector));
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

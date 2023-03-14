@@ -5,7 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { FrontComponentType } from './front-component-type';
@@ -21,15 +21,9 @@ import { Route } from '@modules/route/models/route';
 })
 @ObjectType()
 export class FrontComponent extends CommonEntity {
-  @PrimaryGeneratedColumn()
-  @Field(() => Int)
-  seqNo: number;
-
-  @Column({
-    unique: true,
-  })
+  @PrimaryColumn()
   @Field(() => String)
-  name: string;
+  id: string;
 
   @Column()
   @Field(() => Int)
@@ -45,12 +39,12 @@ export class FrontComponent extends CommonEntity {
   allFrontComponents: Array<AllFrontComponent>;
 
   @Column()
-  @Field(() => Int)
-  initialFrontComponentSeqNo: number;
+  @Field(() => String)
+  initialFrontComponentId: string;
 
   @OneToOne(() => AllFrontComponent)
   @JoinColumn({
-    name: 'initial_front_component_seq_no',
+    name: 'initial_front_component_id',
   })
   initialFrontComponent: AllFrontComponent;
 
@@ -61,4 +55,6 @@ export class FrontComponent extends CommonEntity {
 
   @OneToMany(() => Route, (o) => o.frontComponent)
   routes: Array<Route>;
+
+  allFrontComponentByCurrentUser: AllFrontComponent;
 }

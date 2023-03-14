@@ -10,7 +10,7 @@
 
 export interface InsertRoleRequest {
     name: string;
-    roleGroupSeqNo: number;
+    roleGroupSeqNo?: Nullable<number>;
     userIds?: Nullable<string>;
     menuSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
@@ -26,7 +26,7 @@ export interface SaveRoleGroupRequest {
 
 export interface InsertRouteRequest {
     path: string;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<string>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -35,7 +35,7 @@ export interface InsertRouteRequest {
 export interface UpdateRouteRequest {
     seqNo: number;
     path?: Nullable<string>;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<string>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -64,40 +64,40 @@ export interface InsertMessageGroupRequest {
 }
 
 export interface InsertFrontComponentRequest {
-    seqNo: number;
+    id: string;
     frontComponentTypeSeqNo: number;
-    initialFrontComponentSeqNo: number;
+    initialFrontComponentId: string;
     roleSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateFrontComponentRequest {
-    seqNo: number;
+    id: string;
     frontComponentTypeSeqNo?: Nullable<number>;
-    initialFrontComponentSeqNo?: Nullable<number>;
+    initialFrontComponentId?: Nullable<string>;
     roleSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
 }
 
 export interface InsertFrontComponentTypeRequest {
     name: string;
-    frontComponentSeqNos?: Nullable<number[]>;
+    frontComponentIds?: Nullable<string[]>;
 }
 
 export interface UpdateFrontComponentTypeRequest {
     seqNo: number;
     name?: Nullable<string>;
-    frontComponentSeqNos?: Nullable<number[]>;
+    frontComponentIds?: Nullable<string[]>;
 }
 
 export interface InsertAllFrontComponentRequest {
-    seqNo: number;
-    frontComponentSeqNo?: Nullable<number>;
+    id: string;
+    frontComponentId?: Nullable<string>;
 }
 
 export interface UpdateAllFrontComponentRequest {
-    seqNo: number;
-    frontComponentSeqNo?: Nullable<number>;
+    id: string;
+    frontComponentId?: Nullable<string>;
 }
 
 export interface CodeTree {
@@ -130,25 +130,24 @@ export interface FrontComponentType {
 }
 
 export interface AllFrontComponent {
-    seqNo: number;
-    name: string;
-    frontComponentSeqNo?: Nullable<number>;
+    id: string;
+    frontComponentId?: Nullable<string>;
     frontComponent: FrontComponent;
 }
 
 export interface RoleFrontComponentMap {
     roleSeqNo: number;
-    frontComponentSeqNo: number;
+    frontComponentId: string;
     role: Role;
     frontComponent: FrontComponent;
     allFrontComponent: AllFrontComponent;
 }
 
 export interface FrontComponent {
-    seqNo: number;
-    name: string;
+    id: string;
     frontComponentTypeSeqNo: number;
-    initialFrontComponentSeqNo: number;
+    initialFrontComponentId: string;
+    allFrontComponentByCurrentUser?: Nullable<AllFrontComponent>;
     frontComponentType: FrontComponentType;
     allFrontComponents: AllFrontComponent[];
     initialFrontComponent: AllFrontComponent;
@@ -159,7 +158,7 @@ export interface FrontComponent {
 export interface Route {
     seqNo: number;
     path: string;
-    frontComponentSeqNo?: Nullable<number>;
+    frontComponentId?: Nullable<string>;
     frontComponent?: Nullable<FrontComponent>;
     children: Route[];
     parents: Route[];
@@ -202,7 +201,8 @@ export interface Menu {
 export interface Role {
     seqNo: number;
     name: string;
-    roleGroupSeqNo: number;
+    identifier?: Nullable<string>;
+    roleGroupSeqNo?: Nullable<number>;
     roleGroup: RoleGroup;
     users: User[];
     menus: Menu[];
@@ -235,17 +235,19 @@ export interface AppMetadata {
 }
 
 export interface IQuery {
+    authCheck(): boolean | Promise<boolean>;
     user(id: string): User | Promise<User>;
     role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
-    roleFrontComponentMap(roleSeqNo: number, frontComponentSeqNo: number): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
+    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
     message(seqNo: number): Message | Promise<Message>;
     route(seqNo: number): Route | Promise<Route>;
     rootRoutes(): Route[] | Promise<Route[]>;
     messageGroup(code: string): MessageGroup | Promise<MessageGroup>;
     appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
-    frontComponent(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
+    frontComponent(id: string): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
     frontComponentType(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
-    allFrontComponent(seqNo: number): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
+    allFrontComponent(id: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
+    allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
     icon(id: string): Icon | Promise<Icon>;
 }
 

@@ -19,7 +19,7 @@ export class RouteService {
       const savedRoute = await entityManager.save(Route, {
         seqNo: route instanceof UpdateRouteRequest ? route.seqNo : undefined,
         path: route.path,
-        frontComponentSeqNo: route.frontComponentSeqNo,
+        frontComponentId: route.frontComponentId,
       });
 
       if (!isNil(route.childSeqNos)) {

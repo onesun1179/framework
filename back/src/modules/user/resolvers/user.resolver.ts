@@ -16,7 +16,7 @@ export class UserResolver {
     })
     id: User['id'],
   ) {
-    return await this.userService.getUserRepository().findOneBy({
+    return await User.findOneBy({
       id,
     });
   }

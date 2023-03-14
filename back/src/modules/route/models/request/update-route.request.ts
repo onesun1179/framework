@@ -14,7 +14,7 @@ import { Route } from '../route';
 })
 export class UpdateRouteRequest extends IntersectionType(
   PickType(Route, ['seqNo']),
-  PartialType(PickType(Route, ['path', 'frontComponentSeqNo'])),
+  PartialType(PickType(Route, ['path', 'frontComponentId'])),
 ) {
   @Field(() => [Int], {
     nullable: true,

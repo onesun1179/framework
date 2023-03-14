@@ -12,11 +12,11 @@ import { InsertFrontComponentRequest } from '@modules/front-component/model/requ
 @ArgsType()
 export class UpdateFrontComponentRequest extends IntersectionType(
   IntersectionType(
-    PickType(FrontComponent, ['seqNo']),
+    PickType(FrontComponent, ['id']),
     PartialType(
       PickType(FrontComponent, [
         'frontComponentTypeSeqNo',
-        'initialFrontComponentSeqNo',
+        'initialFrontComponentId',
       ]),
     ),
   ),

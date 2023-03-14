@@ -1,6 +1,5 @@
 import {
   Args,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -17,23 +16,50 @@ import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-
 import { Route } from '@modules/route/models/route';
 import { InsertFrontComponentRequest } from '@modules/front-component/model/requests/insert-front-component.request';
 import { UpdateFrontComponentRequest } from '@modules/front-component/model/requests/update-front-component.request';
+import { CurrentUser } from '@common/docorator/CurrentUser';
+import { AfterAT } from '../../../auth/interfaces/AfterAT';
 
 @Resolver(() => FrontComponent)
 export class FrontComponentResolver {
   constructor(private readonly frontRouteService: FrontComponentService) {}
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => FrontComponent, {
     nullable: true,
   })
   async frontComponent(
-    @Args('seqNo', {
-      type: () => Int,
+    @Args('id', {
+      type: () => String,
     })
-    seqNo: number,
+    id: string,
   ): Promise<FrontComponent> {
     return await FrontComponent.findOneBy({
-      seqNo,
+      id,
     });
+  }
+
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
+  @ResolveField(() => AllFrontComponent, {
+    nullable: true,
+    description:
+      UtilField.getFieldComment('auth', 'by', 'all', 'front', 'component') +
+      `토큰 없으면 비회원 컴포넌트`,
+  })
+  async allFrontComponentByCurrentUser(
+    @CurrentUser() currentUser: AfterAT,
+    @Parent() { id: frontComponentId }: FrontComponent,
+  ): Promise<AllFrontComponent> {
+    return await RoleFrontComponentMap.findOne({
+      select: ['allFrontComponent'],
+      where: {
+        frontComponentId,
+        roleSeqNo: currentUser.roleSeqNo,
+      },
+    }).then((r) => r?.allFrontComponent);
   }
 
   @ResolveField(() => FrontComponentType, {
@@ -51,7 +77,7 @@ export class FrontComponentResolver {
     description: UtilField.getFieldComment('all', 'front', 'component', 's'),
   })
   async allFrontComponents(
-    @Parent() { seqNo }: FrontComponent,
+    @Parent() { id }: FrontComponent,
   ): Promise<Array<AllFrontComponent>> {
     return await FrontComponent.findOne({
       select: ['allFrontComponents'],
@@ -59,7 +85,7 @@ export class FrontComponentResolver {
         allFrontComponents: true,
       },
       where: {
-        seqNo,
+        id,
       },
     }).then((r) => r?.allFrontComponents);
   }
@@ -68,41 +94,44 @@ export class FrontComponentResolver {
     description: UtilField.getFieldComment('front', 'component', 'initial'),
   })
   async initialFrontComponent(
-    @Parent() { initialFrontComponentSeqNo }: FrontComponent,
+    @Parent() { initialFrontComponentId }: FrontComponent,
   ): Promise<AllFrontComponent> {
     return await AllFrontComponent.findOneBy({
-      seqNo: initialFrontComponentSeqNo,
+      id: initialFrontComponentId,
     });
   }
 
   @ResolveField(() => [Role], {
     description: UtilField.getFieldComment('role', 's'),
   })
-  async roles(@Parent() { seqNo }: FrontComponent): Promise<Array<Role>> {
+  async roles(@Parent() { id }: FrontComponent): Promise<Array<Role>> {
     return await RoleFrontComponentMap.find({
       select: ['role'],
       relations: {
         role: true,
       },
       where: {
-        frontComponentSeqNo: seqNo,
+        frontComponentId: id,
       },
     }).then((r) => r?.map((o) => o.role));
   }
 
   @ResolveField(() => [Route])
-  async routes(@Parent() { seqNo }: FrontComponent): Promise<Array<Route>> {
+  async routes(@Parent() { id }: FrontComponent): Promise<Array<Route>> {
     return await FrontComponent.findOne({
       select: ['routes'],
       relations: {
         routes: true,
       },
       where: {
-        seqNo,
+        id,
       },
     }).then((r) => r.routes);
   }
 
+  /**************************************
+   *           MUTATION
+   ***************************************/
   @Mutation(() => FrontComponent, {
     description: UtilField.getFieldComment(
       'front',
@@ -138,7 +167,7 @@ export class FrontComponentResolver {
   ) {
     if (
       (await FrontComponent.countBy({
-        seqNo: updateFrontComponentRequest.seqNo,
+        id: updateFrontComponentRequest.id,
       })) === 0
     ) {
       throw new Error();

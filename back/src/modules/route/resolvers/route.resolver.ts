@@ -22,6 +22,9 @@ export class RouteResolver {
   constructor(private routeService: RouteService) {}
   logger = new Logger(RouteResolver.name);
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => Route)
   async route(
     @Args('seqNo', {
@@ -34,15 +37,19 @@ export class RouteResolver {
     });
   }
 
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
+
   @ResolveField(() => FrontComponent, {
     nullable: true,
   })
   frontComponent(
-    @Parent() { frontComponentSeqNo }: Route,
+    @Parent() { frontComponentId }: Route,
   ): Promise<FrontComponent | null> {
-    if (frontComponentSeqNo) {
+    if (frontComponentId) {
       return FrontComponent.findOneBy({
-        seqNo: frontComponentSeqNo,
+        id: frontComponentId,
       });
     }
     return null;
@@ -95,6 +102,9 @@ export class RouteResolver {
     }).then((r) => r?.roleRouteMaps.map((o) => o.role));
   }
 
+  /**************************************
+   *           MUTATION
+   ***************************************/
   @Mutation(() => Route, {
     description: UtilField.getFieldComment('route', 'insert'),
   })

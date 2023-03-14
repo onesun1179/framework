@@ -38,7 +38,9 @@ export class RoleGroup extends CommonEntity {
   })
   name: string;
 
-  @OneToMany(() => Role, (o) => o.roleGroup)
+  @OneToMany(() => Role, (o) => o.roleGroup, {
+    nullable: true,
+  })
   roles: Role[];
 
   @OneToMany(() => RoleGroup, (o) => o.parent)

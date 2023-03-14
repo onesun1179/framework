@@ -23,8 +23,8 @@ export class RoleFrontComponentMap extends CommonEntity {
   roleSeqNo: number;
 
   @PrimaryColumn()
-  @Field(() => Int)
-  frontComponentSeqNo: number;
+  @Field(() => String)
+  frontComponentId: string;
 
   @ManyToOne(() => Role, (r) => r.roleFrontComponentMaps)
   @JoinColumn({
@@ -34,16 +34,16 @@ export class RoleFrontComponentMap extends CommonEntity {
 
   @ManyToOne(() => FrontComponent, (r) => r.roleFrontComponentMaps)
   @JoinColumn({
-    name: 'front_component_seq_no',
+    name: 'front_component_id',
   })
   frontComponent: FrontComponent;
 
   @Column()
-  allFrontComponentSeqNo: number;
+  allFrontComponentId: string;
 
   @OneToOne(() => AllFrontComponent)
   @JoinColumn({
-    name: 'all_front_component_seq_no',
+    name: 'all_front_component_id',
   })
   allFrontComponent: AllFrontComponent;
 }

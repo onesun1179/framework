@@ -1,8 +1,11 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
 import { Route } from '../models/route';
-import { DataSource, IsNull, Not } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
 
+@UseGuards(GqlAuthGuard)
 @Resolver(() => [Route])
 export class RoutesResolver {
   constructor(
@@ -11,18 +14,15 @@ export class RoutesResolver {
   ) {}
   @Query(() => [Route])
   async rootRoutes() {
-    const a = await Route.find({
+    return await Route.find({
       relations: {
         parentRouteRouteMaps: true,
       },
       where: {
         parentRouteRouteMaps: {
-          parentSeqNo: Not(IsNull()),
+          parentSeqNo: IsNull(),
         },
       },
     });
-
-    console.log(a);
-    return a;
   }
 }

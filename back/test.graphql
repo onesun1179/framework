@@ -22,3 +22,11 @@ query {
 
     }
 }
+
+query {
+    frontComponent(seqNo: 1) {
+        allFrontComponents {
+            seqNo
+        }
+    }
+}
