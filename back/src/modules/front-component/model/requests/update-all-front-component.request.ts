@@ -1,15 +1,6 @@
-import {
-  ArgsType,
-  InputType,
-  IntersectionType,
-  PartialType,
-  PickType,
-} from '@nestjs/graphql';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
+import { ArgsType, InputType } from '@nestjs/graphql';
+import { InsertAllFrontComponentRequest } from '@modules/front-component/model/requests/insert-all-front-component.request';
 
 @InputType()
 @ArgsType()
-export class UpdateAllFrontComponentRequest extends IntersectionType(
-  PickType(AllFrontComponent, ['id']),
-  PickType(PartialType(AllFrontComponent), ['frontComponentId']),
-) {}
+export class UpdateAllFrontComponentRequest extends InsertAllFrontComponentRequest {}

@@ -7,15 +7,10 @@ import { UtilField } from '@util/Util.field';
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('front', 'component', 'type'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('front', 'component', 'type'),
-})
+@ObjectType()
 export class FrontComponentType extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('front', 'component', 'type', 'seqNo'),
-  })
+  @PrimaryGeneratedColumn()
   @Field(() => Int, {
     description: UtilField.getFieldComment(
       'front',
@@ -26,17 +21,8 @@ export class FrontComponentType extends CommonEntity {
   })
   seqNo: number;
 
-  @Column({
-    comment: UtilField.getFieldComment('front', 'component', 'type', 'name'),
-  })
-  @Field({
-    description: UtilField.getFieldComment(
-      'front',
-      'component',
-      'type',
-      'name',
-    ),
-  })
+  @Column()
+  @Field()
   name: string;
 
   @OneToMany(() => FrontComponent, (o) => o.frontComponentType)

@@ -1,5 +1,6 @@
 import {
   Args,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -17,32 +18,50 @@ import { UpdateAllFrontComponentRequest } from '@modules/front-component/model/r
 export class AllFrontComponentResolver {
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => AllFrontComponent, {
     nullable: true,
   })
   async allFrontComponent(
-    @Args('id', {
-      type: () => String,
+    @Args('seqNo', {
+      type: () => Int,
     })
-    id: string,
+    seqNo: number,
   ): Promise<AllFrontComponent> {
     return await AllFrontComponent.findOneBy({
-      id,
+      seqNo,
     });
   }
+
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
 
   @ResolveField(() => FrontComponent, {
     description: UtilField.getFieldComment('front', 'component'),
   })
   async frontComponent(
-    @Parent() { frontComponentId }: AllFrontComponent,
+    @Parent() { frontComponentSeqNo }: AllFrontComponent,
   ): Promise<FrontComponent> {
     return await FrontComponent.findOneBy({
-      id: frontComponentId,
+      seqNo: frontComponentSeqNo,
     });
   }
 
-  @Mutation(() => AllFrontComponent)
+  /**************************************
+   *           MUTATION
+   ***************************************/
+  @Mutation(() => AllFrontComponent, {
+    description: UtilField.getFieldComment(
+      'all',
+      'front',
+      'component',
+      'insert',
+      'req',
+    ),
+  })
   async insertAllFrontComponent(
     @Args('insertAllFrontComponentRequest', {
       type: () => InsertAllFrontComponentRequest,
@@ -54,7 +73,15 @@ export class AllFrontComponentResolver {
     );
   }
 
-  @Mutation(() => AllFrontComponent)
+  @Mutation(() => AllFrontComponent, {
+    description: UtilField.getFieldComment(
+      'all',
+      'front',
+      'component',
+      'update',
+      'req',
+    ),
+  })
   async updateAllFrontComponent(
     @Args('updateAllFrontComponentRequest', {
       type: () => UpdateAllFrontComponentRequest,

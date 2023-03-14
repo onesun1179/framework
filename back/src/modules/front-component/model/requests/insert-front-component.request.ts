@@ -4,9 +4,9 @@ import { FrontComponent } from '@modules/front-component/model/front-component';
 @InputType()
 @ArgsType()
 export class InsertFrontComponentRequest extends PickType(FrontComponent, [
-  'id',
+  'seqNo',
   'frontComponentTypeSeqNo',
-  'initialFrontComponentId',
+  'initialFrontComponentSeqNo',
 ]) {
   @Field(() => [Int], {
     nullable: true,

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -43,31 +44,32 @@ export class Route extends CommonEntity {
     nullable: true,
   })
   @Field(() => Int, {
-    description: UtilField.getFieldComment('front', 'component', 'seqNo'),
     nullable: true,
   })
-  frontComponentId?: string;
+  frontComponentSeqNo?: number;
 
   @ManyToOne(() => FrontComponent, (o) => o.routes, {
     nullable: true,
   })
   @Field(() => FrontComponent, {
     nullable: true,
-    description: UtilField.getFieldComment('front', 'component'),
+  })
+  @JoinColumn({
+    name: 'front_component_seq_no',
   })
   frontComponent?: FrontComponent;
 
   @OneToMany(() => RouteRouteMap, (o) => o.childRoute, {
     nullable: true,
   })
-  childRouteRouteMap: RouteRouteMap[];
+  childRouteRouteMaps: RouteRouteMap[];
 
   children: Route[];
 
   @OneToMany(() => RouteRouteMap, (o) => o.parentRoute, {
     nullable: true,
   })
-  parentRouteRouteMap: RouteRouteMap[];
+  parentRouteRouteMaps: RouteRouteMap[];
 
   parents: Route[];
 

@@ -6,8 +6,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@src/*": [ "src/*" ],
-      "@gqlType": [ "graphql.ts" ]
+      "@src/*": [ "./src/*" ],
+      "@gqlType": [ "./graphql.ts" ]
     },
     "target": "ESNext",
     "useDefineForClassFields": true,

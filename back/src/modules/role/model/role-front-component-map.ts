@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
 import { Role } from '@modules/role/model/role';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
@@ -16,27 +15,16 @@ import { AllFrontComponent } from '@modules/front-component/model/all-front-comp
 @Entity()
 @InputType({
   isAbstract: true,
-  description: UtilField.getFieldComment('role', 'by', 'front', 'component'),
 })
-@ObjectType({
-  description: UtilField.getFieldComment('role', 'by', 'front', 'component'),
-})
+@ObjectType()
 export class RoleFrontComponentMap extends CommonEntity {
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('role', 'seqNo'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('role', 'seqNo'),
-  })
+  @PrimaryColumn()
+  @Field(() => Int)
   roleSeqNo: number;
 
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('front', 'component', 'id'),
-  })
-  @Field(() => Int, {
-    description: UtilField.getFieldComment('front', 'component', 'id'),
-  })
-  frontComponentId: string;
+  @PrimaryColumn()
+  @Field(() => Int)
+  frontComponentSeqNo: number;
 
   @ManyToOne(() => Role, (r) => r.roleFrontComponentMaps)
   @JoinColumn({
@@ -46,18 +34,16 @@ export class RoleFrontComponentMap extends CommonEntity {
 
   @ManyToOne(() => FrontComponent, (r) => r.roleFrontComponentMaps)
   @JoinColumn({
-    name: 'front_component_id',
+    name: 'front_component_seq_no',
   })
   frontComponent: FrontComponent;
 
-  @Column({
-    comment: UtilField.getFieldComment('all', 'front', 'component', 'id'),
-  })
-  allFrontComponentId: string;
+  @Column()
+  allFrontComponentSeqNo: number;
 
   @OneToOne(() => AllFrontComponent)
   @JoinColumn({
-    name: 'all_front_component_id',
+    name: 'all_front_component_seq_no',
   })
   allFrontComponent: AllFrontComponent;
 }

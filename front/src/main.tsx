@@ -10,7 +10,6 @@ import {
 	HttpLink,
 	InMemoryCache,
 } from "@apollo/client";
-import { onErrorLink } from "./graphql/errorHandling";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { FrontComponent, Route as GqlRoute } from "@gqlType";
 import { COMPONENT, ROUTE_COMPONENT } from "@src/constants/component.constant";
@@ -18,6 +17,7 @@ import {
 	IndexRouteObject,
 	NonIndexRouteObject,
 } from "react-router/dist/lib/context";
+import { onErrorLink } from "./graphql/errorHandling";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -25,37 +25,30 @@ const client = new ApolloClient({
 	link: ApolloLink.from([
 		onErrorLink,
 		new HttpLink({
-			uri: import.meta.env.VITE_API_PATH + "/graphql",
+			uri: `${import.meta.env.VITE_API_PATH}/graphql`,
 		}),
 	]),
 });
 
 const ROUTES_QUERY = gql`
 	query {
-		routes {
+		rootRoutes {
+			seqNo
 			path
-			id
 			frontComponent {
-				id
+				name
 			}
 			children {
+				seqNo
 				path
-				id
 				frontComponent {
-					id
+					name
 				}
 				children {
+					seqNo
 					path
-					id
 					frontComponent {
-						id
-					}
-					children {
-						path
-						id
-						frontComponent {
-							id
-						}
+						name
 					}
 				}
 			}
@@ -63,8 +56,8 @@ const ROUTES_QUERY = gql`
 	}
 `;
 
-type RouteType = Pick<GqlRoute, "path" | "id"> & {
-	frontComponent: Pick<FrontComponent, "id">;
+type RouteType = Pick<GqlRoute, "seqNo" | "path"> & {
+	frontComponent: Pick<FrontComponent, "name">;
 	children: Array<RouteType>;
 };
 
@@ -77,9 +70,9 @@ function makeRouteObject(routeType: RouteType): IndexRouteObject;
 function makeRouteObject(routeType: RouteType): NonIndexRouteObject;
 function makeRouteObject(routeType: RouteType): any {
 	return {
-		...ROUTE_COMPONENT[routeType.frontComponent.id],
+		...ROUTE_COMPONENT[routeType.frontComponent.name],
 		path: routeType.path,
-		element: createElement(COMPONENT[routeType.frontComponent.id]),
+		element: createElement(COMPONENT[routeType.frontComponent.name]),
 		children: routeType.children.map((o) => makeRouteObject(o)),
 	};
 }

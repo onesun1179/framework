@@ -8,7 +8,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export interface InsertRoleIn {
+export interface InsertRoleRequest {
     name: string;
     roleGroupSeqNo: number;
     userIds?: Nullable<string>;
@@ -26,7 +26,7 @@ export interface SaveRoleGroupRequest {
 
 export interface InsertRouteRequest {
     path: string;
-    frontComponentId?: Nullable<number>;
+    frontComponentSeqNo?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -35,7 +35,7 @@ export interface InsertRouteRequest {
 export interface UpdateRouteRequest {
     seqNo: number;
     path?: Nullable<string>;
-    frontComponentId?: Nullable<number>;
+    frontComponentSeqNo?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
     parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
@@ -63,25 +63,41 @@ export interface InsertMessageGroupRequest {
     messageSeqNos?: Nullable<number[]>;
 }
 
+export interface InsertFrontComponentRequest {
+    seqNo: number;
+    frontComponentTypeSeqNo: number;
+    initialFrontComponentSeqNo: number;
+    roleSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
+export interface UpdateFrontComponentRequest {
+    seqNo: number;
+    frontComponentTypeSeqNo?: Nullable<number>;
+    initialFrontComponentSeqNo?: Nullable<number>;
+    roleSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
 export interface InsertFrontComponentTypeRequest {
     name: string;
-    frontComponentIds?: Nullable<string[]>;
+    frontComponentSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateFrontComponentTypeRequest {
     seqNo: number;
     name?: Nullable<string>;
-    frontComponentIds?: Nullable<string[]>;
+    frontComponentSeqNos?: Nullable<number[]>;
 }
 
 export interface InsertAllFrontComponentRequest {
-    id: string;
-    frontComponentId: string;
+    seqNo: number;
+    frontComponentSeqNo?: Nullable<number>;
 }
 
 export interface UpdateAllFrontComponentRequest {
-    id: string;
-    frontComponentId?: Nullable<string>;
+    seqNo: number;
+    frontComponentSeqNo?: Nullable<number>;
 }
 
 export interface CodeTree {
@@ -114,23 +130,25 @@ export interface FrontComponentType {
 }
 
 export interface AllFrontComponent {
-    id: string;
-    frontComponentId: string;
+    seqNo: number;
+    name: string;
+    frontComponentSeqNo?: Nullable<number>;
     frontComponent: FrontComponent;
 }
 
 export interface RoleFrontComponentMap {
     roleSeqNo: number;
-    frontComponentId: number;
+    frontComponentSeqNo: number;
     role: Role;
     frontComponent: FrontComponent;
     allFrontComponent: AllFrontComponent;
 }
 
 export interface FrontComponent {
-    id: string;
+    seqNo: number;
+    name: string;
     frontComponentTypeSeqNo: number;
-    initialFrontComponentId: string;
+    initialFrontComponentSeqNo: number;
     frontComponentType: FrontComponentType;
     allFrontComponents: AllFrontComponent[];
     initialFrontComponent: AllFrontComponent;
@@ -141,7 +159,7 @@ export interface FrontComponent {
 export interface Route {
     seqNo: number;
     path: string;
-    frontComponentId?: Nullable<number>;
+    frontComponentSeqNo?: Nullable<number>;
     frontComponent?: Nullable<FrontComponent>;
     children: Route[];
     parents: Route[];
@@ -219,20 +237,20 @@ export interface AppMetadata {
 export interface IQuery {
     user(id: string): User | Promise<User>;
     role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
-    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
+    roleFrontComponentMap(roleSeqNo: number, frontComponentSeqNo: number): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
     message(seqNo: number): Message | Promise<Message>;
     route(seqNo: number): Route | Promise<Route>;
     rootRoutes(): Route[] | Promise<Route[]>;
     messageGroup(code: string): MessageGroup | Promise<MessageGroup>;
     appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
-    frontComponent(id: string): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
+    frontComponent(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
     frontComponentType(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
-    allFrontComponent(id: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
+    allFrontComponent(seqNo: number): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
     icon(id: string): Icon | Promise<Icon>;
 }
 
 export interface IMutation {
-    insertRole(role: InsertRoleIn): Nullable<Role> | Promise<Nullable<Role>>;
+    insertRole(role: InsertRoleRequest): Nullable<Role> | Promise<Nullable<Role>>;
     saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest): RoleGroup | Promise<RoleGroup>;
     removeRoleGroup(seqNo: number): RoleGroup | Promise<RoleGroup>;
     insertRoute(insertRouteRequest: InsertRouteRequest): Route | Promise<Route>;
@@ -241,6 +259,8 @@ export interface IMutation {
     insertMessage(InsertMessageRequest: InsertMessageRequest): Message | Promise<Message>;
     updateMessageGroup(UpdateMessageGroupRequest: UpdateMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
     insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest): MessageGroup | Promise<MessageGroup>;
+    insertFrontComponent(insertFrontComponentRequest: InsertFrontComponentRequest): FrontComponent | Promise<FrontComponent>;
+    updateFrontComponent(updateFrontComponentRequest: UpdateFrontComponentRequest): FrontComponent | Promise<FrontComponent>;
     insertFrontComponentType(insertFrontComponentTypeRequest: InsertFrontComponentTypeRequest): FrontComponentType | Promise<FrontComponentType>;
     updateFrontComponentType(updateFrontComponentTypeRequest: UpdateFrontComponentTypeRequest): FrontComponentType | Promise<FrontComponentType>;
     insertAllFrontComponent(insertAllFrontComponentRequest: InsertAllFrontComponentRequest): AllFrontComponent | Promise<AllFrontComponent>;

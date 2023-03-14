@@ -1,7 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
 import { Route } from '../models/route';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull, Not } from 'typeorm';
 
 @Resolver(() => [Route])
 export class RoutesResolver {
@@ -11,10 +11,18 @@ export class RoutesResolver {
   ) {}
   @Query(() => [Route])
   async rootRoutes() {
-    return await Route.find({
+    const a = await Route.find({
+      relations: {
+        parentRouteRouteMaps: true,
+      },
       where: {
-        parentRouteRouteMap: [],
+        parentRouteRouteMaps: {
+          parentSeqNo: Not(IsNull()),
+        },
       },
     });
+
+    console.log(a);
+    return a;
   }
 }

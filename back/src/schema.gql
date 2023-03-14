@@ -37,12 +37,9 @@ type RoleGroup {
   parent: RoleGroup
 }
 
-"""앞단 컴포넌트 타입"""
 type FrontComponentType {
   """앞단 컴포넌트 타입 일련번호"""
   seqNo: Int!
-
-  """앞단 컴포넌트 타입 이름"""
   name: String!
 
   """앞단 컴포넌트 목록"""
@@ -51,32 +48,27 @@ type FrontComponentType {
 
 """전체 앞단 컴포넌트"""
 type AllFrontComponent {
-  """전체 앞단 컴포넌트 식별자"""
-  id: String!
-
-  """앞단 컴포넌트 식별자"""
-  frontComponentId: String!
+  seqNo: Int!
+  name: String!
+  frontComponentSeqNo: Int
 
   """앞단 컴포넌트"""
   frontComponent: FrontComponent!
 }
 
-"""권한 별 앞단 컴포넌트"""
 type RoleFrontComponentMap {
-  """권한 일련번호"""
   roleSeqNo: Int!
-
-  """앞단 컴포넌트 식별자"""
-  frontComponentId: Int!
+  frontComponentSeqNo: Int!
   role: Role!
   frontComponent: FrontComponent!
   allFrontComponent: AllFrontComponent!
 }
 
 type FrontComponent {
-  id: String!
+  seqNo: Int!
+  name: String!
   frontComponentTypeSeqNo: Int!
-  initialFrontComponentId: String!
+  initialFrontComponentSeqNo: Int!
 
   """앞단 컴포넌트 타입"""
   frontComponentType: FrontComponentType!
@@ -99,11 +91,7 @@ type Route {
 
   """라우트 경로"""
   path: String!
-
-  """앞단 컴포넌트 일련번호"""
-  frontComponentId: Int
-
-  """앞단 컴포넌트"""
+  frontComponentSeqNo: Int
   frontComponent: FrontComponent
 
   """자식 목록"""
@@ -265,20 +253,20 @@ type AppMetadata {
 type Query {
   user(id: String!): User!
   role(seqNo: Int!): RoleGroup
-  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMap
+  roleFrontComponentMap(roleSeqNo: Int!, frontComponentSeqNo: Int!): RoleFrontComponentMap
   message(seqNo: Int!): Message!
   route(seqNo: Int!): Route!
   rootRoutes: [Route!]!
   messageGroup(code: String!): MessageGroup!
   appMetaData(name: String!): AppMetadata!
-  frontComponent(id: String!): FrontComponent
+  frontComponent(seqNo: Int!): FrontComponent
   frontComponentType(seqNo: Int!): FrontComponent
-  allFrontComponent(id: String!): AllFrontComponent
+  allFrontComponent(seqNo: Int!): AllFrontComponent
   icon(id: String!): Icon!
 }
 
 type Mutation {
-  insertRole(role: InsertRoleIn!): Role
+  insertRole(role: InsertRoleRequest!): Role
 
   """권한 그룹 저장"""
   saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest!): RoleGroup!
@@ -304,16 +292,26 @@ type Mutation {
   """메세지 그룹 삽입"""
   insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest!): MessageGroup!
 
+  """앞단 컴포넌트 삽입 인자"""
+  insertFrontComponent(insertFrontComponentRequest: InsertFrontComponentRequest!): FrontComponent!
+
+  """앞단 컴포넌트 수정 인자"""
+  updateFrontComponent(updateFrontComponentRequest: UpdateFrontComponentRequest!): FrontComponent!
+
   """앞단 컴포넌트 타입 삽입"""
   insertFrontComponentType(insertFrontComponentTypeRequest: InsertFrontComponentTypeRequest!): FrontComponentType!
 
   """앞단 컴포넌트 타입 수정"""
   updateFrontComponentType(updateFrontComponentTypeRequest: UpdateFrontComponentTypeRequest!): FrontComponentType!
+
+  """전체 앞단 컴포넌트 삽입 인자"""
   insertAllFrontComponent(insertAllFrontComponentRequest: InsertAllFrontComponentRequest!): AllFrontComponent!
+
+  """전체 앞단 컴포넌트 수정 인자"""
   updateAllFrontComponent(updateAllFrontComponentRequest: UpdateAllFrontComponentRequest!): AllFrontComponent!
 }
 
-input InsertRoleIn {
+input InsertRoleRequest {
   """권한 이름"""
   name: String!
 
@@ -352,9 +350,7 @@ input SaveRoleGroupRequest {
 input InsertRouteRequest {
   """라우트 경로"""
   path: String!
-
-  """앞단 컴포넌트 일련번호"""
-  frontComponentId: Int
+  frontComponentSeqNo: Int
 
   """자식 일련번호 목록"""
   childSeqNos: [Int!]
@@ -373,9 +369,7 @@ input UpdateRouteRequest {
 
   """라우트 경로"""
   path: String
-
-  """앞단 컴포넌트 일련번호"""
-  frontComponentId: Int
+  frontComponentSeqNo: Int
 
   """자식 일련번호 목록"""
   childSeqNos: [Int!]
@@ -429,39 +423,40 @@ input InsertMessageGroupRequest {
   messageSeqNos: [Int!] = []
 }
 
-"""앞단 컴포넌트 타입 삽입 인자"""
-input InsertFrontComponentTypeRequest {
-  """앞단 컴포넌트 타입 이름"""
-  name: String!
-
-  """앞단 컴포넌트 식별자 목록"""
-  frontComponentIds: [String!] = null
+input InsertFrontComponentRequest {
+  seqNo: Int!
+  frontComponentTypeSeqNo: Int!
+  initialFrontComponentSeqNo: Int!
+  roleSeqNos: [Int!]
+  routeSeqNos: [Int!]
 }
 
-"""앞단 컴포넌트 타입 삽입 인자"""
+input UpdateFrontComponentRequest {
+  seqNo: Int!
+  frontComponentTypeSeqNo: Int
+  initialFrontComponentSeqNo: Int
+  roleSeqNos: [Int!]
+  routeSeqNos: [Int!]
+}
+
+input InsertFrontComponentTypeRequest {
+  name: String!
+  frontComponentSeqNos: [Int!] = null
+}
+
 input UpdateFrontComponentTypeRequest {
   """앞단 컴포넌트 타입 일련번호"""
   seqNo: Int!
-
-  """앞단 컴포넌트 타입 이름"""
   name: String
-
-  """앞단 컴포넌트 식별자 목록"""
-  frontComponentIds: [String!] = null
+  frontComponentSeqNos: [Int!] = null
 }
 
 input InsertAllFrontComponentRequest {
-  """전체 앞단 컴포넌트 식별자"""
-  id: String!
-
-  """앞단 컴포넌트 식별자"""
-  frontComponentId: String!
+  seqNo: Int!
+  frontComponentSeqNo: Int = null
 }
 
 input UpdateAllFrontComponentRequest {
-  """전체 앞단 컴포넌트 식별자"""
-  id: String!
-
-  """앞단 컴포넌트 식별자"""
-  frontComponentId: String
+  seqNo: Int!
+  frontComponentSeqNo: Int = null
 }

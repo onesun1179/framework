@@ -1,25 +1,15 @@
-import { ArgsType, Field, InputType, PickType } from '@nestjs/graphql';
-import { UtilField } from '@util/Util.field';
+import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
 import { FrontComponentType } from '@modules/front-component/model/front-component-type';
 
-@InputType({
-  description: UtilField.getFieldComment(
-    'front',
-    'component',
-    'type',
-    'insert',
-    'req',
-  ),
-})
+@InputType()
 @ArgsType()
 export class InsertFrontComponentTypeRequest extends PickType(
   FrontComponentType,
   ['name'],
 ) {
-  @Field(() => [String], {
-    description: UtilField.getFieldComment('front', 'component', 'id', 's'),
+  @Field(() => [Int], {
     nullable: true,
     defaultValue: null,
   })
-  frontComponentIds?: Array<string>;
+  frontComponentSeqNos?: Array<number>;
 }

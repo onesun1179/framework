@@ -38,11 +38,11 @@ export class RouteResolver {
     nullable: true,
   })
   frontComponent(
-    @Parent() { frontComponentId }: Route,
+    @Parent() { frontComponentSeqNo }: Route,
   ): Promise<FrontComponent | null> {
-    if (frontComponentId) {
+    if (frontComponentSeqNo) {
       return FrontComponent.findOneBy({
-        id: frontComponentId,
+        seqNo: frontComponentSeqNo,
       });
     }
     return null;

@@ -3,8 +3,28 @@ mutation {
     insertFrontComponentType(insertFrontComponentTypeRequest: {
         name: "route"
     }) {
+        ...on FrontComponentType {
+            seqNo
+        }
+    }
+    a : insertAllFrontComponent(insertAllFrontComponentRequest: {
+        id : "login"
+    }) {
         __typename
     }
+    b : insertAllFrontComponent(insertAllFrontComponentRequest: {
+        id : "route"
+    }) {
+        __typename
+    }
+#    insertFrontComponent(insertFrontComponentRequest: {
+#        id: "login"
+#        initialFrontComponentId:"login"
+#        frontComponentTypeSeqNo: FrontComponentType
+#    }) {
+#        __typename
+#    }
+
 
 }
 
@@ -16,3 +36,4 @@ mutation {
         __typename
     }
 }
+

@@ -16,11 +16,10 @@ export class RouteService {
     route: InsertRouteRequest | UpdateRouteRequest,
   ): Promise<Route> {
     return this.dataSource.manager.transaction(async (entityManager) => {
-      console.log(1);
       const savedRoute = await entityManager.save(Route, {
         seqNo: route instanceof UpdateRouteRequest ? route.seqNo : undefined,
         path: route.path,
-        frontComponentId: route.frontComponentId,
+        frontComponentSeqNo: route.frontComponentSeqNo,
       });
 
       if (!isNil(route.childSeqNos)) {
@@ -101,7 +100,7 @@ export class RouteService {
         }
       }
 
-      if (route.roleSeqNos === null) {
+      if (!isNil(route.roleSeqNos)) {
         await entityManager.save(
           route.roleSeqNos.map((roleSeqNo) => {
             return RoleRouteMap.create({

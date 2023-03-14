@@ -7,7 +7,7 @@ import { UtilField } from '@util/Util.field';
 })
 export class InsertRouteRequest extends PickType(Route, [
   'path',
-  'frontComponentId',
+  'frontComponentSeqNo',
 ] as const) {
   @Field(() => [Int], {
     nullable: true,

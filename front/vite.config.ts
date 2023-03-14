@@ -6,15 +6,16 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react()],
+
 	resolve: {
 		alias: [
 			{
 				find: "@gqlType",
-				replacement: path.resolve(__dirname, "graphql.ts"),
+				replacement: path.resolve(path.resolve(), "graphql.ts"),
 			},
 			{
 				find: "@src",
-				replacement: path.resolve(__dirname, "src"),
+				replacement: path.resolve(path.resolve(), "src"),
 			},
 		],
 	},

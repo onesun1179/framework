@@ -1,13 +1,24 @@
-mutation {
-    insertRoute(insertRouteRequest: {
-        path: "/"
-    })
-}
-
 query {
     rootRoutes {
-        path
         seqNo
-        frontComponentId
+        path
+        frontComponent {
+            name
+        }
+        children {
+            seqNo
+            path
+            frontComponent {
+                name
+            }
+            children {
+                seqNo
+                path
+                frontComponent {
+                    name
+                }
+            }
+        }
+
     }
 }

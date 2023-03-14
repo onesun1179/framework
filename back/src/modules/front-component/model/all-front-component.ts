@@ -1,6 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { UtilField } from '@util/Util.field';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 
@@ -13,25 +19,29 @@ import { FrontComponent } from '@modules/front-component/model/front-component';
   description: UtilField.getFieldComment('all', 'front', 'component'),
 })
 export class AllFrontComponent extends CommonEntity {
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('all', 'front', 'component', 'id'),
-  })
-  @Field(() => String, {
-    description: UtilField.getFieldComment('all', 'front', 'component', 'id'),
-  })
-  id: string;
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
+  seqNo: number;
 
   @Column({
-    comment: UtilField.getFieldComment('front', 'component', 'id'),
+    unique: true,
   })
-  @Field(() => String, {
-    description: UtilField.getFieldComment('front', 'component', 'id'),
-  })
-  frontComponentId: string;
+  @Field(() => String)
+  name: string;
 
-  @ManyToOne(() => FrontComponent, (o) => o.allFrontComponents)
-  @JoinColumn({
-    name: 'front_component_id',
+  @Column({
+    nullable: true,
   })
-  frontComponent: FrontComponent;
+  @Field(() => Int, {
+    nullable: true,
+  })
+  frontComponentSeqNo?: number = null;
+
+  @ManyToOne(() => FrontComponent, (o) => o.allFrontComponents, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: 'front_component_seq_no',
+  })
+  frontComponent?: FrontComponent = null;
 }

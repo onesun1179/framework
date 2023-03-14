@@ -1,17 +1,23 @@
 module.exports = {
-	plugins: ["@typescript-eslint", "prettier"],
 	parser : "@typescript-eslint/parser",
-	parserOptions: {
-		tsconfigRootDir: __dirname,
-		project: ["./tsconfig.json"],
-	},
+	plugins: ["@typescript-eslint", "prettier"],
 	extends: [
 		"prettier",
-		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"plugin:prettier/recommended"
 	],
 	rules: {
-		"@typescript-eslint/ban-types": "off",
+		"import/no-unresolved" : "off"
 	},
+	"settings": {
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx", ".js"]
+		},
+		"import/resolver": {
+			"typescript": "./tsconfig.json",
+			"node": {
+				"extensions": [".ts", ".tsx", ".native.js"]
+			}
+		}
+	}
 };
