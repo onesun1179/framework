@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { IconGroup } from './icon-group';
 
 @Entity()

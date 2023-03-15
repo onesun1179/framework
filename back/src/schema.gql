@@ -31,18 +31,18 @@ type FrontComponentType {
   frontComponents: [FrontComponent!]!
 }
 
-type AllFrontComponent {
-  id: String!
-  frontComponentId: String
-  frontComponent: FrontComponent!
-}
-
 type RoleFrontComponentMap {
   roleSeqNo: Int!
   frontComponentId: String!
   role: Role!
   frontComponent: FrontComponent!
   allFrontComponent: AllFrontComponent!
+}
+
+type AllFrontComponent {
+  id: String!
+  frontComponentId: String
+  frontComponent: FrontComponent!
 }
 
 type FrontComponent {
@@ -77,7 +77,6 @@ type IconGroupTree {
 type IconGroup {
   seqNo: Int!
   name: String!
-  icons: [Icon!]!
   children: [IconGroupTree!]!
   parents: [IconGroupTree!]!
 }
@@ -85,8 +84,6 @@ type IconGroup {
 type Icon {
   id: String!
   filePath: String!
-  iconGroupSeqNo: Int!
-  iconGroup: IconGroup!
   menus: [Menu!]
 }
 

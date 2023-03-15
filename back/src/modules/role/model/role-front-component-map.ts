@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Role } from '@modules/role/model/role';
@@ -41,7 +34,7 @@ export class RoleFrontComponentMap extends CommonEntity {
   @Column()
   allFrontComponentId: string;
 
-  @OneToOne(() => AllFrontComponent)
+  @ManyToOne(() => AllFrontComponent, (o) => o.roleFrontComponentMaps)
   @JoinColumn({
     name: 'all_front_component_id',
   })

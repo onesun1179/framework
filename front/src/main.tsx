@@ -17,7 +17,7 @@ import {
 	NonIndexRouteObject,
 } from "react-router/dist/lib/context";
 import { onErrorLink } from "./graphql/errorHandling";
-import { FrontC } from "./component/common/FrontC";
+import FrontC from "./component/common/FrontC";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),

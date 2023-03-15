@@ -129,18 +129,18 @@ export interface FrontComponentType {
     frontComponents: FrontComponent[];
 }
 
-export interface AllFrontComponent {
-    id: string;
-    frontComponentId?: Nullable<string>;
-    frontComponent: FrontComponent;
-}
-
 export interface RoleFrontComponentMap {
     roleSeqNo: number;
     frontComponentId: string;
     role: Role;
     frontComponent: FrontComponent;
     allFrontComponent: AllFrontComponent;
+}
+
+export interface AllFrontComponent {
+    id: string;
+    frontComponentId?: Nullable<string>;
+    frontComponent: FrontComponent;
 }
 
 export interface FrontComponent {
@@ -175,7 +175,6 @@ export interface IconGroupTree {
 export interface IconGroup {
     seqNo: number;
     name: string;
-    icons: Icon[];
     children: IconGroupTree[];
     parents: IconGroupTree[];
 }
@@ -183,8 +182,6 @@ export interface IconGroup {
 export interface Icon {
     id: string;
     filePath: string;
-    iconGroupSeqNo: number;
-    iconGroup: IconGroup;
     menus?: Nullable<Menu[]>;
 }
 

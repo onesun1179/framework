@@ -5,9 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Icon } from './model/icon';
 import { IconGroupTree } from './model/icon-group-tree';
 import { IconGroup } from './model/icon-group';
+import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Icon, IconGroupTree, IconGroup])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Icon,
+      IconGroupTree,
+      IconGroup,
+      IconIconGroupMap,
+    ]),
+  ],
   providers: [IconResolver, IconService],
 })
 export class IconModule {}

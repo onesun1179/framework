@@ -22,9 +22,10 @@ import * as shell from 'shelljs';
 import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { DataSource } from 'typeorm';
+import { FileModule } from './file/file.module';
 
-const initYn = false;
-// const initYn = true;
+// const initYn = false;
+const initYn = true;
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -88,6 +89,7 @@ const initYn = false;
         origin: process.env.CLIENT_DOMAIN,
       },
     }),
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -106,22 +108,34 @@ export class AppModule implements OnModuleInit {
           VALUES ('home', 1, 'Home');
 
           UPDATE all_front_component
-          SET front_component_id = 'home'
-          WHERE id = 'Home';
+             SET front_component_id = 'home'
+           WHERE id = 'Home';
 
           INSERT INTO route(seq_no, path, front_component_id)
           VALUES (1, '/', 'home');
+
           INSERT INTO role(seq_no, name, identifier)
-          VALUES (1, '최초가입자', 'guest');
+          VALUES (1, '최초가입자', 'guest'), (2, '개발자', null);
+
           INSERT INTO user(id, role_seq_no)
-          VALUES ('102494101026679318764', 1);
+          VALUES ('102494101026679318764', 2);
+
           INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
-          VALUES (1, 'home', 'Home')
+          VALUES (1, 'home', 'Home'), (2, 'home', 'Home');
+
+          INSERT INTO menu(seq_no, name)
+          VALUES (1, '관리'), (2, '메뉴 관리');
+
+          INSERT INTO menu_tree(child_menu_seq_no, parent_menu_seq_no)
+          VALUES (2, 1);
+
+          INSERT INTO menu_role_map(role_seq_no, menu_seq_no)
+          VALUES (2, 1), (2, 2);
 
 
       `;
       for await (const q of query.split(';')) {
-        await this.dataSource.query(q);
+        q.trim() && (await this.dataSource.query(q));
       }
     }
     if (process.env.NODE_ENV === 'dev') {

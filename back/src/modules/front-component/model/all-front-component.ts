@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { FrontComponent } from '@modules/front-component/model/front-component';
+import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 
 @Entity()
 @InputType({
@@ -28,4 +29,7 @@ export class AllFrontComponent extends CommonEntity {
     name: 'front_component_id',
   })
   frontComponent?: FrontComponent = null;
+
+  @ManyToOne(() => RoleFrontComponentMap, (o) => o.allFrontComponent)
+  roleFrontComponentMaps: Array<RoleFrontComponentMap>;
 }

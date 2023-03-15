@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '@common/entity/common.entity';
-import { Icon } from './icon';
 import { IconGroupTree } from './icon-group-tree';
+import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 
 @Entity()
 @InputType({
@@ -18,9 +18,8 @@ export class IconGroup extends CommonEntity {
   @Field()
   name: string;
 
-  @OneToMany(() => Icon, (o) => o.iconGroup)
-  @Field(() => [Icon])
-  icons: Icon[];
+  @OneToMany(() => IconIconGroupMap, (o) => o.iconGroup)
+  iconIconGroupMaps: Array<IconIconGroupMap>;
 
   @OneToMany(() => IconGroupTree, (o) => o.child)
   @Field(() => [IconGroupTree])

@@ -12,7 +12,7 @@ const ALL_FRONT_COMPONENT_BY_CURRENT_USER_AND_FRONT_COMPONENT_ID = gql`
 	}
 `;
 
-export const FrontC: FC<{
+const FrontC: FC<{
 	frontComponentId: string;
 }> = ({ frontComponentId }) => {
 	const { loading, data } = useQuery<{
@@ -33,3 +33,5 @@ export const FrontC: FC<{
 
 	return null;
 };
+
+export default FrontC;
