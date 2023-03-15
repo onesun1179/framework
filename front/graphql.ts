@@ -180,9 +180,10 @@ export interface IconGroup {
 }
 
 export interface Icon {
-    id: string;
+    seqNo: number;
+    name: string;
     filePath: string;
-    menus?: Nullable<Menu[]>;
+    menus: Menu[];
 }
 
 export interface Menu {
@@ -191,7 +192,7 @@ export interface Menu {
     children: Menu[];
     parents: Menu[];
     roles: Role[];
-    iconId?: Nullable<string>;
+    iconSeqNo?: Nullable<number>;
     icon?: Nullable<Icon>;
 }
 
@@ -245,7 +246,7 @@ export interface IQuery {
     frontComponentType(seqNo: number): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;
     allFrontComponent(id: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
     allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: string): Nullable<AllFrontComponent> | Promise<Nullable<AllFrontComponent>>;
-    icon(id: string): Icon | Promise<Icon>;
+    icon(seqNo: number): Icon | Promise<Icon>;
 }
 
 export interface IMutation {

@@ -82,9 +82,10 @@ type IconGroup {
 }
 
 type Icon {
-  id: String!
+  seqNo: Int!
+  name: String!
   filePath: String!
-  menus: [Menu!]
+  menus: [Menu!]!
 }
 
 type Menu {
@@ -93,7 +94,7 @@ type Menu {
   children: [Menu!]!
   parents: [Menu!]!
   roles: [Role!]!
-  iconId: String
+  iconSeqNo: Int
   icon: Icon
 }
 
@@ -147,7 +148,7 @@ type Query {
   frontComponentType(seqNo: Int!): FrontComponent
   allFrontComponent(id: String!): AllFrontComponent
   allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: String!): AllFrontComponent
-  icon(id: String!): Icon!
+  icon(seqNo: Int!): Icon!
 }
 
 type Mutation {

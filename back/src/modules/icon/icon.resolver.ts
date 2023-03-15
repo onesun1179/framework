@@ -1,4 +1,11 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { IconService } from './icon.service';
 import { Logger } from '@nestjs/common';
 import { Icon } from './model/icon';
@@ -10,12 +17,12 @@ export class IconResolver {
   private readonly logger = new Logger(IconResolver.name);
 
   @Query(() => Icon)
-  async icon(@Args('id', { type: () => String }) id: Icon['id']) {
-    return await this.iconService.getIconRepository().findOneBy({ id });
+  async icon(@Args('seqNo', { type: () => Int }) seqNo: Icon['seqNo']) {
+    return await this.iconService.getIconRepository().findOneBy({ seqNo });
   }
 
   @ResolveField(() => [Menu])
-  async menus(@Parent() { id }: Icon): Promise<Menu[]> {
+  async menus(@Parent() { seqNo }: Icon): Promise<Menu[]> {
     return await this.iconService
       .getIconRepository()
       .findOne({
@@ -24,7 +31,7 @@ export class IconResolver {
           menus: true,
         },
         where: {
-          id,
+          seqNo,
         },
       })
       .then((r) => r?.menus);

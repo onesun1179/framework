@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '@common/entity/common.entity';
 import { Menu } from '@modules/menu/model/menu';
 import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
@@ -10,9 +10,13 @@ import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 })
 @ObjectType()
 export class Icon extends CommonEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
+  seqNo: string;
+
+  @Column()
   @Field()
-  id: string;
+  name: string;
 
   @Column()
   @Field()
@@ -21,11 +25,9 @@ export class Icon extends CommonEntity {
   @OneToMany(() => IconIconGroupMap, (o) => o.icon)
   iconIconGroupMaps: Array<IconIconGroupMap>;
 
-  @ManyToOne(() => Menu, (o) => o.icon, {
+  @OneToMany(() => Menu, (o) => o.icon, {
     nullable: true,
   })
-  @Field(() => [Menu], {
-    nullable: true,
-  })
+  @Field(() => [Menu])
   menus: Array<Menu>;
 }

@@ -45,10 +45,10 @@ export class Menu extends CommonEntity {
   @Column({
     nullable: true,
   })
-  @Field({
+  @Field(() => Int, {
     nullable: true,
   })
-  iconId?: string;
+  iconSeqNo?: number;
 
   @ManyToOne(() => Icon, (o) => o.menus, {
     nullable: true,
@@ -57,7 +57,7 @@ export class Menu extends CommonEntity {
     nullable: true,
   })
   @JoinColumn({
-    name: 'icon_id',
+    name: 'icon_seq_no',
   })
   icon?: Icon;
 

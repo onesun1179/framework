@@ -25,8 +25,6 @@ const FrontC: FC<{
 		},
 	});
 
-	console.log(data, frontComponentId);
-
 	if (data?.data.id) {
 		return createElement(All_FRONT_COMPONENT[data.data.id]);
 	}

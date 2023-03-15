@@ -11,17 +11,17 @@ import { IconGroup } from '@modules/icon/model/icon-group';
 @ObjectType()
 export class IconIconGroupMap extends CommonEntity {
   @PrimaryColumn()
-  @Field(() => [String])
-  iconId: Icon['id'];
+  @Field(() => Int)
+  iconSeqNo: Icon['seqNo'];
 
   @PrimaryColumn()
-  @Field(() => [Int])
+  @Field(() => Int)
   iconGroupSeqNo: IconGroup['seqNo'];
 
   @ManyToOne(() => Icon, (o) => o.iconIconGroupMaps)
   @Field(() => Icon)
   @JoinColumn({
-    name: 'icon_id',
+    name: 'icon_seq_no',
   })
   icon: Icon;
 

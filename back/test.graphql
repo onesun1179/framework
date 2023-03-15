@@ -1,25 +1,13 @@
 query {
-    rootRoutes {
+    route(seqNo: 1) {
         seqNo
-        path
         frontComponent {
-            name
-        }
-        children {
-            seqNo
-            path
-            frontComponent {
-                name
-            }
-            children {
-                seqNo
-                path
+            allFrontComponents {
                 frontComponent {
-                    name
+                    initialFrontComponentId
                 }
             }
         }
-
     }
 }
 

@@ -1,5 +1,5 @@
 import { CacheModule, Module, OnModuleInit } from '@nestjs/common';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -23,11 +23,17 @@ import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { DataSource } from 'typeorm';
 import { FileModule } from './file/file.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as fs from 'fs';
+import { chunk } from 'lodash';
 
 // const initYn = false;
 const initYn = true;
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'resource'),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -47,6 +53,7 @@ const initYn = true;
     // }),
 
     TypeOrmModule.forRoot({
+      maxQueryExecutionTime: 60,
       namingStrategy: new SnakeNamingStrategy(),
       type: 'mariadb',
       host: process.env.DB_HOST,
@@ -98,7 +105,7 @@ export class AppModule implements OnModuleInit {
   constructor(private dataSource: DataSource) {}
   async onModuleInit() {
     if (initYn) {
-      const query = `
+      let query = `
           INSERT INTO all_front_component(id)
           VALUES ('Home');
 
@@ -131,15 +138,75 @@ export class AppModule implements OnModuleInit {
 
           INSERT INTO menu_role_map(role_seq_no, menu_seq_no)
           VALUES (2, 1), (2, 2);
-
-
       `;
+      let iconGroupNames: Array<{
+        seqNo: number;
+        name: string;
+      }> = [];
+      await new Promise((resolve) => {
+        fs.readdir(
+          join(process.cwd(), 'resource', 'icon'),
+          async (err, files) => {
+            iconGroupNames = files.map((fileName, i) => ({
+              seqNo: i + 1,
+              name: fileName,
+            }));
+            resolve(true);
+          },
+        );
+      });
+      const icons: Array<{
+        seqNo: number;
+        filePath: string;
+        name: string;
+        groupSeqNo: number;
+      }> = [];
+      for await (const iconGroupName of iconGroupNames) {
+        await new Promise((r) => {
+          fs.readdir(
+            join(process.cwd(), 'resource', 'icon', iconGroupName.name),
+            async (err, files) => {
+              files.forEach((o) => {
+                icons.push({
+                  name: o.split('.')[0],
+                  groupSeqNo: iconGroupName.seqNo,
+                  seqNo: icons.length + 1,
+                  filePath: `/icon/${iconGroupName.name}/${o}`,
+                });
+              });
+              r(true);
+            },
+          );
+        });
+      }
+
+      query += `INSERT INTO icon_group(seq_no, name) VALUES`;
+
+      iconGroupNames.forEach(({ name, seqNo }, i, array) => {
+        query += `(${seqNo}, '${name}')${i + 1 === array.length ? ';' : ','}`;
+      });
+      chunk(icons, 500).forEach((_icons) => {
+        query += `INSERT INTO icon(seq_no, name, file_path) VALUES`;
+        _icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
+          query += `(${seqNo}, '${name}', '${filePath}')${
+            i + 1 === array.length ? ';' : ','
+          }`;
+        });
+      });
+      chunk(icons, 500).forEach((_icons) => {
+        query += `INSERT INTO icon_icon_group_map(icon_seq_no, icon_group_seq_no) VALUES`;
+        _icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
+          query += `(${seqNo}, ${groupSeqNo})${
+            i + 1 === array.length ? ';' : ','
+          }`;
+        });
+      });
+
+      console.log(query);
       for await (const q of query.split(';')) {
         q.trim() && (await this.dataSource.query(q));
       }
     }
-    if (process.env.NODE_ENV === 'dev') {
-      shell.exec('npm run gql.cp');
-    }
+    shell.exec('npm run gql.cp');
   }
 }
