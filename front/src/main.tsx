@@ -10,7 +10,7 @@ import {
 	HttpLink,
 	InMemoryCache,
 } from "@apollo/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { FrontComponent, Route as GqlRoute } from "@gqlType";
 import {
 	IndexRouteObject,
@@ -18,6 +18,7 @@ import {
 } from "react-router/dist/lib/context";
 import { onErrorLink } from "./graphql/errorHandling";
 import FrontC from "./component/common/FrontC";
+import App from "@src/App";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -85,6 +86,6 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={client}>
-		<RouterProvider router={router} />
+		<App router={router} />
 	</ApolloProvider>
 );

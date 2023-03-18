@@ -15,10 +15,15 @@ import { Role } from '@modules/role/model/role';
 import { InsertRouteRequest } from '../models/request/insert-route.request';
 import { UpdateRouteRequest } from '@modules/route/models/request/update-route.request';
 import { RouteRouteMap } from '@modules/route/models/route-route-map';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Resolver(() => Route)
 export class RouteResolver {
-  constructor(private routeService: RouteService) {}
+  constructor(
+    private routeService: RouteService,
+    @InjectDataSource() private dataSource: DataSource,
+  ) {}
   logger = new Logger(RouteResolver.name);
 
   /**************************************
@@ -58,15 +63,17 @@ export class RouteResolver {
     defaultValue: [],
   })
   async children(@Parent() { seqNo }: Route): Promise<Route[]> {
-    return await RouteRouteMap.find({
-      relations: {
-        childRoute: true,
-      },
-      select: ['childRoute'],
-      where: {
-        parentSeqNo: seqNo,
-      },
-    }).then((r) => r?.map((o) => o.childRoute));
+    return await this.dataSource
+      .createQueryBuilder<Route>(Route, 'route')
+      .innerJoin(
+        'route.parentRouteRouteMaps',
+        'parentRouteRouteMaps',
+        'parentRouteRouteMaps.parentSeqNo = :seqNo',
+        {
+          seqNo,
+        },
+      )
+      .getMany();
   }
 
   @ResolveField(() => [Route], {

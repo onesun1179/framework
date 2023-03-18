@@ -6,87 +6,109 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Menu } from '../model/menu';
 import { MenuService } from '../menu.service';
 import { Role } from '@modules/role/model/role';
 import { Icon } from '@modules/icon/model/icon';
+import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
+import { CurrentUser } from '@common/docorator/CurrentUser';
+import { AfterAT } from '../../../auth/interfaces/AfterAT';
+import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { isNil } from 'lodash';
 
+@UseGuards(GqlAuthGuard)
 @Resolver(() => Menu)
 export class MenuResolver {
-  constructor(private readonly menuService: MenuService) {}
+  constructor(
+    private readonly menuService: MenuService,
+    @InjectDataSource() private dataSource: DataSource,
+  ) {}
   private readonly logger = new Logger(MenuResolver.name);
 
   @Query(() => Menu)
-  message(
+  async message(
     @Args('seqNo', {
       type: () => Int,
     })
     seqNo: Menu['seqNo'],
   ) {
-    return this.menuService.getMenuRepository().findOneBy({
-      seqNo,
-    });
-  }
-
-  @ResolveField(() => [Menu], {})
-  children(@Parent() { seqNo }: Menu): Promise<Menu['children']> {
-    return this.menuService
-      .getMenuRepository()
-      .findOne({
-        select: ['childMenuTrees'],
-        relations: {
-          childMenuTrees: true,
-        },
-        where: {
-          seqNo,
-        },
-      })
-      .then((r) => r?.childMenuTrees.map((o) => o.childMenu));
-  }
-
-  @ResolveField(() => [Menu], {})
-  parents(@Parent() { seqNo }: Menu): Promise<Menu['parents']> {
-    return this.menuService
-      .getMenuRepository()
-      .findOne({
-        select: ['parentMenuTrees'],
-        relations: {
-          parentMenuTrees: true,
-        },
-        where: {
-          seqNo,
-        },
-      })
-      .then((r) => r?.parentMenuTrees.map((o) => o.parentMenu));
-  }
-
-  @ResolveField(() => [Role], {})
-  async roles(@Parent() { seqNo }: Menu): Promise<Menu['roles']> {
-    return await Menu.findOne({
-      select: ['menuRoleMaps'],
-      relations: {
-        menuRoleMaps: true,
-      },
-      where: {
+    return await this.dataSource
+      .createQueryBuilder(Menu, 'Menu')
+      .where('Menu.seqNo = :seqNo', {
         seqNo,
-      },
-    }).then((r) => r?.menuRoleMaps.map((o) => o.role));
+      })
+      .getMany();
   }
 
-  @ResolveField(() => Icon)
-  icon(@Parent() { seqNo }: Menu): Promise<Menu['icon']> {
-    return this.menuService
-      .getMenuRepository()
-      .findOne({
-        select: ['icon'],
-        relations: {
-          icon: true,
+  @ResolveField(() => [Role], {
+    defaultValue: [],
+  })
+  async roles(@Parent() { seqNo }: Menu): Promise<Array<Role>> {
+    return await this.dataSource
+      .createQueryBuilder<Role>(Role, 'role')
+      .innerJoin(
+        'role.menuRoleMaps',
+        'menuRoleMaps',
+        'menuRoleMaps.menuSeqNo = :menuSeqNo',
+        {
+          menuSeqNo: seqNo,
         },
-        where: {
-          seqNo,
-        },
+      )
+      .getMany();
+  }
+
+  @ResolveField(() => Icon, {
+    nullable: true,
+  })
+  icon(@Parent() { iconSeqNo }: Menu): Promise<Icon | null> {
+    if (!isNil(iconSeqNo)) {
+      return this.dataSource
+        .createQueryBuilder<Icon>(Icon, 'icon')
+        .where('icon.seqNo = :iconSeqNo', {
+          iconSeqNo,
+        })
+        .getOne();
+    }
+    return null;
+  }
+
+  @ResolveField(() => [Menu], {
+    defaultValue: [],
+  })
+  async children(
+    @Parent() { seqNo }: Menu,
+    @CurrentUser() { roleSeqNo }: AfterAT,
+  ) {
+    return this.dataSource
+      .createQueryBuilder<Menu>(Menu, 'm')
+      .innerJoin('m.menuRoleMaps', 'mr')
+      .innerJoin('mr.children', 'mrp')
+      .where(`mr.roleSeqNo = :roleSeqNo`, {
+        roleSeqNo,
       })
-      .then((r) => r?.icon);
+      .andWhere(
+        (qr) =>
+          `mrp.parentMenuRoleMapSeqNo IN (${qr
+            .createQueryBuilder()
+            .select(`mrm.seqNo`)
+            .from(MenuRoleMap, `mrm`)
+            .where(`mrm.menuSeqNo = ${seqNo}`)
+            .getQuery()})`,
+      )
+
+      .getMany();
+    return await MenuRoleMap.find({
+      select: ['menu'],
+      relations: ['menu'],
+      where: {
+        parents: {
+          parentMenuRoleMapSeqNo: seqNo,
+        },
+        roleSeqNo,
+      },
+    }).then((r) => r?.map((o) => o.menu));
   }
 }

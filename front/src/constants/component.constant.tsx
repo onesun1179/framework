@@ -1,8 +1,8 @@
-import Home from "@src/routes/Home";
-import { FC } from "react";
+import { FC, lazy } from "react";
 
 export const All_FRONT_COMPONENT: {
 	[C: string]: FC;
 } = {
-	Home,
+	Home: lazy(() => import("@src/routes/Home")),
+	MenuManagement: lazy(() => import("@src/routes/admin/MenuManagement")),
 };

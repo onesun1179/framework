@@ -15,12 +15,16 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
 import { CurrentUser } from '@common/docorator/CurrentUser';
 import { AfterAT } from '../../../auth/interfaces/AfterAT';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => AllFrontComponent)
 export class AllFrontComponentResolver {
-  constructor(private readonly frontComponentService: FrontComponentService) {}
+  constructor(
+    private readonly frontComponentService: FrontComponentService,
+    @InjectDataSource() private dataSource: DataSource,
+  ) {}
   private readonly logger = new Logger(AllFrontComponentResolver.name);
 
   /**************************************
@@ -48,23 +52,19 @@ export class AllFrontComponentResolver {
       type: () => String,
     })
     frontComponentId: string,
-    @CurrentUser() user: AfterAT,
+    @CurrentUser() { roleSeqNo }: AfterAT,
   ): Promise<AllFrontComponent> {
-    this.logger.log({
-      ...user,
-    });
-    const a = await RoleFrontComponentMap.findOne({
-      select: ['allFrontComponent'],
-      relations: {
-        allFrontComponent: true,
-      },
-      where: {
-        roleSeqNo: user.roleSeqNo,
+    console.log(22);
+    return this.dataSource
+      .createQueryBuilder<AllFrontComponent>(AllFrontComponent, 'afc')
+      .innerJoin('afc.roleFrontComponentMaps', 'rfc', '')
+      .where(`rfc.roleSeqNo = :roleSeqNo`, {
+        roleSeqNo,
+      })
+      .where('afc.frontComponentId = :frontComponentId', {
         frontComponentId,
-      },
-    }).then((r) => r?.allFrontComponent);
-    console.log(a);
-    return a;
+      })
+      .getOne();
   }
 
   /**************************************

@@ -12,7 +12,7 @@ import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 export class Icon extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: string;
+  seqNo: number;
 
   @Column()
   @Field()

@@ -91,11 +91,19 @@ type Icon {
 type Menu {
   seqNo: Int!
   name: String!
-  children: [Menu!]!
-  parents: [Menu!]!
-  roles: [Role!]!
   iconSeqNo: Int
+  roles: [Role!]!
   icon: Icon
+  children: [Menu!]!
+}
+
+type MenuRoleMap {
+  seqNo: Int!
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+  menu: Menu!
+  role: Role!
+  orderNo: Int!
 }
 
 type Role {
@@ -140,6 +148,7 @@ type Query {
   role(seqNo: Int!): RoleGroup
   roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMap
   message(seqNo: Int!): Message!
+  rootMenus: [Menu!]!
   route(seqNo: Int!): Route!
   rootRoutes: [Route!]!
   messageGroup(code: String!): MessageGroup!

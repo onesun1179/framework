@@ -1,20 +1,37 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from 'typeorm';
 import { Role } from '@modules/role/model/role';
-import { CommonEntity } from '../../../common/entity/common.entity';
+import { CommonEntity } from '@common/entity/common.entity';
 import { Menu } from './menu';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
 
 @Entity()
 @InputType({
   isAbstract: true,
 })
 @ObjectType()
+@Index(['menuSeqNo', 'roleSeqNo'], {
+  unique: true,
+})
 export class MenuRoleMap extends CommonEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  @Field(() => Int)
+  seqNo: number;
+
+  @Column()
   @Field(() => Int)
   menuSeqNo: number;
 
-  @PrimaryColumn()
+  @Column()
   @Field(() => Int)
   roleSeqNo: number;
 
@@ -31,4 +48,22 @@ export class MenuRoleMap extends CommonEntity {
     name: 'role_seq_no',
   })
   role: Role;
+
+  @Field(() => Int)
+  @Column({
+    type: 'int',
+  })
+  orderNo: number;
+
+  @RelationId((o: MenuRoleMap) => o.parents)
+  parentSeqNos: Array<number>;
+
+  @RelationId((o: MenuRoleMap) => o.children)
+  childSeqNos: Array<number>;
+
+  @OneToMany(() => MenuRoleMapTree, (o) => o.parentMenuRoleMap)
+  parents: MenuRoleMapTree[];
+
+  @OneToMany(() => MenuRoleMapTree, (o) => o.childMenuRoleMap)
+  children: MenuRoleMapTree[];
 }

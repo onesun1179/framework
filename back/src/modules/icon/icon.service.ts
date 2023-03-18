@@ -1,17 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Icon } from './model/icon';
 
 @Injectable()
 export class IconService {
-  constructor(
-    @InjectRepository(Icon)
-    private iconRepository: Repository<Icon>,
-  ) {}
+  constructor() {}
   private readonly logger = new Logger(IconService.name);
-
-  getIconRepository() {
-    return this.iconRepository;
-  }
 }

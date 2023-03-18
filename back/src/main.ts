@@ -9,6 +9,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     snapshot: true,
+    cors: true,
   });
 
   const config = new DocumentBuilder()
@@ -23,7 +24,9 @@ async function bootstrap() {
     }),
   );
 
-  app.useStaticAssets(join(__dirname, '..', '..', 'resource'));
+  app.useStaticAssets(join(__dirname, '..', 'resource'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
 
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new GqlAuthGuard(reflector));

@@ -25,10 +25,11 @@ import { DataSource } from 'typeorm';
 import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
-import { chunk } from 'lodash';
+import { LoggingPlugin } from '@common/plugins/LoggingPlugin';
 
-// const initYn = false;
-const initYn = true;
+const initYn = false;
+// const initYn = true;
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -91,18 +92,15 @@ const initYn = true;
 
         return e;
       },
-      cors: {
-        credentials: true,
-        origin: process.env.CLIENT_DOMAIN,
-      },
     }),
     FileModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LoggingPlugin],
 })
 export class AppModule implements OnModuleInit {
   constructor(private dataSource: DataSource) {}
+
   async onModuleInit() {
     if (initYn) {
       let query = `
@@ -122,22 +120,18 @@ export class AppModule implements OnModuleInit {
           VALUES (1, '/', 'home');
 
           INSERT INTO role(seq_no, name, identifier)
-          VALUES (1, '최초가입자', 'guest'), (2, '개발자', null);
+          VALUES (1, '최초가입자', 'guest'),
+                 (2, '개발자', NULL);
 
           INSERT INTO user(id, role_seq_no)
           VALUES ('102494101026679318764', 2);
+          INSERT INTO user(id, role_seq_no)
+          VALUES ('107731247344180282964', 2);
+          
 
           INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
-          VALUES (1, 'home', 'Home'), (2, 'home', 'Home');
-
-          INSERT INTO menu(seq_no, name)
-          VALUES (1, '관리'), (2, '메뉴 관리');
-
-          INSERT INTO menu_tree(child_menu_seq_no, parent_menu_seq_no)
-          VALUES (2, 1);
-
-          INSERT INTO menu_role_map(role_seq_no, menu_seq_no)
-          VALUES (2, 1), (2, 2);
+          VALUES (1, 'home', 'Home'),
+                 (2, 'home', 'Home');
       `;
       let iconGroupNames: Array<{
         seqNo: number;
@@ -180,29 +174,41 @@ export class AppModule implements OnModuleInit {
         });
       }
 
-      query += `INSERT INTO icon_group(seq_no, name) VALUES`;
+      query += `INSERT INTO icon_group(seq_no, name)
+                VALUES`;
 
       iconGroupNames.forEach(({ name, seqNo }, i, array) => {
         query += `(${seqNo}, '${name}')${i + 1 === array.length ? ';' : ','}`;
       });
-      chunk(icons, 500).forEach((_icons) => {
-        query += `INSERT INTO icon(seq_no, name, file_path) VALUES`;
-        _icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
-          query += `(${seqNo}, '${name}', '${filePath}')${
-            i + 1 === array.length ? ';' : ','
-          }`;
-        });
-      });
-      chunk(icons, 500).forEach((_icons) => {
-        query += `INSERT INTO icon_icon_group_map(icon_seq_no, icon_group_seq_no) VALUES`;
-        _icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
-          query += `(${seqNo}, ${groupSeqNo})${
-            i + 1 === array.length ? ';' : ','
-          }`;
-        });
+      query += `INSERT INTO icon(seq_no, name, file_path)
+                VALUES`;
+      icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
+        query += `(${seqNo}, '${name}', '${filePath}')${
+          i + 1 === array.length ? ';' : ','
+        }`;
       });
 
-      console.log(query);
+      query += `INSERT INTO icon_icon_group_map(icon_seq_no, icon_group_seq_no)
+                VALUES`;
+      icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
+        query += `(${seqNo}, ${groupSeqNo})${
+          i + 1 === array.length ? ';' : ','
+        }`;
+      });
+
+      query += `
+          INSERT INTO menu(seq_no, name, icon_seq_no)
+          VALUES (1, '관리', 3),
+                 (2, '메뉴 관리', NULL);
+
+          INSERT INTO menu_role_map(seq_no, role_seq_no, menu_seq_no, order_no)
+          VALUES (1, 2, 1, 1),
+                 (2, 2, 2, 1);
+
+          INSERT INTO menu_role_map_tree(seq_no,child_menu_role_map_seq_no, parent_menu_role_map_seq_no)
+          VALUES (2, 2, 1);
+                  
+      `;
       for await (const q of query.split(';')) {
         q.trim() && (await this.dataSource.query(q));
       }

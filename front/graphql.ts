@@ -189,11 +189,19 @@ export interface Icon {
 export interface Menu {
     seqNo: number;
     name: string;
-    children: Menu[];
-    parents: Menu[];
-    roles: Role[];
     iconSeqNo?: Nullable<number>;
+    roles: Role[];
     icon?: Nullable<Icon>;
+    children: Menu[];
+}
+
+export interface MenuRoleMap {
+    seqNo: number;
+    menuSeqNo: number;
+    roleSeqNo: number;
+    menu: Menu;
+    role: Role;
+    orderNo: number;
 }
 
 export interface Role {
@@ -238,6 +246,7 @@ export interface IQuery {
     role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
     message(seqNo: number): Message | Promise<Message>;
+    rootMenus(): Menu[] | Promise<Menu[]>;
     route(seqNo: number): Route | Promise<Route>;
     rootRoutes(): Route[] | Promise<Route[]>;
     messageGroup(code: string): MessageGroup | Promise<MessageGroup>;

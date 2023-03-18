@@ -1,11 +1,11 @@
-import React, { FC } from "react";
+import React, { FC, PropsWithChildren } from "react";
 import { Breadcrumb, Layout } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useWebStatusStore } from "@src/stores/webStatus.store";
 import SiderMenu from "@src/component/layout/menu/SiderMenu";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 
-const FullLayout: FC = () => {
+const FullLayout: FC<PropsWithChildren> = ({ children }) => {
 	const { menu } = useWebStatusStore();
 	return (
 		<Layout style={{ minHeight: "100vh" }}>
@@ -30,14 +30,7 @@ const FullLayout: FC = () => {
 						<Breadcrumb.Item>User</Breadcrumb.Item>
 						<Breadcrumb.Item>Bill</Breadcrumb.Item>
 					</Breadcrumb>
-					<div
-						style={{
-							padding: 24,
-							minHeight: 360,
-						}}
-					>
-						Bill is a cat.
-					</div>
+					{children}
 				</Content>
 				<Footer style={{ textAlign: "center" }}>
 					Ant Design ©2023 Created by Ant UED

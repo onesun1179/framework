@@ -6,7 +6,6 @@ import { User } from '@modules/user/models/user';
 export const CurrentUser = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
-    console.log('tttt', ctx.getContext().req.user);
     const { userId } = ctx.getContext().req.user as AccessToken;
 
     const { roleSeqNo } = await User.findOne({
