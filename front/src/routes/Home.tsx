@@ -1,13 +1,8 @@
-import { FC } from "react";
-import { Link } from "react-router-dom";
+import React, { FC, PropsWithChildren } from "react";
+import FullLayout from "@src/component/layout/FullLayout";
 
-const Home: FC = () => {
-	return (
-		<>
-			{"Home"}
-			<Link to={"/login"}>{"test"}</Link>
-		</>
-	);
+const Home: FC<PropsWithChildren> = ({ children }) => {
+	return <FullLayout>{children}</FullLayout>;
 };
 
 export default Home;

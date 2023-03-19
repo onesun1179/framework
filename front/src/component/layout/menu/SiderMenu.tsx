@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from "react";
 import { Menu, MenuProps } from "antd";
 import { gql, useQuery } from "@apollo/client";
-import { Icon as IconType, Menu as MenuType } from "@gqlType";
+import { Icon as IconType, Menu as MenuType, Route } from "@gqlType";
 import SvgPathToIcon from "@src/component/common/SvgPathToIcon";
 
 function getItem(menuItem: MenuItemType): Required<MenuProps>["items"][number] {
@@ -15,6 +15,7 @@ function getItem(menuItem: MenuItemType): Required<MenuProps>["items"][number] {
 				? menuItem.children.map((_menuItem) => getItem(_menuItem))
 				: undefined,
 		label: menuItem.name,
+		onClick() {},
 	};
 }
 
@@ -31,11 +32,17 @@ const QUERY = gql`
 			icon {
 				filePath
 			}
+			route {
+				path
+			}
 			children {
 				seqNo
 				name
 				icon {
 					filePath
+				}
+				route {
+					path
 				}
 				children {
 					seqNo
@@ -43,11 +50,17 @@ const QUERY = gql`
 					icon {
 						filePath
 					}
+					route {
+						path
+					}
 					children {
 						seqNo
 						name
 						icon {
 							filePath
+						}
+						route {
+							path
 						}
 						children {
 							seqNo
@@ -55,11 +68,17 @@ const QUERY = gql`
 							icon {
 								filePath
 							}
+							route {
+								path
+							}
 							children {
 								seqNo
 								name
 								icon {
 									filePath
+								}
+								route {
+									path
 								}
 							}
 						}
@@ -72,6 +91,7 @@ const QUERY = gql`
 
 type RootMenu = Pick<MenuType, "seqNo" | "name"> & {
 	icon: Pick<IconType, "filePath">;
+	route: Pick<Route, "path">;
 	children: Array<RootMenu>;
 };
 

@@ -65,7 +65,7 @@ const initYn = false;
       autoLoadEntities: true,
       dropSchema: initYn,
       synchronize: initYn,
-      logging: true,
+      // logging: true,
     }),
     AuthModule,
     RoleModule,
@@ -105,33 +105,47 @@ export class AppModule implements OnModuleInit {
     if (initYn) {
       let query = `
           INSERT INTO all_front_component(id)
-          VALUES ('Home');
+          VALUES ('Home')
+               , ('MenuManagement');
 
           INSERT INTO front_component_type(seq_no, name)
           VALUES (1, 'route');
           INSERT INTO front_component(id, front_component_type_seq_no, initial_front_component_id)
           VALUES ('home', 1, 'Home');
+          INSERT INTO front_component(id, front_component_type_seq_no, initial_front_component_id)
+          VALUES ('menuManage', 1, 'MenuManagement');
 
           UPDATE all_front_component
              SET front_component_id = 'home'
            WHERE id = 'Home';
 
+          UPDATE all_front_component
+             SET front_component_id = 'menuManage'
+           WHERE id = 'MenuManagement';
+
           INSERT INTO route(seq_no, path, front_component_id)
           VALUES (1, '/', 'home');
+          INSERT INTO route(seq_no, path, front_component_id, parent_seq_no)
+          VALUES (2, 'framework', NULL, 1);
+          INSERT INTO route(seq_no, path, front_component_id, parent_seq_no)
+          VALUES (3, 'menu', 'menuManage', 2);
 
           INSERT INTO role(seq_no, name, identifier)
-          VALUES (1, '최초가입자', 'guest'),
-                 (2, '개발자', NULL);
+          VALUES (1, '최초가입자', 'guest')
+               , (2, '개발자', NULL);
+
+          INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
+          VALUES (1, 'home', 'Home')
+               , (2, 'home', 'Home')
+               , (2, 'menuManage', 'MenuManagement');
 
           INSERT INTO user(id, role_seq_no)
           VALUES ('102494101026679318764', 2);
           INSERT INTO user(id, role_seq_no)
           VALUES ('107731247344180282964', 2);
-          
 
-          INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
-          VALUES (1, 'home', 'Home'),
-                 (2, 'home', 'Home');
+
+
       `;
       let iconGroupNames: Array<{
         seqNo: number;
@@ -197,9 +211,9 @@ export class AppModule implements OnModuleInit {
       });
 
       query += `
-          INSERT INTO menu(seq_no, name, icon_seq_no)
-          VALUES (1, '관리', 3),
-                 (2, '메뉴 관리', NULL);
+          INSERT INTO menu(seq_no, name, icon_seq_no, route_seq_no)
+          VALUES (1, '관리', 3, 2),
+                 (2, '메뉴 관리', 67, 3);
 
           INSERT INTO menu_role_map(seq_no, role_seq_no, menu_seq_no, order_no)
           VALUES (1, 2, 1, 1),

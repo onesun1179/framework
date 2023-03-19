@@ -14,7 +14,6 @@ import { FrontComponent } from '@modules/front-component/model/front-component';
 import { Role } from '@modules/role/model/role';
 import { InsertRouteRequest } from '../models/request/insert-route.request';
 import { UpdateRouteRequest } from '@modules/route/models/request/update-route.request';
-import { RouteRouteMap } from '@modules/route/models/route-route-map';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -65,30 +64,19 @@ export class RouteResolver {
   async children(@Parent() { seqNo }: Route): Promise<Route[]> {
     return await this.dataSource
       .createQueryBuilder<Route>(Route, 'route')
-      .innerJoin(
-        'route.parentRouteRouteMaps',
-        'parentRouteRouteMaps',
-        'parentRouteRouteMaps.parentSeqNo = :seqNo',
-        {
-          seqNo,
-        },
-      )
+      .where('route.parentSeqNo = :seqNo', {
+        seqNo,
+      })
       .getMany();
   }
 
-  @ResolveField(() => [Route], {
-    defaultValue: [],
-  })
-  async parents(@Parent() { seqNo }: Route): Promise<Route[]> {
-    return await RouteRouteMap.find({
-      relations: {
-        parentRoute: true,
-      },
-      select: ['parentRoute'],
+  @ResolveField(() => Route)
+  async parent(@Parent() { parentSeqNo }: Route): Promise<Route> {
+    return await Route.findOne({
       where: {
-        childSeqNo: seqNo,
+        seqNo: parentSeqNo,
       },
-    }).then((r) => r?.map((o) => o.parentRoute));
+    });
   }
 
   @ResolveField(() => [Role])
@@ -103,6 +91,9 @@ export class RouteResolver {
       },
     }).then((r) => r?.roleRouteMaps.map((o) => o.role));
   }
+
+  // @ResolveField(() => String)
+  // async fullPath(@Parent() { seqNo }: Route): Promise<string> {}
 
   /**************************************
    *           MUTATION

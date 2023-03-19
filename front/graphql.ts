@@ -27,17 +27,17 @@ export interface SaveRoleGroupRequest {
 export interface InsertRouteRequest {
     path: string;
     frontComponentId?: Nullable<string>;
+    parentSeqNo?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
-    parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateRouteRequest {
     seqNo: number;
+    parentSeqNo?: Nullable<number>;
     path?: Nullable<string>;
     frontComponentId?: Nullable<string>;
     childSeqNos?: Nullable<number[]>;
-    parentSeqNos?: Nullable<number[]>;
     roleSeqNos?: Nullable<number[]>;
 }
 
@@ -155,14 +155,13 @@ export interface FrontComponent {
     routes: Route[];
 }
 
-export interface Route {
+export interface MenuRoleMap {
     seqNo: number;
-    path: string;
-    frontComponentId?: Nullable<string>;
-    frontComponent?: Nullable<FrontComponent>;
-    children: Route[];
-    parents: Route[];
-    roles: Role[];
+    menuSeqNo: number;
+    roleSeqNo: number;
+    menu: Menu;
+    role: Role;
+    orderNo: number;
 }
 
 export interface IconGroupTree {
@@ -193,15 +192,18 @@ export interface Menu {
     roles: Role[];
     icon?: Nullable<Icon>;
     children: Menu[];
+    route?: Nullable<Route>;
 }
 
-export interface MenuRoleMap {
+export interface Route {
     seqNo: number;
-    menuSeqNo: number;
-    roleSeqNo: number;
-    menu: Menu;
-    role: Role;
-    orderNo: number;
+    path: string;
+    frontComponentId?: Nullable<string>;
+    parentSeqNo?: Nullable<number>;
+    frontComponent?: Nullable<FrontComponent>;
+    children: Route[];
+    parent: Route;
+    roles: Role[];
 }
 
 export interface Role {

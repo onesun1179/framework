@@ -10,15 +10,11 @@ import {
 	HttpLink,
 	InMemoryCache,
 } from "@apollo/client";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { FrontComponent, Route as GqlRoute } from "@gqlType";
-import {
-	IndexRouteObject,
-	NonIndexRouteObject,
-} from "react-router/dist/lib/context";
+import { NonIndexRouteObject } from "react-router/dist/lib/context";
 import { onErrorLink } from "./graphql/errorHandling";
 import FrontC from "./component/common/FrontC";
-import App from "@src/App";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -51,6 +47,48 @@ const ROUTES_QUERY = gql`
 					frontComponent {
 						id
 					}
+					children {
+						seqNo
+						path
+						frontComponent {
+							id
+						}
+						children {
+							seqNo
+							path
+							frontComponent {
+								id
+							}
+							children {
+								seqNo
+								path
+								frontComponent {
+									id
+								}
+								children {
+									seqNo
+									path
+									frontComponent {
+										id
+									}
+									children {
+										seqNo
+										path
+										frontComponent {
+											id
+										}
+										children {
+											seqNo
+											path
+											frontComponent {
+												id
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -58,7 +96,7 @@ const ROUTES_QUERY = gql`
 `;
 
 type RouteType = Pick<GqlRoute, "seqNo" | "path"> & {
-	frontComponent: Pick<FrontComponent, "id">;
+	frontComponent?: Pick<FrontComponent, "id">;
 	children: Array<RouteType>;
 };
 
@@ -68,24 +106,20 @@ const { data } = await client.query<{
 	query: ROUTES_QUERY,
 });
 
-console.log(data);
-function makeRouteObject(routeType: RouteType): IndexRouteObject;
-function makeRouteObject(routeType: RouteType): NonIndexRouteObject;
-function makeRouteObject(
-	routeType: RouteType
-): IndexRouteObject | NonIndexRouteObject {
+function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 	return {
 		path: routeType.path,
-		element: <FrontC frontComponentId={routeType.frontComponent.id} />,
+		element: <FrontC frontComponentId={routeType.frontComponent?.id} />,
 		children: routeType.children.map((o) => makeRouteObject(o)),
 	};
 }
 const router = createBrowserRouter(
 	data.rootRoutes.map((o) => makeRouteObject(o))
 );
+console.log(data);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={client}>
-		<App router={router} />
+		<RouterProvider router={router} />
 	</ApolloProvider>
 );

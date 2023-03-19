@@ -57,14 +57,13 @@ type FrontComponent {
   routes: [Route!]!
 }
 
-type Route {
+type MenuRoleMap {
   seqNo: Int!
-  path: String!
-  frontComponentId: String
-  frontComponent: FrontComponent
-  children: [Route!]!
-  parents: [Route!]!
-  roles: [Role!]!
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+  menu: Menu!
+  role: Role!
+  orderNo: Int!
 }
 
 type IconGroupTree {
@@ -95,15 +94,18 @@ type Menu {
   roles: [Role!]!
   icon: Icon
   children: [Menu!]!
+  route: Route
 }
 
-type MenuRoleMap {
+type Route {
   seqNo: Int!
-  menuSeqNo: Int!
-  roleSeqNo: Int!
-  menu: Menu!
-  role: Role!
-  orderNo: Int!
+  path: String!
+  frontComponentId: String
+  parentSeqNo: Int
+  frontComponent: FrontComponent
+  children: [Route!]!
+  parent: Route!
+  roles: [Role!]!
 }
 
 type Role {
@@ -197,17 +199,17 @@ input SaveRoleGroupRequest {
 input InsertRouteRequest {
   path: String!
   frontComponentId: String
+  parentSeqNo: Int
   childSeqNos: [Int!]
-  parentSeqNos: [Int!]
   roleSeqNos: [Int!]
 }
 
 input UpdateRouteRequest {
   seqNo: Int!
+  parentSeqNo: Int
   path: String
   frontComponentId: String
   childSeqNos: [Int!]
-  parentSeqNos: [Int!]
   roleSeqNos: [Int!]
 }
 

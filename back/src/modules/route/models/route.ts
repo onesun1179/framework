@@ -9,9 +9,8 @@ import {
 import { CommonEntity } from '../../../common/entity/common.entity';
 import { FrontComponent } from '@modules/front-component/model/front-component';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { Role } from '@modules/role/model/role';
-import { RouteRouteMap } from '@modules/route/models/route-route-map';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
+import { Menu } from '@modules/menu/model/menu';
 
 @Entity()
 @InputType({
@@ -43,22 +42,30 @@ export class Route extends CommonEntity {
   })
   frontComponent?: FrontComponent;
 
-  @OneToMany(() => RouteRouteMap, (o) => o.childRoute, {
+  @OneToMany(() => Route, (o) => o.parent, {
     nullable: true,
   })
-  childRouteRouteMaps: RouteRouteMap[];
-
   children: Route[];
 
-  @OneToMany(() => RouteRouteMap, (o) => o.parentRoute, {
+  @ManyToOne(() => Route, (o) => o.children, {
     nullable: true,
   })
-  parentRouteRouteMaps: RouteRouteMap[];
+  @JoinColumn({
+    name: 'parent_seq_no',
+  })
+  parent?: Route;
 
-  parents: Route[];
+  @Column({
+    nullable: true,
+  })
+  @Field(() => Int, {
+    nullable: true,
+  })
+  parentSeqNo: number;
 
   @OneToMany(() => RoleRouteMap, (o) => o.route)
   roleRouteMaps: RoleRouteMap[];
 
-  roles: Role[];
+  @OneToMany(() => Menu, (o) => o.route)
+  menus: Array<Menu>;
 }

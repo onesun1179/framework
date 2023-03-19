@@ -54,7 +54,6 @@ export class AllFrontComponentResolver {
     frontComponentId: string,
     @CurrentUser() { roleSeqNo }: AfterAT,
   ): Promise<AllFrontComponent> {
-    console.log(22);
     return this.dataSource
       .createQueryBuilder<AllFrontComponent>(AllFrontComponent, 'afc')
       .innerJoin('afc.roleFrontComponentMaps', 'rfc', '')

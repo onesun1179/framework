@@ -10,18 +10,13 @@ import { Route } from '../route';
 
 @InputType()
 export class UpdateRouteRequest extends IntersectionType(
-  PickType(Route, ['seqNo']),
+  PickType(Route, ['seqNo', 'parentSeqNo']),
   PartialType(PickType(Route, ['path', 'frontComponentId'])),
 ) {
   @Field(() => [Int], {
     nullable: true,
   })
   childSeqNos?: number[];
-
-  @Field(() => [Int], {
-    nullable: true,
-  })
-  parentSeqNos?: number[];
 
   @Field(() => [Int], {
     nullable: true,

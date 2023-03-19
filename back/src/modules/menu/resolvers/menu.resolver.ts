@@ -18,6 +18,7 @@ import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { isNil } from 'lodash';
+import { Route } from '@modules/route/models/route';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => Menu)
@@ -100,15 +101,23 @@ export class MenuResolver {
       )
 
       .getMany();
-    return await MenuRoleMap.find({
-      select: ['menu'],
-      relations: ['menu'],
-      where: {
-        parents: {
-          parentMenuRoleMapSeqNo: seqNo,
-        },
-        roleSeqNo,
-      },
-    }).then((r) => r?.map((o) => o.menu));
+  }
+
+  @ResolveField(() => Route, {
+    nullable: true,
+  })
+  async route(
+    @Parent() { routeSeqNo }: Menu,
+    @CurrentUser() { roleSeqNo }: AfterAT,
+  ): Promise<Route | null> {
+    console.log(routeSeqNo);
+    return await this.dataSource
+      .createQueryBuilder(Route, 'r')
+
+      .where(`r.seqNo = :routeSeqNo`, {
+        routeSeqNo,
+      })
+
+      .getOne();
   }
 }
