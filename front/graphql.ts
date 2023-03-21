@@ -204,6 +204,7 @@ export interface Route {
     children: Route[];
     parent: Route;
     roles: Role[];
+    routeTree: RouteTree;
 }
 
 export interface Role {
@@ -222,6 +223,11 @@ export interface User {
     id: string;
     roleSeqNo: number;
     role: Role;
+}
+
+export interface RouteTree {
+    fullPath: string;
+    depth: number;
 }
 
 export interface MessageGroup {
@@ -250,7 +256,7 @@ export interface IQuery {
     message(seqNo: number): Message | Promise<Message>;
     rootMenus(): Menu[] | Promise<Menu[]>;
     route(seqNo: number): Route | Promise<Route>;
-    rootRoutes(): Route[] | Promise<Route[]>;
+    routes(rootYn: boolean): Route[] | Promise<Route[]>;
     messageGroup(code: string): MessageGroup | Promise<MessageGroup>;
     appMetaData(name: string): AppMetadata | Promise<AppMetadata>;
     frontComponent(id: string): Nullable<FrontComponent> | Promise<Nullable<FrontComponent>>;

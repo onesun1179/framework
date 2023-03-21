@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
 import { Route } from '../models/route';
 import { DataSource } from 'typeorm';
@@ -13,11 +13,29 @@ export class RoutesResolver {
     private routeService: RouteService,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => [Route])
-  async rootRoutes() {
-    return await this.dataSource
-      .createQueryBuilder<Route>(Route, 'route')
-      .where(`route.parentSeqNo is null`)
-      .getMany();
+  async routes(
+    @Args('rootYn', {
+      type: () => Boolean,
+      defaultValue: false,
+    })
+    rootYn = false,
+  ) {
+    if (rootYn) {
+      return await this.dataSource
+        .createQueryBuilder<Route>(Route, 'route')
+        .where(`route.parentSeqNo is null`)
+        .getMany();
+    } else {
+      return await this.dataSource
+        .createQueryBuilder<Route>(Route, 'route')
+        .getMany();
+    }
   }
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
 }

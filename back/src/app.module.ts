@@ -26,10 +26,24 @@ import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
 import { LoggingPlugin } from '@common/plugins/LoggingPlugin';
+import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
+import { FrontComponentType } from '@modules/front-component/model/front-component-type';
+import { FrontComponent } from '@modules/front-component/model/front-component';
+import { Role } from '@modules/role/model/role';
+import { Route } from '@modules/route/models/route';
+import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
+import { User } from '@modules/user/models/user';
+import { Builder } from 'builder-pattern';
+import { IconGroup } from '@modules/icon/model/icon-group';
+import { Icon } from '@modules/icon/model/icon';
+import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
+import { Menu } from '@modules/menu/model/menu';
+import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
+import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
 
 const initYn = false;
 // const initYn = true;
-
+//
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -65,7 +79,7 @@ const initYn = false;
       autoLoadEntities: true,
       dropSchema: initYn,
       synchronize: initYn,
-      // logging: true,
+      logging: true,
     }),
     AuthModule,
     RoleModule,
@@ -103,50 +117,6 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     if (initYn) {
-      let query = `
-          INSERT INTO all_front_component(id)
-          VALUES ('Home')
-               , ('MenuManagement');
-
-          INSERT INTO front_component_type(seq_no, name)
-          VALUES (1, 'route');
-          INSERT INTO front_component(id, front_component_type_seq_no, initial_front_component_id)
-          VALUES ('home', 1, 'Home');
-          INSERT INTO front_component(id, front_component_type_seq_no, initial_front_component_id)
-          VALUES ('menuManage', 1, 'MenuManagement');
-
-          UPDATE all_front_component
-             SET front_component_id = 'home'
-           WHERE id = 'Home';
-
-          UPDATE all_front_component
-             SET front_component_id = 'menuManage'
-           WHERE id = 'MenuManagement';
-
-          INSERT INTO route(seq_no, path, front_component_id)
-          VALUES (1, '/', 'home');
-          INSERT INTO route(seq_no, path, front_component_id, parent_seq_no)
-          VALUES (2, 'framework', NULL, 1);
-          INSERT INTO route(seq_no, path, front_component_id, parent_seq_no)
-          VALUES (3, 'menu', 'menuManage', 2);
-
-          INSERT INTO role(seq_no, name, identifier)
-          VALUES (1, '최초가입자', 'guest')
-               , (2, '개발자', NULL);
-
-          INSERT INTO role_front_component_map(role_seq_no, front_component_id, all_front_component_id)
-          VALUES (1, 'home', 'Home')
-               , (2, 'home', 'Home')
-               , (2, 'menuManage', 'MenuManagement');
-
-          INSERT INTO user(id, role_seq_no)
-          VALUES ('102494101026679318764', 2);
-          INSERT INTO user(id, role_seq_no)
-          VALUES ('107731247344180282964', 2);
-
-
-
-      `;
       let iconGroupNames: Array<{
         seqNo: number;
         name: string;
@@ -188,44 +158,163 @@ export class AppModule implements OnModuleInit {
         });
       }
 
-      query += `INSERT INTO icon_group(seq_no, name)
-                VALUES`;
+      await this.dataSource.transaction(async (entityManager) => {
+        await entityManager.save(
+          iconGroupNames.map((o) =>
+            IconGroup.create({
+              name: o.name,
+              seqNo: o.seqNo,
+            }),
+          ),
+        );
 
-      iconGroupNames.forEach(({ name, seqNo }, i, array) => {
-        query += `(${seqNo}, '${name}')${i + 1 === array.length ? ';' : ','}`;
+        await entityManager.save(
+          icons.map((o) =>
+            Icon.create({
+              name: o.name,
+              filePath: o.filePath,
+              seqNo: o.seqNo,
+            }),
+          ),
+        );
+
+        await entityManager.save(
+          icons.map((o) =>
+            IconIconGroupMap.create({
+              iconSeqNo: o.seqNo,
+              iconGroupSeqNo: o.groupSeqNo,
+            }),
+          ),
+        );
+
+        const [homeAFC, menuManagementAFC, guest, developer] =
+          await entityManager.save([
+            AllFrontComponent.create({
+              id: 'Home',
+            }),
+            AllFrontComponent.create({
+              id: 'MenuManagement',
+            }),
+            Role.create({
+              name: '최초 가입자',
+              identifier: 'guest',
+            }),
+            Role.create({
+              name: '개발자',
+            }),
+          ]);
+        const routeFCT = await entityManager.save(
+          FrontComponentType.create({
+            name: 'route',
+          }),
+        );
+
+        const [homeFC, menuManageFC] = await entityManager.save([
+          FrontComponent.create({
+            frontComponentType: routeFCT,
+            id: 'home',
+            initialFrontComponent: homeAFC,
+          }),
+          FrontComponent.create({
+            frontComponentType: routeFCT,
+            id: 'menuManage',
+            initialFrontComponent: menuManagementAFC,
+          }),
+        ]);
+
+        await entityManager.save([
+          Builder(AllFrontComponent, {
+            ...homeAFC,
+            frontComponent: homeFC,
+          }).build(),
+          Builder(AllFrontComponent, {
+            ...menuManagementAFC,
+            frontComponent: menuManageFC,
+          }).build(),
+        ]);
+
+        const homeRoute = await entityManager.save(
+          Route.create({
+            path: '/',
+            frontComponent: homeFC,
+          }),
+        );
+
+        const frameworkRoute = await entityManager.save(
+          Route.create({
+            path: 'framework',
+            parent: homeRoute,
+          }),
+        );
+
+        const menuManageRoute = await entityManager.save(
+          Route.create({
+            path: 'menu',
+            frontComponent: menuManageFC,
+            parent: frameworkRoute,
+          }),
+        );
+
+        await entityManager.save([
+          RoleFrontComponentMap.create({
+            role: guest,
+            frontComponent: homeFC,
+            allFrontComponent: homeAFC,
+          }),
+          RoleFrontComponentMap.create({
+            role: developer,
+            frontComponent: homeFC,
+            allFrontComponent: homeAFC,
+          }),
+          RoleFrontComponentMap.create({
+            role: developer,
+            frontComponent: menuManageFC,
+            allFrontComponent: menuManagementAFC,
+          }),
+        ]);
+
+        await entityManager.save([
+          User.create({
+            id: '102494101026679318764',
+            role: developer,
+          }),
+          User.create({
+            id: '107731247344180282964',
+            role: developer,
+          }),
+        ]);
+
+        const [manageMenu, menuManageMenu] = await entityManager.save([
+          Menu.create({
+            name: '관리',
+            route: frameworkRoute,
+          }),
+          Menu.create({
+            name: '메뉴 관리',
+            route: menuManageRoute,
+          }),
+        ]);
+
+        const [manageMenuMRM, menuManageMenuMRM] = await entityManager.save([
+          MenuRoleMap.create({
+            role: developer,
+            menu: manageMenu,
+            orderNo: 1,
+          }),
+          MenuRoleMap.create({
+            role: developer,
+            menu: menuManageMenu,
+            orderNo: 1,
+          }),
+        ]);
+
+        await entityManager.save(
+          MenuRoleMapTree.create({
+            parentMenuRoleMap: manageMenuMRM,
+            childMenuRoleMap: menuManageMenuMRM,
+          }),
+        );
       });
-      query += `INSERT INTO icon(seq_no, name, file_path)
-                VALUES`;
-      icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
-        query += `(${seqNo}, '${name}', '${filePath}')${
-          i + 1 === array.length ? ';' : ','
-        }`;
-      });
-
-      query += `INSERT INTO icon_icon_group_map(icon_seq_no, icon_group_seq_no)
-                VALUES`;
-      icons.forEach(({ name, seqNo, groupSeqNo, filePath }, i, array) => {
-        query += `(${seqNo}, ${groupSeqNo})${
-          i + 1 === array.length ? ';' : ','
-        }`;
-      });
-
-      query += `
-          INSERT INTO menu(seq_no, name, icon_seq_no, route_seq_no)
-          VALUES (1, '관리', 3, 2),
-                 (2, '메뉴 관리', 67, 3);
-
-          INSERT INTO menu_role_map(seq_no, role_seq_no, menu_seq_no, order_no)
-          VALUES (1, 2, 1, 1),
-                 (2, 2, 2, 1);
-
-          INSERT INTO menu_role_map_tree(seq_no,child_menu_role_map_seq_no, parent_menu_role_map_seq_no)
-          VALUES (2, 2, 1);
-                  
-      `;
-      for await (const q of query.split(';')) {
-        q.trim() && (await this.dataSource.query(q));
-      }
     }
     shell.exec('npm run gql.cp');
   }

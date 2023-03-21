@@ -16,6 +16,7 @@ import { InsertRouteRequest } from '../models/request/insert-route.request';
 import { UpdateRouteRequest } from '@modules/route/models/request/update-route.request';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { RouteTree } from '@modules/route/models/route-tree';
 
 @Resolver(() => Route)
 export class RouteResolver {
@@ -92,8 +93,37 @@ export class RouteResolver {
     }).then((r) => r?.roleRouteMaps.map((o) => o.role));
   }
 
-  // @ResolveField(() => String)
-  // async fullPath(@Parent() { seqNo }: Route): Promise<string> {}
+  @ResolveField(() => RouteTree)
+  async routeTree(@Parent() { seqNo }: Route): Promise<RouteTree> {
+    return await this.dataSource
+      .query(
+        `
+          WITH RECURSIVE FullPath (full_path, seq_no, parent_seq_no, depth)
+                             AS (
+                                SELECT path AS full_path, seq_no, parent_seq_no, 0 AS depth
+                                  FROM route
+                                 WHERE parent_seq_no IS NULL
+
+                                 UNION ALL
+
+                                SELECT CONCAT(f.full_path,
+                                              IF(ISNULL(f.parent_seq_no) OR INSTR(r.path, '/') = 1, '', '/'),
+                                              r.path) AS full_path
+                                     , r.seq_no
+                                     , r.parent_seq_no
+                                     , depth + 1      AS depth
+                                  FROM FullPath f
+                                     , route r
+                                 WHERE r.parent_seq_no = f.seq_no )
+        SELECT full_path as fullPath
+             , depth
+          FROM FullPath
+         WHERE seq_no = ${seqNo}
+         LIMIT 1
+    `,
+      )
+      .then((r) => r[0]);
+  }
 
   /**************************************
    *           MUTATION

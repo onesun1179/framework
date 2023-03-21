@@ -29,7 +29,7 @@ const client = new ApolloClient({
 
 const ROUTES_QUERY = gql`
 	query {
-		rootRoutes {
+		routes(rootYn: true) {
 			seqNo
 			path
 			frontComponent {
@@ -101,22 +101,23 @@ type RouteType = Pick<GqlRoute, "seqNo" | "path"> & {
 };
 
 const { data } = await client.query<{
-	rootRoutes: Array<RouteType>;
+	routes: Array<RouteType>;
 }>({
 	query: ROUTES_QUERY,
 });
 
+console.log(data);
 function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 	return {
 		path: routeType.path,
 		element: <FrontC frontComponentId={routeType.frontComponent?.id} />,
+		handle: {
+			// crumb : () =>
+		},
 		children: routeType.children.map((o) => makeRouteObject(o)),
 	};
 }
-const router = createBrowserRouter(
-	data.rootRoutes.map((o) => makeRouteObject(o))
-);
-console.log(data);
+const router = createBrowserRouter(data.routes.map((o) => makeRouteObject(o)));
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={client}>
