@@ -14,7 +14,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { FrontComponent, Route as GqlRoute } from "@gqlType";
 import { NonIndexRouteObject } from "react-router/dist/lib/context";
 import { onErrorLink } from "./graphql/errorHandling";
-import FrontC from "./component/common/FrontC";
+import FrontCRoute from "@src/component/common/FrontCRoute";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -106,13 +106,12 @@ const { data } = await client.query<{
 	query: ROUTES_QUERY,
 });
 
-console.log(data);
 function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 	return {
 		path: routeType.path,
-		element: <FrontC frontComponentId={routeType.frontComponent?.id} />,
+		element: <FrontCRoute frontComponentId={routeType.frontComponent?.id} />,
 		handle: {
-			// crumb : () =>
+			frontComponentId: routeType.frontComponent?.id,
 		},
 		children: routeType.children.map((o) => makeRouteObject(o)),
 	};

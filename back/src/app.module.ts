@@ -187,40 +187,54 @@ export class AppModule implements OnModuleInit {
           ),
         );
 
-        const [homeAFC, menuManagementAFC, guest, developer] =
-          await entityManager.save([
-            AllFrontComponent.create({
-              id: 'Home',
-            }),
-            AllFrontComponent.create({
-              id: 'MenuManagement',
-            }),
-            Role.create({
-              name: '최초 가입자',
-              identifier: 'guest',
-            }),
-            Role.create({
-              name: '개발자',
-            }),
-          ]);
+        const [
+          homeAFC,
+          menuManagementAFC,
+          frameworkMenuManagementAFC,
+          guest,
+          developer,
+        ] = await entityManager.save([
+          AllFrontComponent.create({
+            id: 'Home',
+          }),
+          AllFrontComponent.create({
+            id: 'MenuManagement',
+          }),
+          AllFrontComponent.create({
+            id: 'FrameworkMenuManagement',
+          }),
+          Role.create({
+            name: '최초 가입자',
+            identifier: 'guest',
+          }),
+          Role.create({
+            name: '개발자',
+          }),
+        ]);
         const routeFCT = await entityManager.save(
           FrontComponentType.create({
             name: 'route',
           }),
         );
 
-        const [homeFC, menuManageFC] = await entityManager.save([
-          FrontComponent.create({
-            frontComponentType: routeFCT,
-            id: 'home',
-            initialFrontComponent: homeAFC,
-          }),
-          FrontComponent.create({
-            frontComponentType: routeFCT,
-            id: 'menuManage',
-            initialFrontComponent: menuManagementAFC,
-          }),
-        ]);
+        const [homeFC, menuManageFC, frameworkMenuManagementFC] =
+          await entityManager.save([
+            FrontComponent.create({
+              frontComponentType: routeFCT,
+              id: 'home',
+              initialFrontComponent: homeAFC,
+            }),
+            FrontComponent.create({
+              frontComponentType: routeFCT,
+              id: 'menuManage',
+              initialFrontComponent: menuManagementAFC,
+            }),
+            FrontComponent.create({
+              frontComponentType: routeFCT,
+              id: 'frameworkMenuManagement',
+              initialFrontComponent: frameworkMenuManagementAFC,
+            }),
+          ]);
 
         await entityManager.save([
           Builder(AllFrontComponent, {
@@ -231,12 +245,31 @@ export class AppModule implements OnModuleInit {
             ...menuManagementAFC,
             frontComponent: menuManageFC,
           }).build(),
+          Builder(AllFrontComponent, {
+            ...frameworkMenuManagementAFC,
+            frontComponent: frameworkMenuManagementFC,
+          }).build(),
         ]);
 
         const homeRoute = await entityManager.save(
           Route.create({
             path: '/',
             frontComponent: homeFC,
+          }),
+        );
+
+        const manageRoute = await entityManager.save(
+          Route.create({
+            path: 'manage',
+            parent: homeRoute,
+          }),
+        );
+
+        const menuManageRoute = await entityManager.save(
+          Route.create({
+            path: 'menu',
+            frontComponent: menuManageFC,
+            parent: manageRoute,
           }),
         );
 
@@ -247,10 +280,10 @@ export class AppModule implements OnModuleInit {
           }),
         );
 
-        const menuManageRoute = await entityManager.save(
+        const frameworkMenuRoute = await entityManager.save(
           Route.create({
             path: 'menu',
-            frontComponent: menuManageFC,
+            frontComponent: frameworkMenuManagementFC,
             parent: frameworkRoute,
           }),
         );
@@ -271,6 +304,11 @@ export class AppModule implements OnModuleInit {
             frontComponent: menuManageFC,
             allFrontComponent: menuManagementAFC,
           }),
+          RoleFrontComponentMap.create({
+            role: developer,
+            frontComponent: frameworkMenuManagementFC,
+            allFrontComponent: frameworkMenuManagementAFC,
+          }),
         ]);
 
         await entityManager.save([
@@ -284,36 +322,64 @@ export class AppModule implements OnModuleInit {
           }),
         ]);
 
-        const [manageMenu, menuManageMenu] = await entityManager.save([
+        const [
+          manageMenu,
+          menuManageMenu,
+          frameworkMenu,
+          frameworkMenuManagementMenu,
+        ] = await entityManager.save([
           Menu.create({
             name: '관리',
+            route: manageRoute,
+          }),
+          Menu.create({
+            name: '권한별 메뉴 관리',
+            route: menuManageRoute,
+          }),
+          Menu.create({
+            name: '프레임워크',
             route: frameworkRoute,
           }),
           Menu.create({
             name: '메뉴 관리',
-            route: menuManageRoute,
+            route: frameworkMenuRoute,
           }),
         ]);
 
-        const [manageMenuMRM, menuManageMenuMRM] = await entityManager.save([
-          MenuRoleMap.create({
-            role: developer,
-            menu: manageMenu,
-            orderNo: 1,
-          }),
-          MenuRoleMap.create({
-            role: developer,
-            menu: menuManageMenu,
-            orderNo: 1,
-          }),
-        ]);
+        const [manageMRM, menuManageMRM, frameworkMRM, frameworkMenuMRM] =
+          await entityManager.save([
+            MenuRoleMap.create({
+              role: developer,
+              menu: manageMenu,
+              orderNo: 1,
+            }),
+            MenuRoleMap.create({
+              role: developer,
+              menu: menuManageMenu,
+              orderNo: 1,
+            }),
+            MenuRoleMap.create({
+              role: developer,
+              menu: frameworkMenu,
+              orderNo: 2,
+            }),
+            MenuRoleMap.create({
+              role: developer,
+              menu: frameworkMenuManagementMenu,
+              orderNo: 1,
+            }),
+          ]);
 
-        await entityManager.save(
+        await entityManager.save([
           MenuRoleMapTree.create({
-            parentMenuRoleMap: manageMenuMRM,
-            childMenuRoleMap: menuManageMenuMRM,
+            parentMenuRoleMap: manageMRM,
+            childMenuRoleMap: menuManageMRM,
           }),
-        );
+          MenuRoleMapTree.create({
+            parentMenuRoleMap: frameworkMRM,
+            childMenuRoleMap: frameworkMenuMRM,
+          }),
+        ]);
       });
     }
     shell.exec('npm run gql.cp');

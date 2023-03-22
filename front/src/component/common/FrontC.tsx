@@ -1,7 +1,6 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, PropsWithChildren, useEffect, useMemo } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { All_FRONT_COMPONENT } from "@src/constants/component.constant";
-import { Outlet } from "react-router-dom";
 
 const ALL_FRONT_COMPONENT_BY_CURRENT_USER_AND_FRONT_COMPONENT_ID = gql`
 	query ($frontComponentId: String!) {
@@ -13,9 +12,11 @@ const ALL_FRONT_COMPONENT_BY_CURRENT_USER_AND_FRONT_COMPONENT_ID = gql`
 	}
 `;
 
-const FrontC: FC<{
-	frontComponentId?: string;
-}> = ({ frontComponentId }) => {
+const FrontC: FC<
+	PropsWithChildren<{
+		frontComponentId?: string;
+	}>
+> = ({ frontComponentId, children }) => {
 	const { data } = useQuery(
 		ALL_FRONT_COMPONENT_BY_CURRENT_USER_AND_FRONT_COMPONENT_ID,
 		{
@@ -25,17 +26,25 @@ const FrontC: FC<{
 			},
 		}
 	);
+	const Component = useMemo(
+		() => All_FRONT_COMPONENT[data?.data?.id] || null,
+		[data]
+	);
 
-	const Component = useMemo(() => All_FRONT_COMPONENT[data?.data.id], [data]);
+	useEffect(() => {
+		if (data) {
+			if (!data.data?.id) {
+				console.error(`front id 없음, ${frontComponentId}`);
+			} else if (!All_FRONT_COMPONENT[data?.data?.id]) {
+				console.error(`해당하는 컴포넌트 없음, ${data?.data?.id}`);
+			}
+		}
+	}, [data]);
 
 	if (Component) {
-		return (
-			<Component>
-				<Outlet />
-			</Component>
-		);
+		return <Component>{children || null}</Component>;
 	}
-	return <Outlet />;
+	return children || null;
 };
 
 export default FrontC;

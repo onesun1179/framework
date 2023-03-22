@@ -5,4 +5,7 @@ export const All_FRONT_COMPONENT: {
 } = {
 	Home: lazy(() => import("@src/routes/Home")),
 	MenuManagement: lazy(() => import("@src/routes/admin/MenuManagement")),
+	FrameworkMenuManagement: lazy(
+		() => import("@src/routes/framework/MenuManagement")
+	),
 };
