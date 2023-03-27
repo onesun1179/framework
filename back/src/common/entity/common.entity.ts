@@ -4,8 +4,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Field, ObjectType } from '@nestjs/graphql';
 
+@ObjectType({
+  isAbstract: true,
+})
 export class CommonEntity extends BaseEntity {
+  @Field()
   @CreateDateColumn({
     type: 'timestamp',
     comment: '생성시간',
@@ -13,6 +18,7 @@ export class CommonEntity extends BaseEntity {
   })
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn({
     type: 'timestamp',
     comment: '수정시간',
@@ -21,6 +27,9 @@ export class CommonEntity extends BaseEntity {
   })
   updatedAt: Date;
 
+  @Field({
+    nullable: true,
+  })
   @Column({
     type: 'text',
     comment: '비고',

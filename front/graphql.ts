@@ -8,6 +8,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface PagingRequest {
+    skip: number;
+    take: number;
+}
+
+export interface MenusRequest {
+    name?: Nullable<string>;
+    haveRouteYn?: Nullable<boolean>;
+}
+
 export interface InsertRoleRequest {
     name: string;
     roleGroupSeqNo?: Nullable<number>;
@@ -101,6 +111,9 @@ export interface UpdateAllFrontComponentRequest {
 }
 
 export interface CodeTree {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     childSeqNo: number;
     parentSeqNo: number;
     child: Code;
@@ -108,6 +121,9 @@ export interface CodeTree {
 }
 
 export interface Code {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     children: CodeTree[];
@@ -115,6 +131,9 @@ export interface Code {
 }
 
 export interface RoleGroup {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     parentSeqNo?: Nullable<number>;
@@ -124,12 +143,18 @@ export interface RoleGroup {
 }
 
 export interface FrontComponentType {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     frontComponents: FrontComponent[];
 }
 
 export interface RoleFrontComponentMap {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     roleSeqNo: number;
     frontComponentId: string;
     role: Role;
@@ -138,12 +163,18 @@ export interface RoleFrontComponentMap {
 }
 
 export interface AllFrontComponent {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     id: string;
     frontComponentId?: Nullable<string>;
     frontComponent: FrontComponent;
 }
 
 export interface FrontComponent {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     id: string;
     frontComponentTypeSeqNo: number;
     initialFrontComponentId: string;
@@ -156,6 +187,9 @@ export interface FrontComponent {
 }
 
 export interface MenuRoleMap {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     menuSeqNo: number;
     roleSeqNo: number;
@@ -165,6 +199,9 @@ export interface MenuRoleMap {
 }
 
 export interface IconGroupTree {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     childSeqNo: number;
     parentSeqNo: number;
     child: IconGroup;
@@ -172,6 +209,9 @@ export interface IconGroupTree {
 }
 
 export interface IconGroup {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     children: IconGroupTree[];
@@ -179,6 +219,9 @@ export interface IconGroup {
 }
 
 export interface Icon {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     filePath: string;
@@ -186,6 +229,9 @@ export interface Icon {
 }
 
 export interface Menu {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     iconSeqNo?: Nullable<number>;
@@ -196,6 +242,9 @@ export interface Menu {
 }
 
 export interface Route {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     path: string;
     frontComponentId?: Nullable<string>;
@@ -208,6 +257,9 @@ export interface Route {
 }
 
 export interface Role {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     name: string;
     identifier?: Nullable<string>;
@@ -220,9 +272,17 @@ export interface Role {
 }
 
 export interface User {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     id: string;
     roleSeqNo: number;
     role: Role;
+}
+
+export interface Menus {
+    list?: Nullable<Menu[]>;
+    total?: Nullable<number>;
 }
 
 export interface RouteTree {
@@ -231,12 +291,18 @@ export interface RouteTree {
 }
 
 export interface MessageGroup {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: string;
     name: string;
     messages: Message[];
 }
 
 export interface Message {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     seqNo: number;
     text: string;
     messageGroupCode: string;
@@ -244,6 +310,9 @@ export interface Message {
 }
 
 export interface AppMetadata {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
     name: string;
     value: string;
 }
@@ -254,6 +323,7 @@ export interface IQuery {
     role(seqNo: number): Nullable<RoleGroup> | Promise<Nullable<RoleGroup>>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMap> | Promise<Nullable<RoleFrontComponentMap>>;
     message(seqNo: number): Message | Promise<Message>;
+    menus(paging: PagingRequest, param?: Nullable<MenusRequest>): Menus | Promise<Menus>;
     rootMenus(): Menu[] | Promise<Menu[]>;
     route(seqNo: number): Route | Promise<Route>;
     routes(rootYn: boolean): Route[] | Promise<Route[]>;
@@ -284,4 +354,5 @@ export interface IMutation {
     updateAllFrontComponent(updateAllFrontComponentRequest: UpdateAllFrontComponentRequest): AllFrontComponent | Promise<AllFrontComponent>;
 }
 
+export type DateTime = any;
 type Nullable<T> = T | null;

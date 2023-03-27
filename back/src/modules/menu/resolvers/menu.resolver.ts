@@ -19,6 +19,11 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { isNil } from 'lodash';
 import { Route } from '@modules/route/models/route';
+import { Menus } from '@modules/menu/model/dto/menus';
+import { PagingRequest } from '../../../paging/models/paging.request';
+import { MenusRequest } from '@modules/menu/model/requests/menus.request';
+import { UtilPaging } from '../../../paging/Util.paging';
+import { Builder } from 'builder-pattern';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => Menu)
@@ -110,7 +115,6 @@ export class MenuResolver {
     @Parent() { routeSeqNo }: Menu,
     @CurrentUser() { roleSeqNo }: AfterAT,
   ): Promise<Route | null> {
-    console.log(routeSeqNo);
     return await this.dataSource
       .createQueryBuilder(Route, 'r')
 
@@ -119,5 +123,28 @@ export class MenuResolver {
       })
 
       .getOne();
+  }
+
+  @Query(() => Menus)
+  async menus(
+    @Args('paging', {
+      type: () => PagingRequest,
+    })
+    paging: PagingRequest,
+    @Args('param', {
+      type: () => MenusRequest,
+      nullable: true,
+    })
+    param?: MenusRequest,
+  ): Promise<Menus> {
+    return await this.dataSource.transaction(async (entityManager) => {
+      return Builder(
+        Menus,
+        await UtilPaging.getRes(
+          paging,
+          entityManager.createQueryBuilder(Menu, 'm'),
+        ),
+      ).build();
+    });
   }
 }

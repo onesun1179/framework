@@ -3,13 +3,24 @@
 # ------------------------------------------------------
 
 type CodeTree {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   childSeqNo: Int!
   parentSeqNo: Int!
   child: Code!
   parent: Code!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Code {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   children: [CodeTree!]!
@@ -17,6 +28,9 @@ type Code {
 }
 
 type RoleGroup {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   parentSeqNo: Int
@@ -26,12 +40,18 @@ type RoleGroup {
 }
 
 type FrontComponentType {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   frontComponents: [FrontComponent!]!
 }
 
 type RoleFrontComponentMap {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   roleSeqNo: Int!
   frontComponentId: String!
   role: Role!
@@ -40,12 +60,18 @@ type RoleFrontComponentMap {
 }
 
 type AllFrontComponent {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   id: String!
   frontComponentId: String
   frontComponent: FrontComponent!
 }
 
 type FrontComponent {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   id: String!
   frontComponentTypeSeqNo: Int!
   initialFrontComponentId: String!
@@ -58,6 +84,9 @@ type FrontComponent {
 }
 
 type MenuRoleMap {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   menuSeqNo: Int!
   roleSeqNo: Int!
@@ -67,6 +96,9 @@ type MenuRoleMap {
 }
 
 type IconGroupTree {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   childSeqNo: Int!
   parentSeqNo: Int!
   child: IconGroup!
@@ -74,6 +106,9 @@ type IconGroupTree {
 }
 
 type IconGroup {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   children: [IconGroupTree!]!
@@ -81,6 +116,9 @@ type IconGroup {
 }
 
 type Icon {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   filePath: String!
@@ -88,6 +126,9 @@ type Icon {
 }
 
 type Menu {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   iconSeqNo: Int
@@ -98,6 +139,9 @@ type Menu {
 }
 
 type Route {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   path: String!
   frontComponentId: String
@@ -110,6 +154,9 @@ type Route {
 }
 
 type Role {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   name: String!
   identifier: String
@@ -122,9 +169,17 @@ type Role {
 }
 
 type User {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   id: String!
   roleSeqNo: Int!
   role: Role!
+}
+
+type Menus {
+  list: [Menu!]
+  total: Int
 }
 
 type RouteTree {
@@ -133,12 +188,18 @@ type RouteTree {
 }
 
 type MessageGroup {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: String!
   name: String!
   messages: [Message!]!
 }
 
 type Message {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   seqNo: Int!
   text: String!
   messageGroupCode: String!
@@ -146,6 +207,9 @@ type Message {
 }
 
 type AppMetadata {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   name: String!
   value: String!
 }
@@ -156,6 +220,7 @@ type Query {
   role(seqNo: Int!): RoleGroup
   roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMap
   message(seqNo: Int!): Message!
+  menus(paging: PagingRequest!, param: MenusRequest): Menus!
   rootMenus: [Menu!]!
   route(seqNo: Int!): Route!
   routes(rootYn: Boolean! = false): [Route!]!
@@ -166,6 +231,19 @@ type Query {
   allFrontComponent(id: String!): AllFrontComponent
   allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: String!): AllFrontComponent
   icon(seqNo: Int!): Icon!
+}
+
+input PagingRequest {
+  skip: Int!
+  take: Int!
+}
+
+input MenusRequest {
+  """메뉴 명 (LIKE 검색)"""
+  name: String
+
+  """라우트 보유 여부"""
+  haveRouteYn: Boolean
 }
 
 type Mutation {
