@@ -8,4 +8,7 @@ export const All_FRONT_COMPONENT: {
 	FrameworkMenuManagement: lazy(
 		() => import("@src/routes/framework/MenuManagement")
 	),
+	FrameworkMessageManagement: lazy(
+		() => import("@src/routes/framework/MessageManagement")
+	),
 };

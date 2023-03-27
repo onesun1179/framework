@@ -281,8 +281,8 @@ export interface User {
 }
 
 export interface Menus {
-    list?: Nullable<Menu[]>;
-    total?: Nullable<number>;
+    list: Menu[];
+    total: number;
 }
 
 export interface RouteTree {

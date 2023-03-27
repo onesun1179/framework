@@ -7,12 +7,12 @@ export class LoggingPlugin implements ApolloServerPlugin {
     console.log('Request started');
 
     return {
-      async didResolveSource(context) {
-        console.log(context.source);
-      },
-      async willSendResponse() {
-        console.log('Will send response');
-      },
+      // async didResolveSource(context) {
+      //   console.log(context.source);
+      // },
+      // async willSendResponse() {
+      //   console.log('Will send response');
+      // },
     };
   }
 }

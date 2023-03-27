@@ -98,29 +98,29 @@ export class RouteResolver {
     return await this.dataSource
       .query(
         `
-          WITH RECURSIVE FullPath (full_path, seq_no, parent_seq_no, depth)
-                             AS (
-                                SELECT path AS full_path, seq_no, parent_seq_no, 0 AS depth
-                                  FROM route
-                                 WHERE parent_seq_no IS NULL
+              WITH RECURSIVE FullPath (full_path, seq_no, parent_seq_no, depth)
+                                 AS (
+                                    SELECT path AS full_path, seq_no, parent_seq_no, 0 AS depth
+                                      FROM route
+                                     WHERE parent_seq_no IS NULL
 
-                                 UNION ALL
+                                     UNION ALL
 
-                                SELECT CONCAT(f.full_path,
-                                              IF(ISNULL(f.parent_seq_no) OR INSTR(r.path, '/') = 1, '', '/'),
-                                              r.path) AS full_path
-                                     , r.seq_no
-                                     , r.parent_seq_no
-                                     , depth + 1      AS depth
-                                  FROM FullPath f
-                                     , route r
-                                 WHERE r.parent_seq_no = f.seq_no )
-        SELECT full_path as fullPath
-             , depth
-          FROM FullPath
-         WHERE seq_no = ${seqNo}
-         LIMIT 1
-    `,
+                                    SELECT CONCAT(f.full_path,
+                                                  IF(ISNULL(f.parent_seq_no) OR INSTR(r.path, '/') = 1, '', '/'),
+                                                  r.path) AS full_path
+                                         , r.seq_no
+                                         , r.parent_seq_no
+                                         , depth + 1      AS depth
+                                      FROM FullPath f
+                                         , route r
+                                     WHERE r.parent_seq_no = f.seq_no )
+            SELECT full_path AS fullPath
+                 , depth
+              FROM FullPath
+             WHERE seq_no = ${seqNo}
+             LIMIT 1
+        `,
       )
       .then((r) => r[0]);
   }

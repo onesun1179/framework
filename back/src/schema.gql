@@ -178,8 +178,8 @@ type User {
 }
 
 type Menus {
-  list: [Menu!]
-  total: Int
+  list: [Menu!]!
+  total: Int!
 }
 
 type RouteTree {

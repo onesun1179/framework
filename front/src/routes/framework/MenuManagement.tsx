@@ -1,28 +1,63 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Menu, MenusRequest, PagingRequest } from "@gqlType";
+import { Menu, Menus, MenusRequest, PagingRequest } from "@gqlType";
+import { Table } from "antd";
+import { ColumnsType } from "antd/es/table";
 
 const QUERY = gql`
 	query ($paging: PagingRequest!, $param: MenusRequest!) {
 		menus(paging: $paging, param: $param) {
 			list {
 				seqNo
+				name
+				createdAt
+				desc
+				updatedAt
+				iconSeqNo
 			}
 			total
 		}
 	}
 `;
 
-type Req = {
-	param: MenusRequest;
-	paging: PagingRequest;
-};
-type Res = {
-	menus: Pick<Menu, "seqNo" | "name" | "createdAt" | "desc" | "updatedAt">;
-};
+const columns: ColumnsType<Menu> = [
+	{
+		title: "일련번호",
+		dataIndex: "seqNo",
+		key: "seqNo",
+	},
+	{
+		title: "이름",
+		dataIndex: "name",
+		key: "name",
+	},
+	{
+		title: "생성시간",
+		dataIndex: "createdAt",
+		key: "createdAt",
+	},
+	{
+		title: "비고",
+		dataIndex: "desc",
+		key: "desc",
+	},
+	{
+		title: "수정시간",
+		dataIndex: "updatedAt",
+		key: "updatedAt",
+	},
+];
 
 const MenuManagement: FC = () => {
-	const { data } = useQuery<Res, Req>(QUERY, {
+	const { data, loading } = useQuery<
+		{
+			menus: Menus;
+		},
+		{
+			paging: PagingRequest;
+			param?: MenusRequest;
+		}
+	>(QUERY, {
 		variables: {
 			paging: {
 				skip: 0,
@@ -31,8 +66,24 @@ const MenuManagement: FC = () => {
 			param: {},
 		},
 	});
-	console.log(data);
-	return <>{`MenuManagement`}</>;
+
+	const dataSource = useMemo(
+		() =>
+			data?.menus.list.map((o) => ({
+				key: o.seqNo,
+
+				...o,
+			})),
+		[data]
+	);
+	return (
+		<Table
+			size={"small"}
+			loading={loading}
+			columns={columns}
+			dataSource={dataSource}
+		/>
+	);
 };
 
 export default MenuManagement;

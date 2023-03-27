@@ -4,10 +4,10 @@ import { Type } from '@nestjs/common';
 export function PagingResponse<T>(classRef: Type<T>): any {
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType {
-    @Field(() => [classRef], { nullable: true })
+    @Field(() => [classRef])
     list: typeof classRef[];
 
-    @Field(() => Int, { nullable: true })
+    @Field(() => Int)
     total: number;
   }
   return PaginatedType;
