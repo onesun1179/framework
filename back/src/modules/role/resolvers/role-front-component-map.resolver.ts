@@ -9,9 +9,9 @@ import {
 import { RoleService } from '../role.service';
 import { Role } from '../model/role';
 import { Logger } from '@nestjs/common';
-import { FrontComponent } from '@modules/front-component/model/front-component';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
+import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
 
 @Resolver(() => RoleFrontComponentMap)
 export class RoleFrontComponentMapResolver {

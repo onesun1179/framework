@@ -7,16 +7,16 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { FrontComponentService } from '../front-component.service';
-import { FrontComponent } from '@modules/front-component/model/front-component';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
-import { InsertAllFrontComponentRequest } from '@modules/front-component/model/requests/insert-all-front-component.request';
-import { UpdateAllFrontComponentRequest } from '@modules/front-component/model/requests/update-all-front-component.request';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
 import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
 import { CurrentUser } from '@common/docorator/CurrentUser';
 import { AfterAT } from '../../../auth/interfaces/AfterAT';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { InsertAllFrontComponentInput } from '@modules/front-component/dto/insert-all-front-component.input';
+import { UpdateAllFrontComponentInput } from '@modules/front-component/dto/update-all-front-component.input';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => AllFrontComponent)
@@ -84,25 +84,25 @@ export class AllFrontComponentResolver {
    ***************************************/
   @Mutation(() => AllFrontComponent)
   async insertAllFrontComponent(
-    @Args('insertAllFrontComponentRequest', {
-      type: () => InsertAllFrontComponentRequest,
+    @Args('insertAllFrontComponentInput', {
+      type: () => InsertAllFrontComponentInput,
     })
-    insertAllFrontComponentRequest: InsertAllFrontComponentRequest,
+    insertAllFrontComponentInput: InsertAllFrontComponentInput,
   ) {
     return this.frontComponentService.saveAllFrontComponent(
-      insertAllFrontComponentRequest,
+      insertAllFrontComponentInput,
     );
   }
 
   @Mutation(() => AllFrontComponent)
   async updateAllFrontComponent(
-    @Args('updateAllFrontComponentRequest', {
-      type: () => UpdateAllFrontComponentRequest,
+    @Args('updateAllFrontComponentInput', {
+      type: () => UpdateAllFrontComponentInput,
     })
-    updateAllFrontComponentRequest: UpdateAllFrontComponentRequest,
+    updateAllFrontComponentInput: UpdateAllFrontComponentInput,
   ) {
     return this.frontComponentService.saveAllFrontComponent(
-      updateAllFrontComponentRequest,
+      updateAllFrontComponentInput,
     );
   }
 }

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -18,15 +17,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  // app.useGlobalPipes(new ValidationPipe());
 
   app.useStaticAssets(join(__dirname, '..', 'resource'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
+  // app.useGlobalFilters(new GqlErrorFilter());
+  // app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  // app.setViewEngine('hbs');
 
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new GqlAuthGuard(reflector));

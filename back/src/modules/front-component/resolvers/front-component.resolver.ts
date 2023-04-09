@@ -7,20 +7,25 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { FrontComponentService } from '../front-component.service';
-import { FrontComponent } from '@modules/front-component/model/front-component';
-import { FrontComponentType } from '@modules/front-component/model/front-component-type';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
 import { Role } from '@modules/role/model/role';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 import { Route } from '@modules/route/models/route';
-import { InsertFrontComponentRequest } from '@modules/front-component/model/requests/insert-front-component.request';
-import { UpdateFrontComponentRequest } from '@modules/front-component/model/requests/update-front-component.request';
 import { CurrentUser } from '@common/docorator/CurrentUser';
 import { AfterAT } from '../../../auth/interfaces/AfterAT';
+import { DataSource } from 'typeorm';
+import { InsertFrontComponentInput } from '@modules/front-component/dto/insert-front-component.input';
+import { UpdateFrontComponentInput } from '@modules/front-component/dto/update-front-component.input';
+import { FrontComponentRepository } from '@modules/front-component/repositories/front-component.repository';
 
 @Resolver(() => FrontComponent)
 export class FrontComponentResolver {
-  constructor(private readonly frontRouteService: FrontComponentService) {}
+  constructor(
+    private readonly frontRouteService: FrontComponentService,
+    private readonly frontComponentRepository: FrontComponentRepository,
+    private dataSource: DataSource,
+  ) {}
 
   /**************************************
    *              QUERY
@@ -34,7 +39,7 @@ export class FrontComponentResolver {
     })
     id: string,
   ): Promise<FrontComponent> {
-    return await FrontComponent.findOneBy({
+    return await this.dataSource.manager.findOneBy(FrontComponent, {
       id,
     });
   }
@@ -45,76 +50,51 @@ export class FrontComponentResolver {
   @ResolveField(() => AllFrontComponent, {
     nullable: true,
   })
-  async allFrontComponentByCurrentUser(
+  async allFrontComponent(
     @CurrentUser() currentUser: AfterAT,
     @Parent() { id: frontComponentId }: FrontComponent,
   ): Promise<AllFrontComponent> {
-    return await RoleFrontComponentMap.findOne({
-      select: ['allFrontComponent'],
-      where: {
-        frontComponentId,
-        roleSeqNo: currentUser.roleSeqNo,
-      },
-    }).then((r) => r?.allFrontComponent);
-  }
-
-  @ResolveField(() => FrontComponentType)
-  async frontComponentType(
-    @Parent() { frontComponentTypeSeqNo }: FrontComponent,
-  ) {
-    return await FrontComponentType.findOneBy({
-      seqNo: frontComponentTypeSeqNo,
-    });
+    return await this.dataSource.manager
+      .findOne(RoleFrontComponentMap, {
+        select: ['allFrontComponent'],
+        where: {
+          frontComponentId,
+          roleSeqNo: currentUser.roleSeqNo,
+        },
+      })
+      .then((r) => r?.allFrontComponent);
   }
 
   @ResolveField(() => [AllFrontComponent])
   async allFrontComponents(
     @Parent() { id }: FrontComponent,
   ): Promise<Array<AllFrontComponent>> {
-    return await FrontComponent.findOne({
-      select: ['allFrontComponents'],
-      relations: {
-        allFrontComponents: true,
-      },
+    return await this.dataSource.manager.find(AllFrontComponent, {
       where: {
-        id,
+        frontComponentId: id,
       },
-    }).then((r) => r?.allFrontComponents);
-  }
-
-  @ResolveField(() => AllFrontComponent)
-  async initialFrontComponent(
-    @Parent() { initialFrontComponentId }: FrontComponent,
-  ): Promise<AllFrontComponent> {
-    return await AllFrontComponent.findOneBy({
-      id: initialFrontComponentId,
     });
   }
 
   @ResolveField(() => [Role])
   async roles(@Parent() { id }: FrontComponent): Promise<Array<Role>> {
-    return await RoleFrontComponentMap.find({
-      select: ['role'],
-      relations: {
-        role: true,
-      },
-      where: {
-        frontComponentId: id,
-      },
-    }).then((r) => r?.map((o) => o.role));
+    return await this.dataSource.manager
+      .find(RoleFrontComponentMap, {
+        select: ['role'],
+        where: {
+          frontComponentId: id,
+        },
+      })
+      .then((r) => r.map((o) => o.role));
   }
 
   @ResolveField(() => [Route])
   async routes(@Parent() { id }: FrontComponent): Promise<Array<Route>> {
-    return await FrontComponent.findOne({
-      select: ['routes'],
-      relations: {
-        routes: true,
-      },
+    return await this.dataSource.manager.find(Route, {
       where: {
-        id,
+        frontComponentId: id,
       },
-    }).then((r) => r.routes);
+    });
   }
 
   /**************************************
@@ -122,32 +102,32 @@ export class FrontComponentResolver {
    ***************************************/
   @Mutation(() => FrontComponent)
   async insertFrontComponent(
-    @Args('insertFrontComponentRequest', {
-      type: () => InsertFrontComponentRequest,
+    @Args('insertFrontComponentInput', {
+      type: () => InsertFrontComponentInput,
     })
-    insertFrontComponentRequest: InsertFrontComponentRequest,
+    insertFrontComponentInput: InsertFrontComponentInput,
   ) {
     return await this.frontRouteService.saveFrontComponent(
-      insertFrontComponentRequest,
+      insertFrontComponentInput,
     );
   }
 
   @Mutation(() => FrontComponent)
   async updateFrontComponent(
-    @Args('updateFrontComponentRequest', {
-      type: () => UpdateFrontComponentRequest,
+    @Args('updateFrontComponentInput', {
+      type: () => UpdateFrontComponentInput,
     })
-    updateFrontComponentRequest: UpdateFrontComponentRequest,
+    updateFrontComponentInput: UpdateFrontComponentInput,
   ) {
     if (
       (await FrontComponent.countBy({
-        id: updateFrontComponentRequest.id,
+        id: updateFrontComponentInput.id,
       })) === 0
     ) {
       throw new Error();
     }
     return await this.frontRouteService.saveFrontComponent(
-      updateFrontComponentRequest,
+      updateFrontComponentInput,
     );
   }
 }

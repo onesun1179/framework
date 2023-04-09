@@ -14,13 +14,13 @@ import { Menu } from '@modules/menu/model/menu';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
-import { FrontComponent } from '@modules/front-component/model/front-component';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 
 @Entity()
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlRole')
 export class Role extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

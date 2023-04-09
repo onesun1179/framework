@@ -7,68 +7,114 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { MessageService } from '../message.service';
-import { Message } from '../models/message';
+import { MessageService } from '../services/message.service';
+import { Message } from '../entities/message';
 import { Logger } from '@nestjs/common';
-import { MessageGroup } from '../models/message-group';
-import { UpdateMessageRequest } from '../models/request/update-message.request';
-import { InsertMessageRequest } from '../models/request/insert-message.request';
+import { MessageGroup } from '../entities/message-group';
+
+import { MessagesInput } from '@modules/message/dto/input/messages.input';
+import { DataSource } from 'typeorm';
+import { PagingInput } from '@common/dto/inputs/paging.input';
+import { PagedMessages } from '@modules/message/dto/output/paged-messages';
+import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
+import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
+import { MessageRepository } from '@modules/message/repositories/message.repository';
 
 @Resolver(() => Message)
 export class MessageResolver {
-  constructor(private readonly messageService: MessageService) {}
+  constructor(
+    private readonly messageService: MessageService,
+    private dataSource: DataSource,
+    private messageRepository: MessageRepository,
+  ) {}
   private readonly logger = new Logger(MessageResolver.name);
 
-  @Query(() => Message)
+  /**************************************
+   *              QUERY
+   ***************************************/
+  @Query(() => Message, {
+    nullable: true,
+  })
   message(
     @Args('seqNo', {
       type: () => Int,
     })
     seqNo: Message['seqNo'],
-  ) {
+  ): Promise<Message | null> {
     return Message.findOneBy({
       seqNo,
     });
   }
 
-  @ResolveField(() => MessageGroup)
-  messageGroup(@Parent() { seqNo }: Message) {
-    return Message.findOne({
-      select: ['messageGroup'],
-      relations: {
-        messageGroup: true,
-      },
-      where: {
-        seqNo,
-      },
-    }).then((r) => r?.messageGroup);
+  @Query(() => PagedMessages)
+  async messages(
+    @Args('paging', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    paging?: PagingInput,
+    @Args('request', {
+      type: () => MessagesInput,
+      nullable: true,
+    })
+    req?: MessagesInput,
+  ): Promise<PagedMessages> {
+    console.log({
+      paging,
+      req,
+    });
+    return await this.messageRepository.paging(paging, req);
   }
 
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
+
+  @ResolveField(() => MessageGroup)
+  async group(@Parent() { code }: Message) {
+    return await this.dataSource.transaction(async (entityManager) => {
+      return await entityManager
+        .createQueryBuilder(MessageGroup, 'mg')
+        .where(`mg.code = :code`, {
+          code,
+        })
+        .getOne();
+    });
+  }
+
+  /**************************************
+   *           MUTATION
+   ***************************************/
   @Mutation(() => Message)
   async updateMessage(
-    @Args('UpdateMessageRequest', {
-      type: () => UpdateMessageRequest,
+    @Args('updateMessageInput', {
+      type: () => UpdateMessageInput,
     })
-    updateMessageRequest: UpdateMessageRequest,
-  ): Promise<Message> {
-    const message = await Message.findOneBy({
-      seqNo: updateMessageRequest.seqNo,
-    });
-
-    if (!message) {
-      throw new Error();
+    updateMessageInput: UpdateMessageInput,
+  ): Promise<Message | null> {
+    if (await this.messageRepository.hasRow(updateMessageInput.seqNo)) {
+      return this.messageRepository.saveCustom(updateMessageInput);
     }
-
-    return this.messageService.saveMessage(updateMessageRequest);
+    return null;
   }
 
   @Mutation(() => Message)
   async insertMessage(
-    @Args('InsertMessageRequest', {
-      type: () => InsertMessageRequest,
+    @Args('insertMessageInput', {
+      type: () => InsertMessageInput,
     })
-    insertMessageRequest: InsertMessageRequest,
+    insertMessageInput: InsertMessageInput,
   ): Promise<Message> {
-    return this.messageService.saveMessage(insertMessageRequest);
+    return await this.messageRepository.saveCustom(insertMessageInput);
+  }
+  @Mutation(() => Boolean)
+  async deleteMessages(
+    @Args('seqNos', {
+      type: () => [Int],
+    })
+    seqNos: Array<Message['seqNo']>,
+  ): Promise<boolean> {
+    await this.messageRepository.delete(seqNos);
+    return true;
   }
 }

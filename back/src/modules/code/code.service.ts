@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Code } from './model/code';
+import { Code } from '@modules/code/entities/code.entity';
 import { Repository } from 'typeorm';
-import { CodeTree } from './model/code-tree';
+import { CodeMap } from '@modules/code/entities/code-map.entity';
 
 @Injectable()
 export class CodeService {
   constructor(
     @InjectRepository(Code)
     private codeRepository: Repository<Code>,
-    @InjectRepository(CodeTree)
-    private codeTreeRepository: Repository<CodeTree>,
+    @InjectRepository(CodeMap)
+    private codeTreeRepository: Repository<CodeMap>,
   ) {}
 
   getCodeRepository() {

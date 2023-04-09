@@ -16,7 +16,7 @@ import { Route } from '@modules/route/models/route';
 import { Logger } from '@nestjs/common';
 import { RolesResolver } from './roles.resolver';
 import { InsertRoleRequest } from '../model/request/insert-role.request';
-import { FrontComponent } from '@modules/front-component/model/front-component';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 
 @Resolver(() => Role)

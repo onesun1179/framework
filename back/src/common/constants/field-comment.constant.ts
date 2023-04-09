@@ -1,4 +1,9 @@
 export const FieldCommentConstant = {
+  not: '반대',
+  value: '값',
+  regex: '정규식',
+  search: '검색',
+  string: '문자열',
   seqNo: '일련번호',
   auth: '권한',
   name: '이름',
@@ -35,4 +40,9 @@ export const FieldCommentConstant = {
   _: '_',
   initial: '초깃값',
   type: '타입',
+  input: '입력값',
+  output: '출력값',
+  text: '내용',
+  page: '페이지',
+  paged: '페이징처리된',
 } as const;

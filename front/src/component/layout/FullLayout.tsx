@@ -28,9 +28,7 @@ const FullLayout: FC<PropsWithChildren> = ({ children }) => {
 				}}
 			>
 				<Header style={{ padding: 0, backgroundColor: "red" }}></Header>
-				<Content style={{ margin: "0 16px", width: "100%" }}>
-					{children}
-				</Content>
+				<Content style={{ padding: "16px", width: "100%" }}>{children}</Content>
 			</Layout>
 		</Layout>
 	);

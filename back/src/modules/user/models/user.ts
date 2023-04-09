@@ -7,7 +7,7 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlUser')
 export class User extends CommonEntity {
   @PrimaryColumn({
     type: 'varchar',

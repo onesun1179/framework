@@ -6,68 +6,113 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { MessageService } from '../message.service';
-import { MessageGroup } from '../models/message-group';
+import { MessageService } from '../services/message.service';
+import { MessageGroup } from '../entities/message-group';
+import { Message } from '../entities/message';
+
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { MessageGroupService } from '@modules/message/services/message-group.service';
+import { PagedMessageGroups } from '@modules/message/dto/output/paged-message-groups';
+import { PagingInput } from '@common/dto/inputs/paging.input';
+import { MessageGroupsInput } from '@modules/message/dto/input/message-groups.input';
+import { UpdateMessageGroupInput } from '@modules/message/dto/input/update-message-group.input';
+import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
+import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
 import { Logger } from '@nestjs/common';
-import { Message } from '../models/message';
-import { UpdateMessageGroupRequest } from '../models/request/update-message-group.request';
-import { InsertMessageGroupRequest } from '../models/request/insert-message-group.request';
+import { GqlError } from '@common/errors/GqlError';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 @Resolver(() => MessageGroup)
 export class MessageGroupResolver {
-  constructor(private readonly messageService: MessageService) {}
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly messageGroupService: MessageGroupService,
+    private readonly messageGroupRepository: MessageGroupRepository,
+    @InjectDataSource() private dataSource: DataSource,
+  ) {}
   private readonly logger = new Logger(MessageGroupResolver.name);
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => MessageGroup)
   messageGroup(
     @Args('code', {
       type: () => String,
     })
-    seqNo: MessageGroup['seqNo'],
+    code: MessageGroup['code'],
   ) {
     return MessageGroup.findOneBy({
-      seqNo,
+      code,
     });
   }
+
+  @Query(() => PagedMessageGroups)
+  async messageGroups(
+    @Args('paging', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    paging: PagingInput,
+    @Args('request', {
+      type: () => MessageGroupsInput,
+      nullable: true,
+    })
+    req: MessageGroupsInput,
+  ): Promise<PagedMessageGroups> {
+    return await this.messageGroupRepository.paging(paging, req);
+  }
+
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
 
   @ResolveField(() => [Message])
-  messages(@Parent() { seqNo }: MessageGroup) {
-    return MessageGroup.findOne({
-      select: ['messages'],
-      relations: {
-        messages: true,
-      },
-      where: {
-        seqNo,
-      },
-    }).then((r) => r?.messages);
+  messages(@Parent() { code }: MessageGroup) {
+    return this.dataSource.transaction(async (e) => {
+      return await e
+        .createQueryBuilder(Message, 'm')
+        .where(`m.groupCode = :code`, {
+          code,
+        })
+        .getMany();
+    });
   }
 
-  @Mutation(() => MessageGroup)
+  /**************************************
+   *           MUTATION
+   ***************************************/
+  @Mutation(() => MessageGroup, {
+    nullable: true,
+  })
   async updateMessageGroup(
-    @Args('UpdateMessageGroupRequest', {
-      type: () => UpdateMessageGroupRequest,
+    @Args('updateMessageGroupInput', {
+      type: () => UpdateMessageGroupInput,
     })
-    updateMessageGroupRequest: UpdateMessageGroupRequest,
-  ): Promise<MessageGroup> {
-    const messageGroup = await MessageGroup.findOneBy({
-      seqNo: updateMessageGroupRequest.seqNo,
-    });
-
-    if (!messageGroup) {
-      throw new Error();
+    updateMessageGroupInput: UpdateMessageGroupInput,
+  ): Promise<MessageGroup | null> {
+    if (
+      await this.messageGroupRepository.hasRow(updateMessageGroupInput.code)
+    ) {
+      return this.messageGroupRepository.saveCustom(updateMessageGroupInput);
     }
-
-    return this.messageService.saveMessageGroup(updateMessageGroupRequest);
+    return null;
   }
 
   @Mutation(() => MessageGroup)
   async insertMessageGroup(
-    @Args('InsertMessageGroupRequest', {
-      type: () => InsertMessageGroupRequest,
+    @Args('insertMessageGroupInput', {
+      type: () => InsertMessageGroupInput,
     })
-    insertMessageGroupRequest: InsertMessageGroupRequest,
+    insertMessageGroupInput: InsertMessageGroupInput,
   ): Promise<MessageGroup> {
-    return this.messageService.saveMessageGroup(insertMessageGroupRequest);
+    if (
+      await this.messageGroupRepository.hasRow(insertMessageGroupInput.code)
+    ) {
+      throw new GqlError(new MsgCode('E', '0009'));
+    } else {
+      return this.messageGroupRepository.saveCustom(insertMessageGroupInput);
+    }
   }
 }

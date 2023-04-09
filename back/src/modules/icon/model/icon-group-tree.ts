@@ -7,7 +7,7 @@ import { IconGroup } from './icon-group';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlIconGroupTree')
 export class IconGroupTree extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)

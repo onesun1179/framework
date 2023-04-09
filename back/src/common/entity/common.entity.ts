@@ -10,6 +10,11 @@ import { Field, ObjectType } from '@nestjs/graphql';
   isAbstract: true,
 })
 export class CommonEntity extends BaseEntity {
+  // private static dataSource: DataSource;
+  // static useDataSource(dataSource: DataSource | null) {
+  //   this.dataSource = dataSource;
+  // }
+
   @Field()
   @CreateDateColumn({
     type: 'timestamp',

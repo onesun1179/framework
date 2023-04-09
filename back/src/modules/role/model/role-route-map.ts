@@ -8,7 +8,7 @@ import { Role } from '@modules/role/model/role';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlRoleRouteMap')
 export class RoleRouteMap extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)

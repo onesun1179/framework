@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType('GqlRouteTree')
 export class RouteTree {
   @Field(() => String)
   fullPath: string;

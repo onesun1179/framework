@@ -18,7 +18,7 @@ import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlMenuRoleMap')
 @Index(['menuSeqNo', 'roleSeqNo'], {
   unique: true,
 })
@@ -29,18 +29,17 @@ export class MenuRoleMap extends CommonEntity {
 
   @Column()
   @Field(() => Int)
-  menuSeqNo: number;
+  menuSeqNo!: number;
 
   @Column()
   @Field(() => Int)
   roleSeqNo: number;
 
   @ManyToOne(() => Menu, (o) => o.menuRoleMaps)
-  @Field(() => Menu)
   @JoinColumn({
     name: 'menu_seq_no',
   })
-  menu: Menu;
+  menu!: Menu;
 
   @ManyToOne(() => Role, (o) => o.menuRoleMaps)
   @Field(() => Role)

@@ -20,9 +20,9 @@ import { DataSource } from 'typeorm';
 import { isNil } from 'lodash';
 import { Route } from '@modules/route/models/route';
 import { Menus } from '@modules/menu/model/dto/menus';
-import { PagingRequest } from '../../../paging/models/paging.request';
+import { PagingInput } from '@common/dto/inputs/paging.input';
 import { MenusRequest } from '@modules/menu/model/requests/menus.request';
-import { UtilPaging } from '../../../paging/Util.paging';
+import { UtilPaging } from '@common/utils/util.paging';
 import { Builder } from 'builder-pattern';
 
 @UseGuards(GqlAuthGuard)
@@ -128,9 +128,9 @@ export class MenuResolver {
   @Query(() => Menus)
   async menus(
     @Args('paging', {
-      type: () => PagingRequest,
+      type: () => PagingInput,
     })
-    paging: PagingRequest,
+    paging: PagingInput,
     @Args('param', {
       type: () => MenusRequest,
       nullable: true,

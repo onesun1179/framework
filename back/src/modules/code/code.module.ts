@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CodeService } from './code.service';
-import { CodeController } from './code.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Code } from './model/code';
-import { CodeTree } from './model/code-tree';
+import { Code } from '@modules/code/entities/code.entity';
+import { CodeMap } from '@modules/code/entities/code-map.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Code, CodeTree])],
-  controllers: [CodeController],
+  imports: [TypeOrmModule.forFeature([Code, CodeMap])],
   providers: [CodeService],
 })
 export class CodeModule {}

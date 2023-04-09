@@ -16,15 +16,15 @@ import { Route } from '@modules/route/models/route';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlMenu')
 export class Menu extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
 
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
   @Column({
     nullable: true,
@@ -43,16 +43,21 @@ export class Menu extends CommonEntity {
   icon?: Icon;
 
   @OneToMany(() => MenuRoleMap, (o) => o.menu)
-  menuRoleMaps: Array<MenuRoleMap>;
+  menuRoleMaps!: Array<MenuRoleMap>;
 
-  @ManyToOne(() => Route, (o) => o.menus)
+  @Column({
+    nullable: true,
+  })
+  @Field(() => Int, {
+    nullable: true,
+  })
+  routeSeqNo?: number;
+
+  @ManyToOne(() => Route, (o) => o.menus, {
+    nullable: true,
+  })
   @JoinColumn({
     name: 'route_seq_no',
   })
-  route: Route;
-
-  @Column()
-  routeSeqNo: number;
-
-  children: Array<Menu>;
+  route?: Route;
 }

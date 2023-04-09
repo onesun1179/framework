@@ -5,13 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Route } from './models/route';
 
 import { RouteResolver } from './resolvers/route.resolver';
-import { RoutesResolver } from './resolvers/routes.resolver';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Route, RoleRouteMap])],
   controllers: [RouteController],
-  providers: [RouteService, RouteResolver, RoutesResolver],
+  providers: [RouteService, RouteResolver],
   exports: [RouteService],
 })
 export class RouteModule {}

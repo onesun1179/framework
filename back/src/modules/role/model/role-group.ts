@@ -14,11 +14,11 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlRoleGroup')
 export class RoleGroup extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
 
   @Column({
     nullable: false,
@@ -26,15 +26,17 @@ export class RoleGroup extends CommonEntity {
   @Field({
     nullable: false,
   })
-  name: string;
+  name?: string;
 
   @OneToMany(() => Role, (o) => o.roleGroup, {
     nullable: true,
   })
-  roles: Role[];
+  roles?: Role[];
 
-  @OneToMany(() => RoleGroup, (o) => o.parent)
-  children: RoleGroup[];
+  @OneToMany(() => RoleGroup, (o) => o.parent, {
+    nullable: true,
+  })
+  children?: RoleGroup[];
 
   @Column()
   @Field(() => Int, {

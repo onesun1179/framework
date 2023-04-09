@@ -2,14 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CodeTree {
+"""코드 매핑"""
+type GqlCodeMap {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
+
+  """자식 일련번호"""
   childSeqNo: Int!
+
+  """부모 일련번호"""
   parentSeqNo: Int!
-  child: Code!
-  parent: Code!
+
+  """자식"""
+  child: GqlCode!
+
+  """부모"""
+  parent: GqlCode!
 }
 
 """
@@ -17,128 +26,136 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Code {
+"""코드"""
+type GqlCode {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
+
+  """일련번호"""
   seqNo: Int!
+
+  """이름"""
   name: String!
-  children: [CodeTree!]!
-  parents: [CodeTree!]!
+  children: [GqlCodeMap!]!
+  parents: [GqlCodeMap!]!
 }
 
-type RoleGroup {
+type GqlRoleGroup {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
   parentSeqNo: Int
-  roles: [Role!]!
-  children: [RoleGroup!]!
-  parent: RoleGroup
+  roles: [GqlRole!]!
+  children: [GqlRoleGroup!]!
+  parent: GqlRoleGroup
 }
 
-type FrontComponentType {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Int!
-  name: String!
-  frontComponents: [FrontComponent!]!
-}
-
-type RoleFrontComponentMap {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  roleSeqNo: Int!
-  frontComponentId: String!
-  role: Role!
-  frontComponent: FrontComponent!
-  allFrontComponent: AllFrontComponent!
-}
-
-type AllFrontComponent {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  id: String!
-  frontComponentId: String
-  frontComponent: FrontComponent!
-}
-
-type FrontComponent {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  id: String!
-  frontComponentTypeSeqNo: Int!
-  initialFrontComponentId: String!
-  allFrontComponentByCurrentUser: AllFrontComponent
-  frontComponentType: FrontComponentType!
-  allFrontComponents: [AllFrontComponent!]!
-  initialFrontComponent: AllFrontComponent!
-  roles: [Role!]!
-  routes: [Route!]!
-}
-
-type MenuRoleMap {
+type GqlMenuRoleMap {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   menuSeqNo: Int!
   roleSeqNo: Int!
-  menu: Menu!
-  role: Role!
+  menu: GqlMenu!
+  role: GqlRole!
   orderNo: Int!
 }
 
-type IconGroupTree {
+type GqlIconGroupTree {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   childSeqNo: Int!
   parentSeqNo: Int!
-  child: IconGroup!
-  parent: IconGroup!
+  child: GqlIconGroup!
+  parent: GqlIconGroup!
 }
 
-type IconGroup {
+type GqlIconGroup {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
-  children: [IconGroupTree!]!
-  parents: [IconGroupTree!]!
+  children: [GqlIconGroupTree!]!
+  parents: [GqlIconGroupTree!]!
 }
 
-type Icon {
+type GqlIcon {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
   filePath: String!
-  menus: [Menu!]!
+  menus: [GqlMenu!]!
 }
 
-type Menu {
+type GqlMenu {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
   iconSeqNo: Int
-  roles: [Role!]!
-  icon: Icon
-  children: [Menu!]!
-  route: Route
+  roles: [GqlRole!]!
+  icon: GqlIcon
+  children: [GqlMenu!]!
+  route: GqlRoute
 }
 
-type Route {
+"""전체 앞단 컴포넌트"""
+type GqlAllFrontComponent {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+
+  """식별자"""
+  id: String!
+
+  """앞단 컴포넌트 식별자"""
+  frontComponentId: String
+  frontComponent: GqlFrontComponent!
+}
+
+"""권한 앞단 컴포넌트 매핑"""
+type GqlRoleFrontComponentMap {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+
+  """권한 일련번호"""
+  roleSeqNo: Int!
+
+  """앞단 컴포넌트 식별자"""
+  frontComponentId: String!
+
+  """전체 앞단 컴포넌트 식별자"""
+  allFrontComponentId: String!
+  role: GqlRole!
+  frontComponent: GqlFrontComponent!
+  allFrontComponent: GqlAllFrontComponent!
+}
+
+"""앞단 컴포넌트"""
+type GqlFrontComponent {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+
+  """식별자"""
+  id: String!
+  allFrontComponent: GqlAllFrontComponent
+  allFrontComponents: [GqlAllFrontComponent!]!
+  roles: [GqlRole!]!
+  routes: [GqlRoute!]!
+}
+
+type GqlRoute {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -146,14 +163,14 @@ type Route {
   path: String!
   frontComponentId: String
   parentSeqNo: Int
-  frontComponent: FrontComponent
-  children: [Route!]!
-  parent: Route!
-  roles: [Role!]!
-  routeTree: RouteTree!
+  children: [GqlRoute!]!
+  parent: GqlRoute!
+  frontComponent: GqlFrontComponent!
+  roles: [GqlRole!]!
+  routeTree: GqlRouteTree!
 }
 
-type Role {
+type GqlRole {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -161,79 +178,106 @@ type Role {
   name: String!
   identifier: String
   roleGroupSeqNo: Int
-  roleGroup: RoleGroup!
-  users: [User!]!
-  menus: [Menu!]!
-  routes: [Route!]!
-  frontComponents: [FrontComponent!]!
+  roleGroup: GqlRoleGroup!
+  users: [GqlUser!]!
+  menus: [GqlMenu!]!
+  routes: [GqlRoute!]!
+  frontComponents: [GqlFrontComponent!]!
 }
 
-type User {
+type GqlUser {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   id: String!
   roleSeqNo: Int!
-  role: Role!
+  role: GqlRole!
 }
 
-type Menus {
-  list: [Menu!]!
+type GqlMenus {
+  list: [GqlMenu!]!
   total: Int!
 }
 
-type RouteTree {
+"""메세지 그룹"""
+type GqlMessageGroup {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+
+  """코드"""
+  code: String!
+
+  """이름"""
+  name: String!
+  messages: [GqlMessage!]!
+}
+
+"""메세지"""
+type GqlMessage {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+
+  """일련번호"""
+  seqNo: Float!
+
+  """코드"""
+  code: String!
+
+  """이름"""
+  name: String!
+
+  """내용"""
+  text: String!
+
+  """그룹 코드"""
+  groupCode: String
+  group: GqlMessageGroup!
+}
+
+"""페이징처리된 메세지 목록"""
+type GqlPagedMessages {
+  list: [GqlMessage!]!
+  total: Int!
+}
+
+type GqlRouteTree {
   fullPath: String!
   depth: Int!
 }
 
-type MessageGroup {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: String!
-  name: String!
-  messages: [Message!]!
+type GqlPagedRoutes {
+  list: [GqlRoute!]!
+  total: Int!
 }
 
-type Message {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Int!
-  text: String!
-  messageGroupCode: String!
-  messageGroup: MessageGroup!
-}
-
-type AppMetadata {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  name: String!
-  value: String!
+"""페이징처리된 메세지 그룹 목록"""
+type GqlPagedMessageGroups {
+  list: [GqlMessageGroup!]!
+  total: Int!
 }
 
 type Query {
   authCheck: Boolean!
-  user(id: String!): User!
-  role(seqNo: Int!): RoleGroup
-  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMap
-  message(seqNo: Int!): Message!
-  menus(paging: PagingRequest!, param: MenusRequest): Menus!
-  rootMenus: [Menu!]!
-  route(seqNo: Int!): Route!
-  routes(rootYn: Boolean! = false): [Route!]!
-  messageGroup(code: String!): MessageGroup!
-  appMetaData(name: String!): AppMetadata!
-  frontComponent(id: String!): FrontComponent
-  frontComponentType(seqNo: Int!): FrontComponent
-  allFrontComponent(id: String!): AllFrontComponent
-  allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: String!): AllFrontComponent
-  icon(seqNo: Int!): Icon!
+  user(id: String!): GqlUser!
+  role(seqNo: Int!): GqlRoleGroup
+  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): GqlRoleFrontComponentMap
+  message(seqNo: Int!): GqlMessage
+  menus(paging: PagingInput!, param: MenusRequest): GqlMenus!
+  rootMenus: [GqlMenu!]!
+  route(seqNo: Int!): GqlRoute!
+  routes(paging: PagingInput, request: RoutesRequest): GqlPagedRoutes!
+  messages(paging: PagingInput, request: MessagesInput): GqlPagedMessages!
+  messageGroup(code: String!): GqlMessageGroup!
+  messageGroups(paging: PagingInput, request: MessageGroupsInput): GqlPagedMessageGroups!
+  frontComponent(id: String!): GqlFrontComponent
+  allFrontComponent(id: String!): GqlAllFrontComponent
+  allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: String!): GqlAllFrontComponent
+  icon(seqNo: Int!): GqlIcon!
 }
 
-input PagingRequest {
+input PagingInput {
   skip: Int!
   take: Int!
 }
@@ -246,22 +290,61 @@ input MenusRequest {
   haveRouteYn: Boolean
 }
 
+input RoutesRequest {
+  rootYn: Boolean = false
+  seqNos: [Int!]
+  path: String
+  parentSeqNo: Int
+}
+
+input MessagesInput {
+  seqNos: [Int!]
+  groupsInput: MessageGroupsInput
+  text: StringSearchInput
+}
+
+"""메세지 그룹 목록 입력값"""
+input MessageGroupsInput {
+  """코드"""
+  code: String
+
+  """코드 목록"""
+  codes: [String!]
+
+  """이름"""
+  name: String
+}
+
+input StringSearchInput {
+  regex: RegexInput
+  like: LikeInput
+}
+
+input RegexInput {
+  value: String
+  not: Boolean = false
+}
+
+input LikeInput {
+  value: String
+  not: Boolean = false
+}
+
 type Mutation {
-  insertRole(role: InsertRoleRequest!): Role
-  saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest!): RoleGroup!
-  removeRoleGroup(seqNo: Int!): RoleGroup!
-  insertRoute(insertRouteRequest: InsertRouteRequest!): Route!
-  updateRoute(updateRouteRequest: UpdateRouteRequest!): Route!
-  updateMessage(UpdateMessageRequest: UpdateMessageRequest!): Message!
-  insertMessage(InsertMessageRequest: InsertMessageRequest!): Message!
-  updateMessageGroup(UpdateMessageGroupRequest: UpdateMessageGroupRequest!): MessageGroup!
-  insertMessageGroup(InsertMessageGroupRequest: InsertMessageGroupRequest!): MessageGroup!
-  insertFrontComponent(insertFrontComponentRequest: InsertFrontComponentRequest!): FrontComponent!
-  updateFrontComponent(updateFrontComponentRequest: UpdateFrontComponentRequest!): FrontComponent!
-  insertFrontComponentType(insertFrontComponentTypeRequest: InsertFrontComponentTypeRequest!): FrontComponentType!
-  updateFrontComponentType(updateFrontComponentTypeRequest: UpdateFrontComponentTypeRequest!): FrontComponentType!
-  insertAllFrontComponent(insertAllFrontComponentRequest: InsertAllFrontComponentRequest!): AllFrontComponent!
-  updateAllFrontComponent(updateAllFrontComponentRequest: UpdateAllFrontComponentRequest!): AllFrontComponent!
+  insertRole(role: InsertRoleRequest!): GqlRole
+  saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest!): GqlRoleGroup!
+  removeRoleGroup(seqNo: Int!): GqlRoleGroup!
+  insertRoute(req: InsertRouteRequest!): GqlRoute!
+  updateRoute(req: UpdateRouteRequest!): GqlRoute!
+  updateMessage(updateMessageInput: UpdateMessageInput!): GqlMessage!
+  insertMessage(insertMessageInput: InsertMessageInput!): GqlMessage!
+  deleteMessages(seqNos: [Int!]!): Boolean!
+  updateMessageGroup(updateMessageGroupInput: UpdateMessageGroupInput!): GqlMessageGroup
+  insertMessageGroup(insertMessageGroupInput: InsertMessageGroupInput!): GqlMessageGroup!
+  insertFrontComponent(insertFrontComponentInput: InsertFrontComponentInput!): GqlFrontComponent!
+  updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentInput!): GqlFrontComponent!
+  insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentInput!): GqlAllFrontComponent!
+  updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentInput!): GqlAllFrontComponent!
 }
 
 input InsertRoleRequest {
@@ -281,77 +364,128 @@ input SaveRoleGroupRequest {
 }
 
 input InsertRouteRequest {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
   path: String!
   frontComponentId: String
   parentSeqNo: Int
   childSeqNos: [Int!]
   roleSeqNos: [Int!]
+  menuSeqNos: [Int!]
 }
 
 input UpdateRouteRequest {
   seqNo: Int!
-  parentSeqNo: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  desc: String
   path: String
   frontComponentId: String
+  parentSeqNo: Int
   childSeqNos: [Int!]
   roleSeqNos: [Int!]
+  menuSeqNos: [Int!]
 }
 
-input UpdateMessageRequest {
-  seqNo: Int!
-  text: String
-  messageGroupCode: String
-}
+"""메세지 수정 입력값"""
+input UpdateMessageInput {
+  """일련번호"""
+  seqNo: Float!
 
-input InsertMessageRequest {
-  text: String!
-  messageGroupCode: String!
-}
+  """코드"""
+  code: String
 
-input UpdateMessageGroupRequest {
-  seqNo: String!
-  name: String!
-  messageSeqNos: [Int!] = []
-}
-
-input InsertMessageGroupRequest {
-  name: String!
-  messageSeqNos: [Int!] = []
-}
-
-input InsertFrontComponentRequest {
-  id: String!
-  frontComponentTypeSeqNo: Int!
-  initialFrontComponentId: String!
-  roleSeqNos: [Int!]
-  routeSeqNos: [Int!]
-}
-
-input UpdateFrontComponentRequest {
-  id: String!
-  frontComponentTypeSeqNo: Int
-  initialFrontComponentId: String
-  roleSeqNos: [Int!]
-  routeSeqNos: [Int!]
-}
-
-input InsertFrontComponentTypeRequest {
-  name: String!
-  frontComponentIds: [String!] = null
-}
-
-input UpdateFrontComponentTypeRequest {
-  seqNo: Int!
+  """이름"""
   name: String
-  frontComponentIds: [String!] = null
+
+  """내용"""
+  text: String
+
+  """그룹 코드"""
+  groupCode: String
 }
 
-input InsertAllFrontComponentRequest {
+"""메세지 삽입 입력값"""
+input InsertMessageInput {
+  """코드"""
+  code: String!
+
+  """이름"""
+  name: String!
+
+  """내용"""
+  text: String!
+
+  """그룹 코드"""
+  groupCode: String
+}
+
+"""메세지 그룹 수정 입력값"""
+input UpdateMessageGroupInput {
+  """코드"""
+  code: String!
+
+  """이름"""
+  name: String
+
+  """메세지 일련번호"""
+  messageSeqNos: [Int!]
+}
+
+"""메세지 그룹 삽입 입력값"""
+input InsertMessageGroupInput {
+  """코드"""
+  code: String!
+
+  """이름"""
+  name: String!
+
+  """메세지 일련번호"""
+  messageSeqNos: [Int!]
+}
+
+"""앞단 컴포넌트 삽입 입력값"""
+input InsertFrontComponentInput {
+  """식별자"""
   id: String!
+
+  """전체 앞단 컴포넌트 일련번호 목록"""
+  allFrontComponentIds: [Int!]
+
+  """권한 일련번호 목록"""
+  roleSeqNos: [Int!]
+
+  """라우트 일련번호 목록"""
+  routeSeqNos: [Int!]
+}
+
+"""앞단 컴포넌트 수정 입력값"""
+input UpdateFrontComponentInput {
+  """식별자"""
+  id: String!
+
+  """권한 일련번호 목록"""
+  roleSeqNos: [Int!]
+
+  """라우트 일련번호 목록"""
+  routeSeqNos: [Int!]
+}
+
+"""전체 앞단 컴포넌트 삽입 입력값"""
+input InsertAllFrontComponentInput {
+  """식별자"""
+  id: String!
+
+  """앞단 컴포넌트 식별자"""
   frontComponentId: String
 }
 
-input UpdateAllFrontComponentRequest {
+"""전체 앞단 컴포넌트 수정 입력값"""
+input UpdateAllFrontComponentInput {
+  """식별자"""
   id: String!
+
+  """앞단 컴포넌트 식별자"""
   frontComponentId: String
 }

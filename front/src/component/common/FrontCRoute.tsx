@@ -3,7 +3,7 @@ import { Outlet, useMatches } from "react-router-dom";
 import FrontC from "@src/component/common/FrontC";
 
 const FrontCRoute: FC<{
-	frontComponentId?: string;
+	frontComponentId: string;
 }> = ({ frontComponentId }) => {
 	const matches = useMatches();
 	const locationFrontComponentIds = useMemo(

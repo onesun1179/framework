@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './models/user';
 import { LoginUser } from './user.type';
 import { Role } from '@modules/role/model/role';
-import { AppMetadataConstant } from '@modules/app-metadata/app-metadata.constant';
+import { MetadataConstant } from '@common/constants/metadata.constant';
 
 @Injectable()
 export class UserService {
@@ -18,7 +18,7 @@ export class UserService {
       User.create({
         id: loginUser.id,
         role: await Role.findOneBy({
-          identifier: AppMetadataConstant.guestId,
+          identifier: MetadataConstant.guestId,
         }),
       }),
     );

@@ -8,7 +8,7 @@ import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('GqlIcon')
 export class Icon extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

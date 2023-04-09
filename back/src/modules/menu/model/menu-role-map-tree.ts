@@ -11,7 +11,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 
 @Entity()
-@ObjectType()
+@ObjectType('GqlMenuRoleMapTree')
 @Index(['childMenuRoleMapSeqNo', 'parentMenuRoleMapSeqNo'], {
   unique: true,
 })

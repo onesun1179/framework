@@ -2,16 +2,12 @@ import { Controller, Get, Logger, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { LoginUser } from '@modules/user/user.type';
-import { AppMetadataService } from '@modules/app-metadata/app-metadata.service';
 import { AuthService } from '../auth.service';
 import { ACCESS_TOKEN_COOKIE_NAME } from '../auth.constant';
 
 @Controller('auth/google')
 export class GoogleAuthController {
-  constructor(
-    private authService: AuthService,
-    private appConfigService: AppMetadataService,
-  ) {}
+  constructor(private authService: AuthService) {}
   private readonly logger = new Logger(GoogleAuthController.name);
 
   @Get()

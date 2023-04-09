@@ -1,20 +1,52 @@
-query {
-    route(seqNo: 1) {
-        seqNo
-        frontComponent {
-            allFrontComponents {
-                frontComponent {
-                    initialFrontComponentId
-                }
-            }
-        }
+mutation {
+    updateMessageGroup(updateMessageGroupInput: {
+        name: "test",
+        code: "EE1"
+    }) {
+        code
+        name
     }
 }
 
+mutation {
+    insertMessage(insertMessageInput: {
+        groupCode: "E",
+        code: "0001000",
+        name : "test"
+        text: "중복 오류"
+    }) {
+        text
+    }
+}
+
+mutation {
+    deleteMessage(seqNo: 1)
+}
+
 query {
-    frontComponent(seqNo: 1) {
-        allFrontComponents {
-            seqNo
+    messageGroups(
+        request: {
+            code: "E"
         }
+    ) {
+        list {
+            code
+            name
+        }
+        total
+    }
+    messages(request: {
+        text: {
+            like: {
+                value: "test"
+            }
+        }
+    }) {
+        list {
+            seqNo
+            code
+            text
+        }
+        total
     }
 }

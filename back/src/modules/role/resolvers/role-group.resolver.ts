@@ -12,11 +12,18 @@ import { RoleGroup } from '../model/role-group';
 import { Logger } from '@nestjs/common';
 import { Role } from '../model/role';
 import { SaveRoleGroupRequest } from '../model/request/save-role-group.request';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { isNumber } from 'lodash';
 
 @Resolver(() => RoleGroup)
 export class RoleGroupResolver {
-  constructor(private roleService: RoleService) {}
+  constructor(
+    private roleService: RoleService,
+    @InjectRepository(Role) private roleRepository: Repository<Role>,
+    @InjectRepository(RoleGroup)
+    private roleGroupRepository: Repository<RoleGroup>,
+  ) {}
   private readonly logger = new Logger(RoleGroupResolver.name);
 
   @Query(() => RoleGroup, {
@@ -30,45 +37,44 @@ export class RoleGroupResolver {
     defaultValue: [],
   })
   async roles(@Parent() { seqNo }: RoleGroup): Promise<Array<Role>> {
-    return await RoleGroup.findOne({
-      select: ['roles'],
-      relations: {
-        roles: true,
-      },
-      where: {
+    return this.roleRepository
+      .createQueryBuilder('r')
+      .innerJoin('r.roleGroup', 'rrg')
+      .where(`rrg.seqNo = :seqNo`, {
         seqNo,
-      },
-    }).then((r) => r?.roles);
+      })
+      .distinct()
+      .getMany();
   }
 
   @ResolveField(() => [RoleGroup], {
     defaultValue: [],
   })
   async children(@Parent() { seqNo }: RoleGroup): Promise<Array<RoleGroup>> {
-    return RoleGroup.findOne({
-      select: ['children'],
-      relations: {
-        children: true,
-      },
-      where: {
+    return this.roleGroupRepository
+      .createQueryBuilder('rg')
+      .where(`rg.parentSeqNo = :seqNo`, {
         seqNo,
-      },
-    }).then((r) => r?.children);
+      })
+      .getMany();
   }
 
   @ResolveField(() => RoleGroup, {
     nullable: true,
   })
-  async parent(@Parent() { seqNo }: RoleGroup): Promise<RoleGroup | null> {
-    return RoleGroup.findOne({
-      select: ['parent'],
-      relations: {
-        parent: true,
-      },
-      where: {
-        seqNo,
-      },
-    }).then((r) => r?.parent);
+  async parent(
+    @Parent() { parentSeqNo }: RoleGroup,
+  ): Promise<RoleGroup | null> {
+    if (isNumber(parentSeqNo)) {
+      return this.roleGroupRepository
+        .createQueryBuilder(`rg`)
+        .where(`rg.seqNo = :seqNo`, {
+          seqNo: parentSeqNo,
+        })
+        .getOne();
+    } else {
+      return null;
+    }
   }
 
   @Mutation(() => RoleGroup)

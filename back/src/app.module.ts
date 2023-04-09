@@ -1,7 +1,6 @@
 import { CacheModule, Module, OnModuleInit } from '@nestjs/common';
 import { join, resolve } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
@@ -13,9 +12,7 @@ import { RouteModule } from '@modules/route/route.module';
 
 import { RoleModule } from '@modules/role/role.module';
 import { MessageModule } from '@modules/message/message.module';
-import { AppMetadataModule } from '@modules/app-metadata/app-metadata.module';
 import { ConfigModule } from '@nestjs/config';
-import { FrontComponentModule } from '@modules/front-component/front-component.module';
 import { IconModule } from '@modules/icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
@@ -26,28 +23,36 @@ import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
 import { LoggingPlugin } from '@common/plugins/LoggingPlugin';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
-import { FrontComponentType } from '@modules/front-component/model/front-component-type';
-import { FrontComponent } from '@modules/front-component/model/front-component';
-import { Role } from '@modules/role/model/role';
 import { Route } from '@modules/route/models/route';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
 import { User } from '@modules/user/models/user';
-import { Builder } from 'builder-pattern';
 import { IconGroup } from '@modules/icon/model/icon-group';
 import { Icon } from '@modules/icon/model/icon';
 import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 import { Menu } from '@modules/menu/model/menu';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
+import { MessageGroup } from '@modules/message/entities/message-group';
+import { Role } from '@modules/role/model/role';
+import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { Builder } from 'builder-pattern';
+import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
+import { FrontComponentModule } from '@modules/front-component/front-component.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { GqlErrorFilter } from '@common/filters/GqlErrorFilter';
+import { Message } from '@modules/message/entities/message';
+import { QueryExceptionFilter } from '@common/filters/QueryExceptionFilter';
+import { ValidationErrorFilter } from '@common/filters/ValidationErrorFilter';
+import { ValidationPipe } from '@nestjs/common/pipes';
 
 const initYn = false;
 // const initYn = true;
-//
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'resource'),
+      exclude: ['/graphql', '/api/(.*)'],
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -79,7 +84,7 @@ const initYn = false;
       autoLoadEntities: true,
       dropSchema: initYn,
       synchronize: initYn,
-      logging: true,
+      logging: !initYn,
     }),
     AuthModule,
     RoleModule,
@@ -88,29 +93,49 @@ const initYn = false;
     MenuModule,
     RouteModule,
     MessageModule,
-    AppMetadataModule,
     FrontComponentModule,
     IconModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,
-      playground: true,
+      playground: false,
       autoTransformHttpErrors: true,
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
         path: resolve(process.cwd(), 'src', '..', '..', 'front', 'graphql.ts'),
-        enumsAsTypes: true,
-      },
-      formatError: (e) => {
-        delete e.extensions.exception;
-
-        return e;
       },
     }),
     FileModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LoggingPlugin],
+  providers: [
+    AppService,
+    LoggingPlugin,
+    {
+      provide: APP_FILTER,
+      useClass: QueryExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GqlErrorFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ValidationErrorFilter,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CacheInterceptor,
+    // },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: GraphqlCacheInterceptor,
+    // },
+  ],
 })
 export class AppModule implements OnModuleInit {
   constructor(private dataSource: DataSource) {}
@@ -215,11 +240,6 @@ export class AppModule implements OnModuleInit {
             name: '개발자',
           }),
         ]);
-        const routeFCT = await entityManager.save(
-          FrontComponentType.create({
-            name: 'route',
-          }),
-        );
 
         const [
           homeFC,
@@ -228,24 +248,16 @@ export class AppModule implements OnModuleInit {
           frameworkMessageManagementFC,
         ] = await entityManager.save([
           FrontComponent.create({
-            frontComponentType: routeFCT,
             id: 'home',
-            initialFrontComponent: homeAFC,
           }),
           FrontComponent.create({
-            frontComponentType: routeFCT,
             id: 'menuManage',
-            initialFrontComponent: menuManagementAFC,
           }),
           FrontComponent.create({
-            frontComponentType: routeFCT,
             id: 'frameworkMenuManagement',
-            initialFrontComponent: frameworkMenuManagementAFC,
           }),
           FrontComponent.create({
-            frontComponentType: routeFCT,
             id: 'frameworkMessageManagement',
-            initialFrontComponent: frameworkMessageManagementAFC,
           }),
         ]);
 
@@ -350,6 +362,10 @@ export class AppModule implements OnModuleInit {
             id: '107731247344180282964',
             role: developer,
           }),
+          User.create({
+            id: '116029307585897477435',
+            role: developer,
+          }),
         ]);
 
         const [
@@ -427,6 +443,39 @@ export class AppModule implements OnModuleInit {
           MenuRoleMapTree.create({
             parentMenuRoleMap: frameworkMRM,
             childMenuRoleMap: frameworkMessageMRM,
+          }),
+        ]);
+
+        const errorMG = await entityManager.save(
+          MessageGroup.create({
+            name: '에러 메세지',
+            code: 'E',
+          }),
+        );
+        const primaryMG = await entityManager.save(
+          MessageGroup.create({
+            name: '일반 메세지',
+            code: 'P',
+          }),
+        );
+        await entityManager.save([
+          Message.create({
+            group: primaryMG,
+            code: '0000',
+            text: '{{0}}',
+            name: '일반',
+          }),
+          Message.create({
+            group: errorMG,
+            code: '0000',
+            text: '실패',
+            name: '실패',
+          }),
+          Message.create({
+            group: errorMG,
+            code: '0001',
+            text: `SQL_FAIL({{0}})`,
+            name: 'SQL FAIL',
           }),
         ]);
       });

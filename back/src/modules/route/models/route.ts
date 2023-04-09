@@ -6,17 +6,17 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from '../../../common/entity/common.entity';
-import { FrontComponent } from '@modules/front-component/model/front-component';
+import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { RoleRouteMap } from '@modules/role/model/role-route-map';
 import { Menu } from '@modules/menu/model/menu';
+import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 
 @Entity()
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType(`GqlRoute`)
 export class Route extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -45,7 +45,7 @@ export class Route extends CommonEntity {
   @OneToMany(() => Route, (o) => o.parent, {
     nullable: true,
   })
-  children: Route[];
+  children?: Route[];
 
   @ManyToOne(() => Route, (o) => o.children, {
     nullable: true,
@@ -61,11 +61,15 @@ export class Route extends CommonEntity {
   @Field(() => Int, {
     nullable: true,
   })
-  parentSeqNo: number;
+  parentSeqNo?: number;
 
-  @OneToMany(() => RoleRouteMap, (o) => o.route)
-  roleRouteMaps: RoleRouteMap[];
+  @OneToMany(() => RoleRouteMap, (o) => o.route, {
+    nullable: true,
+  })
+  roleRouteMaps?: RoleRouteMap[];
 
-  @OneToMany(() => Menu, (o) => o.route)
+  @OneToMany(() => Menu, (o) => o.route, {
+    nullable: true,
+  })
   menus: Array<Menu>;
 }

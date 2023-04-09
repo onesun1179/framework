@@ -2,24 +2,25 @@ import { Module } from '@nestjs/common';
 import { FrontComponentService } from './front-component.service';
 import { FrontComponentResolver } from './resolvers/front-component.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FrontComponent } from './model/front-component';
-import { FrontComponentType } from './model/front-component-type';
-import { FrontComponentTypeResolver } from '@modules/front-component/resolvers/front-component-type.resolver';
+import { FrontComponent } from './entities/front-component.entity';
 import { AllFrontComponentResolver } from '@modules/front-component/resolvers/all-front-component.resolver';
-import { AllFrontComponent } from '@modules/front-component/model/all-front-component';
+import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
+import { TypeOrmExModule } from '@common/modules/TypeOrmExModule';
+import { AllFrontComponentRepository } from '@modules/front-component/repositories/all-front-component.repository';
+import { FrontComponentRepository } from '@modules/front-component/repositories/front-component.repository';
+import { RouteModule } from '@modules/route/route.module';
 
 @Module({
-  exports: [FrontComponentService],
   imports: [
-    TypeOrmModule.forFeature([
-      AllFrontComponent,
-      FrontComponent,
-      FrontComponentType,
+    TypeOrmModule.forFeature([AllFrontComponent, FrontComponent]),
+    TypeOrmExModule.forCustomRepository([
+      AllFrontComponentRepository,
+      FrontComponentRepository,
     ]),
+    RouteModule,
   ],
   providers: [
     FrontComponentResolver,
-    FrontComponentTypeResolver,
     AllFrontComponentResolver,
     FrontComponentService,
   ],
