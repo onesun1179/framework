@@ -9,34 +9,26 @@ import {
 import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
-import { UtilField } from '@common/utils/util.field';
+import { RoleFrontComponentMap } from '@modules/role/entities/role-front-component-map.entity';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
   isAbstract: true,
 })
-@ObjectType('GqlAllFrontComponent', {
-  description: UtilField.getFieldComment('all', 'front', 'component'),
-})
+@ObjectType('GqlAllFrontComponent')
 export class AllFrontComponent extends CommonEntity {
-  @PrimaryColumn({
-    comment: UtilField.getFieldComment('id'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('id'),
-  })
-  id: string;
+  @PrimaryColumn()
+  @Field()
+  id!: string;
 
   @Column({
     nullable: true,
-    comment: UtilField.getFieldComment('front', 'component', 'id'),
   })
-  @Field({
+  @Field(() => String, {
     nullable: true,
-    description: UtilField.getFieldComment('front', 'component', 'id'),
   })
-  frontComponentId?: string;
+  frontComponentId?: Nullable<string>;
 
   @ManyToOne(() => FrontComponent, (o) => o.allFrontComponents, {
     nullable: true,
@@ -44,8 +36,10 @@ export class AllFrontComponent extends CommonEntity {
   @JoinColumn({
     name: 'front_component_id',
   })
-  frontComponent?: FrontComponent;
+  frontComponent?: Nullable<FrontComponent>;
 
-  @OneToMany(() => RoleFrontComponentMap, (o) => o.allFrontComponent)
-  roleFrontComponentMaps: Array<RoleFrontComponentMap>;
+  @OneToMany(() => RoleFrontComponentMap, (o) => o.allFrontComponent, {
+    nullable: true,
+  })
+  roleFrontComponentMaps?: Nullable<Array<RoleFrontComponentMap>>;
 }

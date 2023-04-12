@@ -1,11 +1,9 @@
 import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
 import { MessageGroup } from '@modules/message/entities/message-group';
-import { UtilField } from '@common/utils/util.field';
 import { Message } from '@modules/message/entities/message';
+import { Nullable } from '@common/types';
 
-@InputType({
-  description: UtilField.getFieldComment('message', 'group', 'insert', 'input'),
-})
+@InputType()
 @ArgsType()
 export class InsertMessageGroupInput extends PickType(MessageGroup, [
   'name',
@@ -13,7 +11,6 @@ export class InsertMessageGroupInput extends PickType(MessageGroup, [
 ]) {
   @Field(() => [Int], {
     nullable: true,
-    description: UtilField.getFieldComment('message', 'seqNo'),
   })
-  messageSeqNos?: Array<Message['seqNo']>;
+  messageSeqNos!: Nullable<Array<Message['seqNo']>>;
 }

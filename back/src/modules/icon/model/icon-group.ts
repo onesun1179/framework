@@ -3,6 +3,7 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '@common/entity/common.entity';
 import { IconGroupTree } from './icon-group-tree';
 import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
@@ -12,20 +13,20 @@ import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
 export class IconGroup extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
 
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
-  @OneToMany(() => IconIconGroupMap, (o) => o.iconGroup)
-  iconIconGroupMaps: Array<IconIconGroupMap>;
+  @OneToMany(() => IconIconGroupMap, (o) => o.iconGroup, {
+    nullable: true,
+  })
+  iconIconGroupMaps?: Nullable<Array<IconIconGroupMap>>;
 
   @OneToMany(() => IconGroupTree, (o) => o.child)
-  @Field(() => [IconGroupTree])
-  children: IconGroupTree[];
+  children?: Nullable<IconGroupTree[]>;
 
   @OneToMany(() => IconGroupTree, (o) => o.parent)
-  @Field(() => [IconGroupTree])
-  parents: IconGroupTree[];
+  parents?: Nullable<IconGroupTree[]>;
 }

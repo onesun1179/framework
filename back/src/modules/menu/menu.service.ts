@@ -1,16 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Menu } from './model/menu';
-import { MenuRoleMapTree } from './model/menu-role-map-tree';
+import { MenuRepository } from '@modules/menu/repositories/menu.repository';
+import { MenuRoleMapTreeRepository } from '@modules/menu/repositories/menu-role-map-tree.repository';
 
 @Injectable()
 export class MenuService {
   constructor(
-    @InjectRepository(Menu)
-    private menuRepository: Repository<Menu>,
-    @InjectRepository(MenuRoleMapTree)
-    private menuTreeRepository: Repository<MenuRoleMapTree>,
+    private menuRepository: MenuRepository,
+    private menuTreeRepository: MenuRoleMapTreeRepository,
   ) {}
   private readonly logger = new Logger(MenuService.name);
 

@@ -33,8 +33,8 @@ export class UtilPaging {
     | Type
   > {
     const [list, total] = await builder
-      .skip(pagingRequest?.skip)
-      .take(pagingRequest?.take)
+      .skip(pagingRequest?.skip || undefined)
+      .take(pagingRequest?.take || undefined)
       .getManyAndCount();
 
     if (classRef) {

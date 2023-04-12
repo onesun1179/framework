@@ -22,22 +22,23 @@ export class IconResolver {
     return await Icon.findOneBy({ seqNo });
   }
 
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
+
   @ResolveField(() => String)
   filePath(@Parent() { filePath }: Icon): string {
-    return process.env.FILE_PATH.concat(filePath);
+    return process.env.FILE_PATH!.concat(filePath);
   }
 
   @ResolveField(() => [Menu])
   async menus(@Parent() { seqNo }: Icon): Promise<Menu[]> {
-    return await Icon.findOne({
-      select: ['menus'],
-      relations: {
-        menus: true,
-      },
-      where: {
-        seqNo,
-      },
-    }).then((r) => r?.menus);
+    return Menu.createQueryBuilder('m')
+      .where(`m.iconSeqNo = :iconSeqNo`, {
+        iconSeqNo: seqNo,
+      })
+      .distinct()
+      .getMany();
   }
 
   // @Mutation(() => Icon)

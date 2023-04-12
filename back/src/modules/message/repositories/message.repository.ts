@@ -1,6 +1,6 @@
 import { Message } from '@modules/message/entities/message';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
-import { DataSource, In, Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { UtilPaging } from '@common/utils/util.paging';
 import { PagedMessages } from '@modules/message/dto/output/paged-messages';
 import { PagingInput } from '@common/dto/inputs/paging.input';
@@ -8,16 +8,14 @@ import { MessagesInput } from '@modules/message/dto/input/messages.input';
 import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
 import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
 import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
-import { CacheKey } from '@nestjs/cache-manager';
-import { Injectable } from '@nestjs/common';
+import { CustomRepository } from '@common/docorator/CustomRepository';
 
-@Injectable()
+@CustomRepository(Message)
 export class MessageRepository extends Repository<Message> {
-  constructor(private dataSource: DataSource) {
-    super(Message, dataSource.createEntityManager());
-  }
-  @CacheKey('test2')
-  async paging(pagingRequest?: PagingInput, messagesInput?: MessagesInput) {
+  async paging(
+    pagingRequest?: PagingInput,
+    messagesInput?: MessagesInput,
+  ): Promise<PagedMessages> {
     const qb = this.createQueryBuilder('m');
     const where: FindOptionsWhere<Message> = {};
 
@@ -31,7 +29,7 @@ export class MessageRepository extends Repository<Message> {
     }
 
     return await UtilPaging.getRes({
-      pagingRequest: pagingRequest,
+      pagingRequest,
       builder: qb.where(where),
       classRef: PagedMessages,
     });

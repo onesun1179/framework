@@ -1,3 +1,1 @@
-export class UtilSearch {
-  static;
-}
+export class UtilSearch {}

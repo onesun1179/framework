@@ -9,21 +9,28 @@ import {
 import { FrontComponentService } from '../front-component.service';
 import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
-import { Role } from '@modules/role/model/role';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
-import { Route } from '@modules/route/models/route';
+import { Role } from '@modules/role/entities/role.entity';
+import { Route } from '@modules/route/dto/route';
 import { CurrentUser } from '@common/docorator/CurrentUser';
 import { AfterAT } from '../../../auth/interfaces/AfterAT';
 import { DataSource } from 'typeorm';
 import { InsertFrontComponentInput } from '@modules/front-component/dto/insert-front-component.input';
 import { UpdateFrontComponentInput } from '@modules/front-component/dto/update-front-component.input';
 import { FrontComponentRepository } from '@modules/front-component/repositories/front-component.repository';
+import { AllFrontComponentRepository } from '@modules/front-component/repositories/all-front-component.repository';
+import { RoleFrontComponentMapRepository } from '@modules/role/repositories/role-front-component-map.repository';
+import { RoleRepository } from '@modules/role/repositories/role.repository';
+import { RouteRepository } from '@modules/route/repositories/route.repository';
 
 @Resolver(() => FrontComponent)
 export class FrontComponentResolver {
   constructor(
-    private readonly frontRouteService: FrontComponentService,
-    private readonly frontComponentRepository: FrontComponentRepository,
+    private frontRouteService: FrontComponentService,
+    private allFrontComponentRepository: AllFrontComponentRepository,
+    private frontComponentRepository: FrontComponentRepository,
+    private roleFrontComponentMapRepository: RoleFrontComponentMapRepository,
+    private roleRepository: RoleRepository,
+    private routeRepository: RouteRepository,
     private dataSource: DataSource,
   ) {}
 
@@ -37,10 +44,12 @@ export class FrontComponentResolver {
     @Args('id', {
       type: () => String,
     })
-    id: string,
-  ): Promise<FrontComponent> {
-    return await this.dataSource.manager.findOneBy(FrontComponent, {
-      id,
+    id: FrontComponent['id'],
+  ): Promise<FrontComponent | null> {
+    return await this.frontComponentRepository.findOne({
+      where: {
+        id,
+      },
     });
   }
 
@@ -51,50 +60,56 @@ export class FrontComponentResolver {
     nullable: true,
   })
   async allFrontComponent(
-    @CurrentUser() currentUser: AfterAT,
+    @CurrentUser() { roleSeqNo }: AfterAT,
     @Parent() { id: frontComponentId }: FrontComponent,
-  ): Promise<AllFrontComponent> {
-    return await this.dataSource.manager
-      .findOne(RoleFrontComponentMap, {
-        select: ['allFrontComponent'],
-        where: {
+  ): Promise<AllFrontComponent | null> {
+    return this.allFrontComponentRepository
+      .createQueryBuilder(`afc`)
+      .innerJoin(
+        `afc.roleFrontComponentMaps`,
+        `rfcm`,
+        `rfcm.roleSeqNo = :roleSeqNo AND rfcm.frontComponentId = :frontComponentId`,
+        {
+          roleSeqNo,
           frontComponentId,
-          roleSeqNo: currentUser.roleSeqNo,
         },
-      })
-      .then((r) => r?.allFrontComponent);
+      )
+      .getOne();
   }
 
   @ResolveField(() => [AllFrontComponent])
   async allFrontComponents(
     @Parent() { id }: FrontComponent,
   ): Promise<Array<AllFrontComponent>> {
-    return await this.dataSource.manager.find(AllFrontComponent, {
-      where: {
-        frontComponentId: id,
-      },
-    });
+    return await this.allFrontComponentRepository
+      .createQueryBuilder('afc')
+      .where(`afc.frontComponentId = :id`, {
+        id,
+      })
+      .getMany();
   }
 
   @ResolveField(() => [Role])
   async roles(@Parent() { id }: FrontComponent): Promise<Array<Role>> {
-    return await this.dataSource.manager
-      .find(RoleFrontComponentMap, {
-        select: ['role'],
-        where: {
-          frontComponentId: id,
-        },
+    return await this.roleRepository
+      .createQueryBuilder('r')
+      .innerJoin(`r.roleFrontComponentMaps`, `rfcm`)
+      .where(`rfcm.frontComponentId = :frontComponentId`, {
+        frontComponentId: id,
       })
-      .then((r) => r.map((o) => o.role));
+      .getMany();
   }
 
   @ResolveField(() => [Route])
-  async routes(@Parent() { id }: FrontComponent): Promise<Array<Route>> {
-    return await this.dataSource.manager.find(Route, {
-      where: {
-        frontComponentId: id,
-      },
-    });
+  async routes(
+    @Parent() { id: frontComponentId }: FrontComponent,
+  ): Promise<Array<Route>> {
+    return this.routeRepository
+      .createQueryBuilder(`route`)
+      .where(`route.frontComponentId = :frontComponentId`, {
+        frontComponentId,
+      })
+      .getMany();
   }
 
   /**************************************
@@ -107,7 +122,7 @@ export class FrontComponentResolver {
     })
     insertFrontComponentInput: InsertFrontComponentInput,
   ) {
-    return await this.frontRouteService.saveFrontComponent(
+    return await this.frontComponentRepository.saveCustom(
       insertFrontComponentInput,
     );
   }
@@ -120,13 +135,15 @@ export class FrontComponentResolver {
     updateFrontComponentInput: UpdateFrontComponentInput,
   ) {
     if (
-      (await FrontComponent.countBy({
-        id: updateFrontComponentInput.id,
-      })) === 0
+      !(await this.frontComponentRepository.exist({
+        where: {
+          id: updateFrontComponentInput.id,
+        },
+      }))
     ) {
       throw new Error();
     }
-    return await this.frontRouteService.saveFrontComponent(
+    return await this.frontComponentRepository.saveCustom(
       updateFrontComponentInput,
     );
   }

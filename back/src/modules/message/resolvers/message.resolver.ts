@@ -19,13 +19,15 @@ import { PagedMessages } from '@modules/message/dto/output/paged-messages';
 import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
 import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
 import { MessageRepository } from '@modules/message/repositories/message.repository';
+import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
 
 @Resolver(() => Message)
 export class MessageResolver {
   constructor(
-    private readonly messageService: MessageService,
+    private messageService: MessageService,
     private dataSource: DataSource,
     private messageRepository: MessageRepository,
+    private messageGroupRepository: MessageGroupRepository,
   ) {}
   private readonly logger = new Logger(MessageResolver.name);
 
@@ -41,9 +43,10 @@ export class MessageResolver {
     })
     seqNo: Message['seqNo'],
   ): Promise<Message | null> {
-    return Message.findOneBy({
-      seqNo,
-    });
+    return this.messageRepository
+      .createQueryBuilder(`message`)
+      .where(`message.seqNo = :seqNo`, { seqNo })
+      .getOne();
   }
 
   @Query(() => PagedMessages)

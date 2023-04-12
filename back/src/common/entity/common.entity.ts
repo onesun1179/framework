@@ -21,7 +21,7 @@ export class CommonEntity extends BaseEntity {
     comment: '생성시간',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Field()
   @UpdateDateColumn({
@@ -30,7 +30,7 @@ export class CommonEntity extends BaseEntity {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Field({
     nullable: true,
@@ -40,5 +40,5 @@ export class CommonEntity extends BaseEntity {
     comment: '비고',
     nullable: true,
   })
-  desc: string;
+  desc!: string;
 }

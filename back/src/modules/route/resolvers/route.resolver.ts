@@ -8,21 +8,18 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { RouteService } from '../route.service';
-import { Route } from '../models/route';
+import { Route } from '@modules/route/dto/route';
 import { Logger } from '@nestjs/common';
-import { Role } from '@modules/role/model/role';
+import { Role } from '@modules/role/entities/role.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { RoleRouteMap } from '@modules/role/model/role-route-map';
-import {
-  InsertRouteRequest,
-  RoutesRequest,
-  UpdateRouteRequest,
-} from '@modules/route/models/route.request';
-import { RouteTree } from '@modules/route/models/route-tree';
-import { PagedRoutes } from '@modules/route/models/paged-routes';
+import { RoleRouteMap } from '@modules/role/entities/role-route-map.entity';
+
+import { RouteTree } from '@modules/route/dto/route-tree';
+import { PagedRoutes } from '@modules/route/dto/paged-routes';
 import { PagingInput } from '@common/dto/inputs/paging.input';
-import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { RoutesInput } from '@modules/route/dto/routes.input';
+import { InsertRouteInput } from '@modules/route/dto/insert-route.input';
 
 @Resolver(() => Route)
 export class RouteResolver {
@@ -57,10 +54,10 @@ export class RouteResolver {
     })
     paging: PagingInput,
     @Args('request', {
-      type: () => RoutesRequest,
+      type: () => RoutesInput,
       nullable: true,
     })
-    req: RoutesRequest,
+    req: RoutesInput,
   ): Promise<PagedRoutes> {
     return this.dataSource.transaction(async (e) => {
       return this.routeService.getPaging(e, paging, req);
@@ -82,25 +79,25 @@ export class RouteResolver {
     });
   }
 
-  @ResolveField(() => Route)
-  async parent(@Parent() { parentSeqNo }: Route): Promise<Route> {
-    return await this.dataSource.manager.findOne(Route, {
-      where: {
-        seqNo: parentSeqNo,
-      },
-    });
-  }
+  // @ResolveField(() => Route)
+  // async parent(@Parent() { parentSeqNo }: Route): Promise<Route> {
+  //   return await this.dataSource.manager.findOne(Route, {
+  //     where: {
+  //       seqNo: parentSeqNo,
+  //     },
+  //   });
+  // }
 
-  @ResolveField(() => FrontComponent)
-  async frontComponent(
-    @Parent() { frontComponentId }: Route,
-  ): Promise<FrontComponent> {
-    return await this.dataSource.manager.findOne(FrontComponent, {
-      where: {
-        id: frontComponentId,
-      },
-    });
-  }
+  // @ResolveField(() => FrontComponent)
+  // async frontComponent(
+  //   @Parent() { frontComponentId }: Route,
+  // ): Promise<FrontComponent> {
+  //   return await this.dataSource.manager.findOne(FrontComponent, {
+  //     where: {
+  //       id: frontComponentId,
+  //     },
+  //   });
+  // }
 
   @ResolveField(() => [Role])
   async roles(@Parent() { seqNo }: Route): Promise<Role[]> {
@@ -152,26 +149,25 @@ export class RouteResolver {
   @Mutation(() => Route)
   async insertRoute(
     @Args('req', {
-      type: () => InsertRouteRequest,
+      type: () => InsertRouteInput,
     })
-    req: InsertRouteRequest,
+    req: InsertRouteInput,
   ): Promise<Route> {
     return await this.dataSource.transaction(async (e) => {
       return this.routeService.save(e, req);
     });
   }
 
-  @Mutation(() => Route)
-  async updateRoute(
-    @Args('req', {
-      type: () => UpdateRouteRequest,
-    })
-    req: UpdateRouteRequest,
-  ): Promise<Route> {
-    return await this.dataSource.transaction(async (e) => {
-      if (await this.routeService.hasSeqNo(e, req.seqNo)) {
-        return this.routeService.save(e, req);
-      }
-    });
-  }
+  // @Mutation(() => Route)
+  // async updateRoute(
+  //   @Args('req', {
+  //     type: () => UpdateRouteRequest,
+  //   })
+  //   req: UpdateRouteRequest,
+  // ): Promise<Route> {
+  //   if (await this.routeService.hasSeqNo(e, req.seqNo)) {
+  //     return this.routeService.save(e, req);
+  //   }
+  //
+  // }
 }

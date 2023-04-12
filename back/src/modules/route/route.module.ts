@@ -2,13 +2,22 @@ import { Module } from '@nestjs/common';
 import { RouteController } from './route.controller';
 import { RouteService } from './route.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Route } from './models/route';
+import { Route } from '@modules/route/dto/route';
 
 import { RouteResolver } from './resolvers/route.resolver';
-import { RoleRouteMap } from '@modules/role/model/role-route-map';
+import { RoleRouteMap } from '@modules/role/entities/role-route-map.entity';
+import { TypeOrmExModule } from '@common/modules/TypeOrmExModule';
+import { RouteRepository } from '@modules/route/repositories/route.repository';
+import { RoleRouteMapRepository } from '@modules/role/repositories/role-route-map.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Route, RoleRouteMap])],
+  imports: [
+    TypeOrmModule.forFeature([Route, RoleRouteMap]),
+    TypeOrmExModule.forCustomRepository([
+      RouteRepository,
+      RoleRouteMapRepository,
+    ]),
+  ],
   controllers: [RouteController],
   providers: [RouteService, RouteResolver],
   exports: [RouteService],

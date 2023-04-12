@@ -8,19 +8,19 @@ import { MessageGroupResolver } from './resolvers/message-group.resolver';
 import { MessageGroupService } from '@modules/message/services/message-group.service';
 import { MessageRepository } from '@modules/message/repositories/message.repository';
 import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
+import { TypeOrmExModule } from '@common/modules/TypeOrmExModule';
 
 @Global()
 @Module({
-  exports: [
-    MessageService,
-    MessageGroupService,
-    MessageRepository,
-    MessageGroupRepository,
+  exports: [MessageService, MessageGroupService],
+  imports: [
+    TypeOrmModule.forFeature([Message, MessageGroup]),
+    TypeOrmExModule.forCustomRepository([
+      MessageRepository,
+      MessageGroupRepository,
+    ]),
   ],
-  imports: [TypeOrmModule.forFeature([Message, MessageGroup])],
   providers: [
-    MessageRepository,
-    MessageGroupRepository,
     MessageResolver,
     MessageGroupResolver,
     MessageService,

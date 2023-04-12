@@ -9,12 +9,11 @@ import {
 import { CommonEntity } from '@common/entity/common.entity';
 import { User } from '@modules/user/models/user';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { RoleGroup } from './role-group';
-import { Menu } from '@modules/menu/model/menu';
-import { RoleRouteMap } from '@modules/role/model/role-route-map';
+import { RoleGroup } from './role-group.entity';
+import { RoleRouteMap } from '@modules/role/entities/role-route-map.entity';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
-import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { RoleFrontComponentMap } from '@modules/role/entities/role-front-component-map.entity';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
@@ -24,16 +23,17 @@ import { FrontComponent } from '@modules/front-component/entities/front-componen
 export class Role extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
+
   @Column()
   @Field()
-  name: string;
+  name!: string;
 
   @Column({
     nullable: true,
     update: false,
   })
-  @Field({
+  @Field(() => String, {
     nullable: true,
   })
   identifier?: string;
@@ -44,29 +44,31 @@ export class Role extends CommonEntity {
   @Field(() => Int, {
     nullable: true,
   })
-  roleGroupSeqNo?: number;
+  roleGroupSeqNo?: Nullable<number>;
+
   @ManyToOne(() => RoleGroup, (o) => o.roles, {
     nullable: true,
   })
   @JoinColumn({
     name: 'role_group_seq_no',
   })
-  roleGroup?: RoleGroup;
-  @OneToMany(() => User, (o) => o.role)
-  users: User[];
+  roleGroup?: Nullable<RoleGroup>;
+
+  @OneToMany(() => User, (o) => o.role, {
+    nullable: true,
+  })
+  users?: Nullable<User[]>;
 
   @OneToMany(() => MenuRoleMap, (o) => o.role)
-  menuRoleMaps: MenuRoleMap[];
+  menuRoleMaps!: MenuRoleMap[];
 
-  menus: Menu[];
+  @OneToMany(() => RoleRouteMap, (o) => o.route, {
+    nullable: true,
+  })
+  roleRouteMaps?: Nullable<Array<RoleRouteMap>>;
 
-  @OneToMany(() => RoleRouteMap, (o) => o.route)
-  roleRouteMaps: Array<RoleRouteMap>;
-
-  routes: [];
-
-  @OneToMany(() => RoleFrontComponentMap, (o) => o.role)
-  roleFrontComponentMaps: Array<RoleFrontComponentMap>;
-
-  frontComponents: Array<FrontComponent>;
+  @OneToMany(() => RoleFrontComponentMap, (o) => o.role, {
+    nullable: true,
+  })
+  roleFrontComponentMaps?: Nullable<Array<RoleFrontComponentMap>>;
 }

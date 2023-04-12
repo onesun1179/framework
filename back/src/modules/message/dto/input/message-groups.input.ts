@@ -1,25 +1,20 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { UtilField } from '@common/utils/util.field';
+import { Nullable } from '@common/types';
 
-@InputType({
-  description: UtilField.getFieldComment('message', 'group', 's', 'input'),
-})
+@InputType()
 @ArgsType()
 export class MessageGroupsInput {
   @Field(() => String, {
-    description: UtilField.getFieldComment('code'),
     nullable: true,
   })
-  code?: string;
+  code?: Nullable<string>;
   @Field(() => [String], {
     nullable: true,
-    description: UtilField.getFieldComment('code', 's'),
   })
-  codes?: Array<string>;
+  codes?: Nullable<Array<string>>;
 
   @Field(() => String, {
     nullable: true,
-    description: UtilField.getFieldComment('name'),
   })
-  name?: string;
+  name?: Nullable<string>;
 }

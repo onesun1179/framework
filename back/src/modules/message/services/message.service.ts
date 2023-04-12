@@ -34,7 +34,6 @@ export class MessageService {
       },
     });
 
-    console.log(msgCode);
     if (msg) {
       return {
         result: true,

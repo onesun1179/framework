@@ -24,29 +24,20 @@ mutation {
 }
 
 query {
-    messageGroups(
-        request: {
-            code: "E"
-        }
-    ) {
-        list {
-            code
-            name
-        }
-        total
+    message(seqNo: 1) {
+        seqNo
     }
+
     messages(request: {
-        text: {
-            like: {
-                value: "test"
-            }
-        }
+        text:  : {
+
+    }
     }) {
         list {
             seqNo
+            groupCode
             code
             text
         }
-        total
     }
 }

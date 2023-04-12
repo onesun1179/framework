@@ -8,9 +8,10 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { RoleRouteMap } from '@modules/role/model/role-route-map';
+import { RoleRouteMap } from '@modules/role/entities/role-route-map.entity';
 import { Menu } from '@modules/menu/model/menu';
 import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
@@ -20,11 +21,11 @@ import { FrontComponent } from '@modules/front-component/entities/front-componen
 export class Route extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
 
   @Column()
   @Field()
-  path: string;
+  path!: string;
 
   @Column({
     nullable: true,
@@ -32,7 +33,7 @@ export class Route extends CommonEntity {
   @Field(() => String, {
     nullable: true,
   })
-  frontComponentId?: string;
+  frontComponentId?: Nullable<string>;
 
   @ManyToOne(() => FrontComponent, (o) => o.routes, {
     nullable: true,
@@ -40,12 +41,12 @@ export class Route extends CommonEntity {
   @JoinColumn({
     name: 'front_component_id',
   })
-  frontComponent?: FrontComponent;
+  frontComponent?: Nullable<FrontComponent>;
 
   @OneToMany(() => Route, (o) => o.parent, {
     nullable: true,
   })
-  children?: Route[];
+  children?: Nullable<Route[]>;
 
   @ManyToOne(() => Route, (o) => o.children, {
     nullable: true,
@@ -53,7 +54,7 @@ export class Route extends CommonEntity {
   @JoinColumn({
     name: 'parent_seq_no',
   })
-  parent?: Route;
+  parent?: Nullable<Route>;
 
   @Column({
     nullable: true,
@@ -61,15 +62,15 @@ export class Route extends CommonEntity {
   @Field(() => Int, {
     nullable: true,
   })
-  parentSeqNo?: number;
+  parentSeqNo?: Nullable<number>;
 
   @OneToMany(() => RoleRouteMap, (o) => o.route, {
     nullable: true,
   })
-  roleRouteMaps?: RoleRouteMap[];
+  roleRouteMaps?: Nullable<RoleRouteMap[]>;
 
   @OneToMany(() => Menu, (o) => o.route, {
     nullable: true,
   })
-  menus: Array<Menu>;
+  menus?: Nullable<Array<Menu>>;
 }

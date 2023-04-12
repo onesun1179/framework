@@ -13,7 +13,7 @@ export class MessagesInput {
   @Field(() => MessageGroupsInput, {
     nullable: true,
   })
-  groupsInput: MessageGroupsInput;
+  groupsInput?: MessageGroupsInput;
 
   @Field(() => StringSearchInput, {
     nullable: true,

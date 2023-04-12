@@ -8,24 +8,29 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { RoleService } from '../role.service';
-import { RoleGroup } from '../model/role-group';
+import { RoleGroup } from '../entities/role-group.entity';
 import { Logger } from '@nestjs/common';
-import { Role } from '../model/role';
-import { SaveRoleGroupRequest } from '../model/request/save-role-group.request';
-import { In, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from '../entities/role.entity';
+import { UpdateRoleGroupInput } from '../dto/update-role-group.input';
 import { isNumber } from 'lodash';
+import { RoleGroupRepository } from '@modules/role/repositories/role-group.repository';
+import { RoleRepository } from '@modules/role/repositories/role.repository';
+import { GqlError } from '@common/errors/GqlError';
+import { MessageConstant } from '@common/constants/message.constant';
+import { InsertRoleGroupInput } from '@modules/role/dto/insert-role-group.input';
 
 @Resolver(() => RoleGroup)
 export class RoleGroupResolver {
   constructor(
     private roleService: RoleService,
-    @InjectRepository(Role) private roleRepository: Repository<Role>,
-    @InjectRepository(RoleGroup)
-    private roleGroupRepository: Repository<RoleGroup>,
+    private roleRepository: RoleRepository,
+    private roleGroupRepository: RoleGroupRepository,
   ) {}
   private readonly logger = new Logger(RoleGroupResolver.name);
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => RoleGroup, {
     nullable: true,
   })
@@ -33,6 +38,9 @@ export class RoleGroupResolver {
     return await RoleGroup.findOneBy({ seqNo });
   }
 
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
   @ResolveField(() => [Role], {
     defaultValue: [],
   })
@@ -76,44 +84,37 @@ export class RoleGroupResolver {
       return null;
     }
   }
+  /**************************************
+   *           MUTATION
+   ***************************************/
 
   @Mutation(() => RoleGroup)
-  async saveRoleGroup(
-    @Args('SaveRoleGroupRequest', {
-      type: () => SaveRoleGroupRequest,
+  async insertRoleGroup(
+    @Args('insertRoleGroupInput', {
+      type: () => InsertRoleGroupInput,
     })
-    saveRoleGroupRequest: SaveRoleGroupRequest,
+    insertRoleGroupInput: InsertRoleGroupInput,
   ): Promise<RoleGroup> {
-    const roleGroup = await RoleGroup.create({
-      seqNo: saveRoleGroupRequest.seqNo,
-      name: saveRoleGroupRequest.name,
-      parentSeqNo: saveRoleGroupRequest.parentSeqNo,
-    }).save();
+    return await this.roleGroupRepository.saveCustom(insertRoleGroupInput);
+  }
 
-    if (saveRoleGroupRequest.roleSeqNos.length > 0) {
-      const a = await Role.update(
-        {
-          seqNo: In(saveRoleGroupRequest.roleSeqNos),
+  @Mutation(() => RoleGroup)
+  async updateRoleGroup(
+    @Args('updateRoleGroupInput', {
+      type: () => UpdateRoleGroupInput,
+    })
+    updateRoleGroupInput: UpdateRoleGroupInput,
+  ): Promise<RoleGroup> {
+    if (
+      !(await this.roleGroupRepository.exist({
+        where: {
+          seqNo: updateRoleGroupInput.seqNo,
         },
-        {
-          roleGroup,
-        },
-      );
-      this.logger.log(a);
+      }))
+    ) {
+      throw new GqlError(MessageConstant.NONE_KEY());
     }
-
-    if (saveRoleGroupRequest.childSeqNos.length > 0) {
-      await RoleGroup.update(
-        {
-          seqNo: In(saveRoleGroupRequest.roleSeqNos),
-        },
-        {
-          parent: roleGroup,
-        },
-      );
-    }
-
-    return roleGroup;
+    return this.roleGroupRepository.saveCustom(updateRoleGroupInput);
   }
 
   @Mutation(() => RoleGroup)

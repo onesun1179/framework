@@ -2,20 +2,16 @@ import { EntityRepository } from '@common/repositories/entity.repository';
 import { MessageGroup } from '@modules/message/entities/message-group';
 import { MessageGroupsInput } from '@modules/message/dto/input/message-groups.input';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
-import { DataSource, In, Like } from 'typeorm';
+import { In, Like } from 'typeorm';
 import { PagingInput } from '@common/dto/inputs/paging.input';
 import { PagedMessageGroups } from '@modules/message/dto/output/paged-message-groups';
 import { UtilPaging } from '@common/utils/util.paging';
 import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
 import { UpdateMessageGroupInput } from '@modules/message/dto/input/update-message-group.input';
-import { Injectable } from '@nestjs/common';
+import { CustomRepository } from '@common/docorator/CustomRepository';
 
-@Injectable()
+@CustomRepository(MessageGroup)
 export class MessageGroupRepository extends EntityRepository<MessageGroup> {
-  constructor(private dataSource: DataSource) {
-    super(MessageGroup, dataSource.createEntityManager());
-  }
-
   static getWhereByMessageGroupsInput({
     codes,
     name,
@@ -43,13 +39,13 @@ export class MessageGroupRepository extends EntityRepository<MessageGroup> {
     pagingRequest: PagingInput,
     messageGroupsInput: MessageGroupsInput,
   ): Promise<PagedMessageGroups> {
-    return await UtilPaging.getRes<MessageGroup>(
+    return await UtilPaging.getRes<MessageGroup>({
       pagingRequest,
-      this.createQueryBuilder('mg').where(
+      builder: this.createQueryBuilder('mg').where(
         MessageGroupRepository.getWhereByMessageGroupsInput(messageGroupsInput),
       ),
-      PagedMessageGroups,
-    );
+      classRef: PagedMessageGroups,
+    });
   }
 
   async saveCustom(p: InsertMessageGroupInput | UpdateMessageGroupInput) {

@@ -18,27 +18,26 @@ import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 export class MenuRoleMapTree extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
-  seqNo: number;
+  seqNo!: number;
 
   @Column()
   @Field(() => Int)
-  childMenuRoleMapSeqNo: number;
+  childMenuRoleMapSeqNo!: number;
 
   @Column()
   @Field(() => Int)
-  parentMenuRoleMapSeqNo: number;
+  parentMenuRoleMapSeqNo!: number;
 
   @ManyToOne(() => MenuRoleMap, (o) => o.children)
-  @Field(() => MenuRoleMap)
   @JoinColumn({
     name: 'child_menu_role_map_seq_no',
   })
-  childMenuRoleMap: MenuRoleMap;
+  childMenuRoleMap!: MenuRoleMap;
 
   @ManyToOne(() => MenuRoleMap, (o) => o.parents)
   @Field(() => MenuRoleMap)
   @JoinColumn({
     name: 'parent_menu_role_map_seq_no',
   })
-  parentMenuRoleMap: MenuRoleMap;
+  parentMenuRoleMap!: MenuRoleMap;
 }

@@ -7,13 +7,11 @@ export const CurrentUser = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
     const { userId } = ctx.getContext().req.user as AccessToken;
-
-    const { roleSeqNo } = await User.findOne({
-      select: ['roleSeqNo'],
-      where: {
-        id: userId,
-      },
-    });
+    const { roleSeqNo } = await User.createQueryBuilder(`u`)
+      .where(`u.id = :userId`, {
+        userId,
+      })
+      .getOneOrFail();
     return {
       roleSeqNo,
       userId,

@@ -10,7 +10,8 @@ import { CommonEntity } from '@common/entity/common.entity';
 import { MenuRoleMap } from './menu-role-map';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Icon } from '@modules/icon/model/icon';
-import { Route } from '@modules/route/models/route';
+import { Route } from '@modules/route/dto/route';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
@@ -32,7 +33,7 @@ export class Menu extends CommonEntity {
   @Field(() => Int, {
     nullable: true,
   })
-  iconSeqNo?: number;
+  iconSeqNo?: Nullable<number>;
 
   @ManyToOne(() => Icon, (o) => o.menus, {
     nullable: true,
@@ -40,7 +41,7 @@ export class Menu extends CommonEntity {
   @JoinColumn({
     name: 'icon_seq_no',
   })
-  icon?: Icon;
+  icon?: Nullable<Icon>;
 
   @OneToMany(() => MenuRoleMap, (o) => o.menu)
   menuRoleMaps!: Array<MenuRoleMap>;
@@ -51,7 +52,7 @@ export class Menu extends CommonEntity {
   @Field(() => Int, {
     nullable: true,
   })
-  routeSeqNo?: number;
+  routeSeqNo?: Nullable<number>;
 
   @ManyToOne(() => Route, (o) => o.menus, {
     nullable: true,
@@ -59,5 +60,5 @@ export class Menu extends CommonEntity {
   @JoinColumn({
     name: 'route_seq_no',
   })
-  route?: Route;
+  route?: Nullable<Route>;
 }

@@ -23,7 +23,7 @@ import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
 import { LoggingPlugin } from '@common/plugins/LoggingPlugin';
-import { Route } from '@modules/route/models/route';
+import { Route } from '@modules/route/dto/route';
 import { User } from '@modules/user/models/user';
 import { IconGroup } from '@modules/icon/model/icon-group';
 import { Icon } from '@modules/icon/model/icon';
@@ -32,11 +32,11 @@ import { Menu } from '@modules/menu/model/menu';
 import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
 import { MessageGroup } from '@modules/message/entities/message-group';
-import { Role } from '@modules/role/model/role';
+import { Role } from '@modules/role/entities/role.entity';
 import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
 import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 import { Builder } from 'builder-pattern';
-import { RoleFrontComponentMap } from '@modules/role/model/role-front-component-map';
+import { RoleFrontComponentMap } from '@modules/role/entities/role-front-component-map.entity';
 import { FrontComponentModule } from '@modules/front-component/front-component.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -85,6 +85,7 @@ const initYn = false;
       dropSchema: initYn,
       synchronize: initYn,
       logging: !initYn,
+      // entitySkipConstructor: true,
     }),
     AuthModule,
     RoleModule,

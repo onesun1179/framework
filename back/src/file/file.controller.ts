@@ -12,7 +12,7 @@ export class FileController {
   async getIcon(
     // @Res() res: Response,
     @Param('path') path: string,
-    @Param('fileName') fileName,
+    @Param('fileName') fileName: string,
   ) {
     const file = fs.readFileSync(
       join(process.cwd(), 'resource', 'icon', path, fileName),

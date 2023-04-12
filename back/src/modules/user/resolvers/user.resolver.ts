@@ -1,14 +1,21 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
 import { User } from '../models/user';
-import { UserService } from '../user.service';
-import { Role } from '@modules/role/model/role';
+import { Role } from '@modules/role/entities/role.entity';
+import { RoleRepository } from '@modules/role/repositories/role.repository';
+import { UserRepository } from '@modules/user/repositories/user.repository';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userRepository: UserRepository,
+    private roleRepository: RoleRepository,
+  ) {}
   logger = new Logger(UserResolver.name);
 
+  /**************************************
+   *              QUERY
+   ***************************************/
   @Query(() => User)
   async user(
     @Args('id', {
@@ -21,16 +28,16 @@ export class UserResolver {
     });
   }
 
+  /**************************************
+   *           RESOLVE_FIELD
+   ***************************************/
   @ResolveField(() => Role)
-  async role(@Parent() user: User): Promise<Role> {
-    return await User.findOne({
-      select: ['role'],
-      relations: {
-        role: true,
-      },
-      where: {
-        id: user.id,
-      },
-    }).then((r) => r.role);
+  async role(@Parent() { roleSeqNo }: User): Promise<Role> {
+    return (await this.roleRepository
+      .createQueryBuilder('r')
+      .where(`r.seqNo = :seqNo`, {
+        seqNo: roleSeqNo,
+      })
+      .getOne())!;
   }
 }

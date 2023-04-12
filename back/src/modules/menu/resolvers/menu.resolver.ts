@@ -9,7 +9,7 @@ import {
 import { Logger, UseGuards } from '@nestjs/common';
 import { Menu } from '../model/menu';
 import { MenuService } from '../menu.service';
-import { Role } from '@modules/role/model/role';
+import { Role } from '@modules/role/entities/role.entity';
 import { Icon } from '@modules/icon/model/icon';
 import { GqlAuthGuard } from '../../../auth/guard/gql-auth.guard';
 import { CurrentUser } from '@common/docorator/CurrentUser';
@@ -18,12 +18,7 @@ import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { isNil } from 'lodash';
-import { Route } from '@modules/route/models/route';
-import { Menus } from '@modules/menu/model/dto/menus';
-import { PagingInput } from '@common/dto/inputs/paging.input';
-import { MenusRequest } from '@modules/menu/model/requests/menus.request';
-import { UtilPaging } from '@common/utils/util.paging';
-import { Builder } from 'builder-pattern';
+import { Route } from '@modules/route/dto/route';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => Menu)
@@ -69,9 +64,9 @@ export class MenuResolver {
   @ResolveField(() => Icon, {
     nullable: true,
   })
-  icon(@Parent() { iconSeqNo }: Menu): Promise<Icon | null> {
+  async icon(@Parent() { iconSeqNo }: Menu): Promise<Icon | null> {
     if (!isNil(iconSeqNo)) {
-      return this.dataSource
+      return await this.dataSource
         .createQueryBuilder<Icon>(Icon, 'icon')
         .where('icon.seqNo = :iconSeqNo', {
           iconSeqNo,
@@ -125,26 +120,26 @@ export class MenuResolver {
       .getOne();
   }
 
-  @Query(() => Menus)
-  async menus(
-    @Args('paging', {
-      type: () => PagingInput,
-    })
-    paging: PagingInput,
-    @Args('param', {
-      type: () => MenusRequest,
-      nullable: true,
-    })
-    param?: MenusRequest,
-  ): Promise<Menus> {
-    return await this.dataSource.transaction(async (entityManager) => {
-      return Builder(
-        Menus,
-        await UtilPaging.getRes(
-          paging,
-          entityManager.createQueryBuilder(Menu, 'm'),
-        ),
-      ).build();
-    });
-  }
+  // @Query(() => Menus)
+  // async menus(
+  //   @Args('paging', {
+  //     type: () => PagingInput,
+  //   })
+  //   paging: PagingInput,
+  //   @Args('param', {
+  //     type: () => MenusRequest,
+  //     nullable: true,
+  //   })
+  //   param?: MenusRequest,
+  // ): Promise<Menus> {
+  //   return await this.dataSource.transaction(async (entityManager) => {
+  //     return Builder(
+  //       Menus,
+  //       await UtilPaging.getRes(
+  //         paging,
+  //         entityManager.createQueryBuilder(Menu, 'm'),
+  //       ),
+  //     ).build();
+  //   });
+  // }
 }

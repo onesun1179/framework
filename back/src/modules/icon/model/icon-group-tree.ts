@@ -11,23 +11,23 @@ import { IconGroup } from './icon-group';
 export class IconGroupTree extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)
-  childSeqNo: number;
+  childSeqNo!: number;
 
   @PrimaryColumn()
   @Field(() => Int)
-  parentSeqNo: number;
+  parentSeqNo!: number;
 
   @ManyToOne(() => IconGroup, (o) => o.children)
   @JoinColumn({
     name: 'child_seq_no',
   })
   @Field(() => IconGroup)
-  child: IconGroup;
+  child!: IconGroup;
 
   @ManyToOne(() => IconGroup, (o) => o.parents)
   @JoinColumn({
     name: 'parent_seq_no',
   })
   @Field(() => IconGroup)
-  parent: IconGroup;
+  parent!: IconGroup;
 }

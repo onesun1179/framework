@@ -8,8 +8,6 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
 import { MessageGroup } from './message-group';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { UtilField } from '@common/utils/util.field';
 import {
   IsInt,
   IsOptional,
@@ -17,62 +15,44 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 @Entity()
 @InputType({
   isAbstract: true,
 })
-@ObjectType('GqlMessage', {
-  description: UtilField.getFieldComment('message'),
-})
+@ObjectType('GqlMessage')
 @Unique(['code', 'groupCode'])
 export class Message extends CommonEntity {
-  @PrimaryGeneratedColumn({
-    comment: UtilField.getFieldComment('seqNo'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('seqNo'),
-  })
+  @PrimaryGeneratedColumn()
+  @Field()
   @IsInt()
-  seqNo: number;
+  seqNo!: number;
 
   @Column({
     type: 'char',
     length: '4',
-    comment: UtilField.getFieldComment('code'),
   })
   @IsString()
   @MaxLength(4)
   @MinLength(4)
-  @Field({
-    description: UtilField.getFieldComment('code'),
-  })
-  code: string;
+  @Field({})
+  code!: string;
 
-  @Column({
-    comment: UtilField.getFieldComment('name'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('name'),
-  })
+  @Column()
+  @Field()
   @IsString()
-  name: string;
+  name!: string;
 
-  @Column({
-    comment: UtilField.getFieldComment('text'),
-  })
-  @Field({
-    description: UtilField.getFieldComment('text'),
-  })
+  @Column()
+  @Field()
   @IsString()
-  text: string;
+  text!: string;
 
   @Column({
-    comment: UtilField.getFieldComment('group', 'code'),
     nullable: true,
   })
   @Field({
-    description: UtilField.getFieldComment('group', 'code'),
     nullable: true,
   })
   @IsOptional()

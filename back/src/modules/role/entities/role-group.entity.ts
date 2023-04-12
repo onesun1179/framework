@@ -7,8 +7,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommonEntity } from '@common/entity/common.entity';
-import { Role } from './role';
+import { Role } from './role.entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Nullable } from '@common/types';
 
 @Entity()
 @InputType({
@@ -20,29 +21,25 @@ export class RoleGroup extends CommonEntity {
   @Field(() => Int)
   seqNo!: number;
 
-  @Column({
-    nullable: false,
-  })
-  @Field({
-    nullable: false,
-  })
-  name?: string;
+  @Column()
+  @Field()
+  name!: string;
 
   @OneToMany(() => Role, (o) => o.roleGroup, {
     nullable: true,
   })
-  roles?: Role[];
+  roles?: Nullable<Role[]>;
 
   @OneToMany(() => RoleGroup, (o) => o.parent, {
     nullable: true,
   })
-  children?: RoleGroup[];
+  children?: Nullable<RoleGroup[]>;
 
   @Column()
   @Field(() => Int, {
     nullable: true,
   })
-  parentSeqNo?: number;
+  parentSeqNo?: Nullable<number>;
 
   @ManyToOne(() => RoleGroup, (o) => o.children, {
     nullable: true,
@@ -50,5 +47,5 @@ export class RoleGroup extends CommonEntity {
   @JoinColumn({
     name: 'parent_seq_no',
   })
-  parent?: RoleGroup;
+  parent?: Nullable<RoleGroup>;
 }

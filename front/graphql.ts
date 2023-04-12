@@ -9,16 +9,11 @@
 /* eslint-disable */
 
 export interface PagingInput {
-    skip: number;
-    take: number;
+    skip?: Nullable<number>;
+    take?: Nullable<number>;
 }
 
-export interface MenusRequest {
-    name?: Nullable<string>;
-    haveRouteYn?: Nullable<boolean>;
-}
-
-export interface RoutesRequest {
+export interface RoutesInput {
     rootYn?: Nullable<boolean>;
     seqNos?: Nullable<number[]>;
     path?: Nullable<string>;
@@ -52,40 +47,41 @@ export interface LikeInput {
     not?: Nullable<boolean>;
 }
 
-export interface InsertRoleRequest {
+export interface InsertRoleInput {
     name: string;
+    identifier?: Nullable<string>;
     roleGroupSeqNo?: Nullable<number>;
     userIds?: Nullable<string>;
     menuSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
 }
 
-export interface SaveRoleGroupRequest {
+export interface UpdateRoleInput {
+    seqNo: number;
+    name?: Nullable<string>;
+    roleGroupSeqNo?: Nullable<number>;
+    userIds?: Nullable<string>;
+    menuSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertRoleGroupInput {
     name: string;
     parentSeqNo?: Nullable<number>;
-    seqNo?: Nullable<number>;
     roleSeqNos?: Nullable<number[]>;
     childSeqNos?: Nullable<number[]>;
 }
 
-export interface InsertRouteRequest {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    path: string;
-    frontComponentId?: Nullable<string>;
-    parentSeqNo?: Nullable<number>;
-    childSeqNos?: Nullable<number[]>;
-    roleSeqNos?: Nullable<number[]>;
-    menuSeqNos?: Nullable<number[]>;
-}
-
-export interface UpdateRouteRequest {
+export interface UpdateRoleGroupInput {
     seqNo: number;
-    createdAt?: Nullable<DateTime>;
-    updatedAt?: Nullable<DateTime>;
-    desc?: Nullable<string>;
-    path?: Nullable<string>;
+    name?: Nullable<string>;
+    parentSeqNo?: Nullable<number>;
+    roleSeqNos?: Nullable<number[]>;
+    childSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertRouteInput {
+    path: string;
     frontComponentId?: Nullable<string>;
     parentSeqNo?: Nullable<number>;
     childSeqNos?: Nullable<number[]>;
@@ -122,13 +118,14 @@ export interface InsertMessageGroupInput {
 
 export interface InsertFrontComponentInput {
     id: string;
-    allFrontComponentIds?: Nullable<number[]>;
+    allFrontComponentIds?: Nullable<string[]>;
     roleSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateFrontComponentInput {
-    id: string;
+    id?: Nullable<string>;
+    allFrontComponentIds?: Nullable<string[]>;
     roleSeqNos?: Nullable<number[]>;
     routeSeqNos?: Nullable<number[]>;
 }
@@ -159,8 +156,8 @@ export interface GqlCode {
     desc?: Nullable<string>;
     seqNo: number;
     name: string;
-    children: GqlCodeMap[];
-    parents: GqlCodeMap[];
+    children?: Nullable<GqlCodeMap[]>;
+    parents?: Nullable<GqlCodeMap[]>;
 }
 
 export interface GqlRoleGroup {
@@ -182,19 +179,8 @@ export interface GqlMenuRoleMap {
     seqNo: number;
     menuSeqNo: number;
     roleSeqNo: number;
-    menu: GqlMenu;
     role: GqlRole;
     orderNo: number;
-}
-
-export interface GqlIconGroupTree {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    childSeqNo: number;
-    parentSeqNo: number;
-    child: GqlIconGroup;
-    parent: GqlIconGroup;
 }
 
 export interface GqlIconGroup {
@@ -203,8 +189,6 @@ export interface GqlIconGroup {
     desc?: Nullable<string>;
     seqNo: number;
     name: string;
-    children: GqlIconGroupTree[];
-    parents: GqlIconGroupTree[];
 }
 
 export interface GqlIcon {
@@ -224,6 +208,7 @@ export interface GqlMenu {
     seqNo: number;
     name: string;
     iconSeqNo?: Nullable<number>;
+    routeSeqNo?: Nullable<number>;
     roles: GqlRole[];
     icon?: Nullable<GqlIcon>;
     children: GqlMenu[];
@@ -236,7 +221,7 @@ export interface GqlAllFrontComponent {
     desc?: Nullable<string>;
     id: string;
     frontComponentId?: Nullable<string>;
-    frontComponent: GqlFrontComponent;
+    frontComponent?: Nullable<GqlFrontComponent>;
 }
 
 export interface GqlRoleFrontComponentMap {
@@ -271,8 +256,6 @@ export interface GqlRoute {
     frontComponentId?: Nullable<string>;
     parentSeqNo?: Nullable<number>;
     children: GqlRoute[];
-    parent: GqlRoute;
-    frontComponent: GqlFrontComponent;
     roles: GqlRole[];
     routeTree: GqlRouteTree;
 }
@@ -285,7 +268,7 @@ export interface GqlRole {
     name: string;
     identifier?: Nullable<string>;
     roleGroupSeqNo?: Nullable<number>;
-    roleGroup: GqlRoleGroup;
+    roleGroup?: Nullable<GqlRoleGroup>;
     users: GqlUser[];
     menus: GqlMenu[];
     routes: GqlRoute[];
@@ -301,9 +284,14 @@ export interface GqlUser {
     role: GqlRole;
 }
 
-export interface GqlMenus {
-    list: GqlMenu[];
+export interface GqlPagedRoutes {
+    list: GqlRoute[];
     total: number;
+}
+
+export interface GqlRouteTree {
+    fullPath: string;
+    depth: number;
 }
 
 export interface GqlMessageGroup {
@@ -332,16 +320,6 @@ export interface GqlPagedMessages {
     total: number;
 }
 
-export interface GqlRouteTree {
-    fullPath: string;
-    depth: number;
-}
-
-export interface GqlPagedRoutes {
-    list: GqlRoute[];
-    total: number;
-}
-
 export interface GqlPagedMessageGroups {
     list: GqlMessageGroup[];
     total: number;
@@ -353,25 +331,24 @@ export interface IQuery {
     role(seqNo: number): Nullable<GqlRoleGroup> | Promise<Nullable<GqlRoleGroup>>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<GqlRoleFrontComponentMap> | Promise<Nullable<GqlRoleFrontComponentMap>>;
     message(seqNo: number): Nullable<GqlMessage> | Promise<Nullable<GqlMessage>>;
-    menus(paging: PagingInput, param?: Nullable<MenusRequest>): GqlMenus | Promise<GqlMenus>;
     rootMenus(): GqlMenu[] | Promise<GqlMenu[]>;
     route(seqNo: number): GqlRoute | Promise<GqlRoute>;
-    routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesRequest>): GqlPagedRoutes | Promise<GqlPagedRoutes>;
+    routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesInput>): GqlPagedRoutes | Promise<GqlPagedRoutes>;
     messages(paging?: Nullable<PagingInput>, request?: Nullable<MessagesInput>): GqlPagedMessages | Promise<GqlPagedMessages>;
     messageGroup(code: string): GqlMessageGroup | Promise<GqlMessageGroup>;
     messageGroups(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupsInput>): GqlPagedMessageGroups | Promise<GqlPagedMessageGroups>;
     frontComponent(id: string): Nullable<GqlFrontComponent> | Promise<Nullable<GqlFrontComponent>>;
     allFrontComponent(id: string): Nullable<GqlAllFrontComponent> | Promise<Nullable<GqlAllFrontComponent>>;
-    allFrontComponentByCurrentUserAndFrontComponentId(frontComponentId: string): Nullable<GqlAllFrontComponent> | Promise<Nullable<GqlAllFrontComponent>>;
     icon(seqNo: number): GqlIcon | Promise<GqlIcon>;
 }
 
 export interface IMutation {
-    insertRole(role: InsertRoleRequest): Nullable<GqlRole> | Promise<Nullable<GqlRole>>;
-    saveRoleGroup(SaveRoleGroupRequest: SaveRoleGroupRequest): GqlRoleGroup | Promise<GqlRoleGroup>;
+    insertRole(insertRoleInput: InsertRoleInput): GqlRole | Promise<GqlRole>;
+    updateRole(updateRoleInput: UpdateRoleInput): GqlRole | Promise<GqlRole>;
+    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput): GqlRoleGroup | Promise<GqlRoleGroup>;
+    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput): GqlRoleGroup | Promise<GqlRoleGroup>;
     removeRoleGroup(seqNo: number): GqlRoleGroup | Promise<GqlRoleGroup>;
-    insertRoute(req: InsertRouteRequest): GqlRoute | Promise<GqlRoute>;
-    updateRoute(req: UpdateRouteRequest): GqlRoute | Promise<GqlRoute>;
+    insertRoute(req: InsertRouteInput): GqlRoute | Promise<GqlRoute>;
     updateMessage(updateMessageInput: UpdateMessageInput): GqlMessage | Promise<GqlMessage>;
     insertMessage(insertMessageInput: InsertMessageInput): GqlMessage | Promise<GqlMessage>;
     deleteMessages(seqNos: number[]): boolean | Promise<boolean>;

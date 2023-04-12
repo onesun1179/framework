@@ -6,17 +6,8 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
-import { UtilField } from '@common/utils/util.field';
 
-@InputType({
-  description: UtilField.getFieldComment(
-    'all',
-    'front',
-    'component',
-    'insert',
-    'input',
-  ),
-})
+@InputType()
 @ArgsType()
 export class InsertAllFrontComponentInput extends IntersectionType(
   PickType(AllFrontComponent, ['id']),
