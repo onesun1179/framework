@@ -1,5 +1,5 @@
 import { ObjectType } from '@nestjs/graphql';
-import { PagingOutput } from '@common/dto/paging.output';
+import { PagingOutput } from '@common/dto/outputs/paging.output';
 import { MessageGroup } from '@modules/message/entities/message-group';
 
 @ObjectType('GqlPagedMessageGroups')

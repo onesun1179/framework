@@ -8,16 +8,14 @@ export class GqlErrorFilter implements ExceptionFilter {
   constructor(private ms: MessageService) {}
   async catch(e: GqlError, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
-    const msgCode = e.msgCode!;
-    const r = await this.ms.getTextByMsgCode(e.msgCode);
 
-    console.log(msgCode);
-    if (r.result) {
-      e.setMessage(r.text);
+    const { groupCode, code } = e.msgCode!;
+    const r = await this.ms.getMessageByCode(groupCode, code);
+
+    if (r) {
+      e.setMessage(e.msgCode.text(r.text));
     } else {
-      e.setMessage(
-        `메세지 코드를 찾을 수 없습니다.(${msgCode.groupCode}, ${msgCode.code})`,
-      );
+      e.setMessage(`메세지 코드를 찾을 수 없습니다.(${groupCode}, ${code})`);
     }
 
     return e;

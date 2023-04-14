@@ -1,36 +1,52 @@
 import { Message } from '@modules/message/entities/message';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
-import { In, Like, Repository } from 'typeorm';
+import { FindOptionsOrder } from 'typeorm';
 import { UtilPaging } from '@common/utils/util.paging';
 import { PagedMessages } from '@modules/message/dto/output/paged-messages';
 import { PagingInput } from '@common/dto/inputs/paging.input';
 import { MessagesInput } from '@modules/message/dto/input/messages.input';
-import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
 import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
 import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
 import { CustomRepository } from '@common/docorator/CustomRepository';
+import { Nullable } from '@common/types';
+import { UtilSearch } from '@common/utils/Util.search';
+import { UtilSort } from '@common/utils/Util.sort';
+import { EntityRepository } from '@common/repositories/entity.repository';
 
 @CustomRepository(Message)
-export class MessageRepository extends Repository<Message> {
+export class MessageRepository extends EntityRepository<Message> {
   async paging(
-    pagingRequest?: PagingInput,
-    messagesInput?: MessagesInput,
+    pagingInput: Nullable<PagingInput>,
+    messagesInput: Nullable<MessagesInput>,
   ): Promise<PagedMessages> {
     const qb = this.createQueryBuilder('m');
-    const where: FindOptionsWhere<Message> = {};
+    let order: FindOptionsOrder<Message> = {};
+    let where: FindOptionsWhere<Message> = {};
 
     if (messagesInput) {
-      const { seqNos, text, groupsInput } = messagesInput;
-      seqNos && (where.seqNo = In(seqNos));
-      text && (where.text = Like(`%${text}%`));
-      groupsInput &&
-        (where.group =
-          MessageGroupRepository.getWhereByMessageGroupsInput(groupsInput));
+      const { search, sort } = messagesInput;
+
+      if (search) {
+        where = UtilSearch.bulkSearch(search);
+        // const { seqNo, text, groupsInput } = search;
+        // const seqNoWhere = seqNo ? UtilSearch.number(seqNo) : [];
+        // const textWhere = text ? UtilSearch.string(text) : [];
+        //
+        // seqNoWhere.length > 0 && (where.seqNo = And(...seqNoWhere));
+        // textWhere.length > 0 && text && (where.text = And(...textWhere));
+      }
+
+      if (sort) {
+        order = UtilSort.getFindOptionsOrder<Message>(sort);
+      }
     }
 
     return await UtilPaging.getRes({
-      pagingRequest,
-      builder: qb.where(where),
+      pagingInput,
+      builder: qb.setFindOptions({
+        where,
+        order,
+      }),
       classRef: PagedMessages,
     });
   }

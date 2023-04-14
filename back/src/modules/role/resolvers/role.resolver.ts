@@ -145,7 +145,7 @@ export class RoleResolver {
         },
       }))
     ) {
-      throw new GqlError(MessageConstant.NONE_KEY());
+      throw new GqlError(MessageConstant.NOT_FOUND_VALUE());
     }
     return await this.roleRepository.saveCustom(updateRoleInput);
   }

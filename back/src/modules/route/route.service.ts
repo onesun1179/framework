@@ -1,44 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Route } from '@modules/route/dto/route';
-import { EntityManager, In, IsNull, Like } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { difference } from 'lodash';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
-import { UtilPaging } from '@common/utils/util.paging';
-import { PagingInput } from '@common/dto/inputs/paging.input';
-import { PagedRoutes } from '@modules/route/dto/paged-routes';
 import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
 import { RouteRepository } from '@modules/route/repositories/route.repository';
-import { RoutesInput } from '@modules/route/dto/routes.input';
 import { InsertRouteInput } from '@modules/route/dto/insert-route.input';
 import { UpdateRouteInput } from '@modules/route/dto/update-route.input';
 
 @Injectable()
 export class RouteService {
-  constructor(
-     private routeRepository: RouteRepository,
-  ) {}
+  constructor(private routeRepository: RouteRepository) {}
   private readonly logger = new Logger(RouteService.name);
-
-  async getPaging(
-    entityManager: EntityManager,
-    pagingRequest: PagingInput,
-    p: RoutesInput,
-  ): Promise<PagedRoutes> {
-    const qb = this.routeRepository.createQueryBuilder('r');
-    const where: FindOptionsWhere<Route> = {};
-
-    p.rootYn && (where.parentSeqNo = IsNull());
-    p.seqNos && (where.seqNo = In(p.seqNos));
-    p.path && (where.path = Like(`%${p.path}%`));
-    p.parentSeqNo && (where.parentSeqNo = p.parentSeqNo);
-
-    return await UtilPaging.getRes({
-      pagingRequest,
-      builder: qb.where(where),
-      classRef: PagedRoutes,
-    });
-  }
 
   async save(
     e: EntityManager,

@@ -112,7 +112,7 @@ export class RoleGroupResolver {
         },
       }))
     ) {
-      throw new GqlError(MessageConstant.NONE_KEY());
+      throw new GqlError(MessageConstant.NOT_FOUND_VALUE());
     }
     return this.roleGroupRepository.saveCustom(updateRoleGroupInput);
   }

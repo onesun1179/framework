@@ -151,16 +151,6 @@ type GqlUser {
   role: GqlRole!
 }
 
-type GqlPagedRoutes {
-  list: [GqlRoute!]!
-  total: Int!
-}
-
-type GqlRouteTree {
-  fullPath: String!
-  depth: Int!
-}
-
 type GqlMessageGroup {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -187,6 +177,16 @@ type GqlPagedMessages {
   total: Int!
 }
 
+type GqlRouteTree {
+  fullPath: String!
+  depth: Int!
+}
+
+type GqlPagedRoutes {
+  list: [GqlRoute!]!
+  total: Int!
+}
+
 type GqlPagedMessageGroups {
   list: [GqlMessageGroup!]!
   total: Int!
@@ -197,10 +197,12 @@ type Query {
   user(id: String!): GqlUser!
   role(seqNo: Int!): GqlRoleGroup
   roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): GqlRoleFrontComponentMap
-  message(seqNo: Int!): GqlMessage
+  message(seqNo: Int!): GqlMenu!
   rootMenus: [GqlMenu!]!
-  route(seqNo: Int!): GqlRoute!
+  routeBySeqNo(seqNo: Int!): GqlRoute!
   routes(paging: PagingInput, request: RoutesInput): GqlPagedRoutes!
+  messageBySeqNo(seqNo: Int!): GqlMessage!
+  messageByCode(groupCode: String!, code: String!): GqlMessage!
   messages(paging: PagingInput, request: MessagesInput): GqlPagedMessages!
   messageGroup(code: String!): GqlMessageGroup!
   messageGroups(paging: PagingInput, request: MessageGroupsInput): GqlPagedMessageGroups!
@@ -215,14 +217,108 @@ input PagingInput {
 }
 
 input RoutesInput {
+  search: RoutesSearchInput
+  sort: RoutesSortInput
+}
+
+input RoutesSearchInput {
+  path: NumberSearchInput
+  frontComponentId: StringSearchInput
   rootYn: Boolean = false
-  seqNos: [Int!]
-  path: String
-  parentSeqNo: Int
+}
+
+input NumberSearchInput {
+  equal: EqualNumberSearchInput
+  any: AnyNumberSearchInput
+  in: InNumberSearchInput
+  isNull: Boolean
+  lessThan: Int
+  lessThanOrEqual: Int
+  moreThan: Int
+  moreThanOrEqual: Int
+  between: BetweenNumberSearchInput
+}
+
+input EqualNumberSearchInput {
+  value: Int!
+  not: Boolean = false
+}
+
+input AnyNumberSearchInput {
+  value: [Int]!
+  not: Boolean = false
+}
+
+input InNumberSearchInput {
+  value: [Int]!
+  not: Boolean = false
+}
+
+input BetweenNumberSearchInput {
+  from: Int!
+  to: Int!
+}
+
+input StringSearchInput {
+  regex: RegexStringSearchInput = null
+  like: LikeStringSearchInput = null
+  equal: EqualStringSearchInput = null
+  ilike: IlikeStringSearchInput = null
+  any: AnyStringSearchInput = null
+  in: InStringSearchInput = null
+  isNull: Boolean = null
+}
+
+input RegexStringSearchInput {
+  value: String!
+  not: Boolean = false
+}
+
+input LikeStringSearchInput {
+  value: String!
+  not: Boolean = false
+}
+
+input EqualStringSearchInput {
+  value: String!
+  not: Boolean = false
+}
+
+input IlikeStringSearchInput {
+  value: String!
+  not: Boolean = false
+}
+
+input AnyStringSearchInput {
+  value: [String]!
+  not: Boolean = false
+}
+
+input InStringSearchInput {
+  value: [String]!
+  not: Boolean = false
+}
+
+input RoutesSortInput {
+  seqNo: Sort
+  code: Sort
+  name: Sort
+  text: Sort
+  groupCode: Sort
+}
+
+enum Sort {
+  ASC
+  DESC
 }
 
 input MessagesInput {
-  seqNos: [Int!]
+  search: MessagesSearchInput
+  sort: MessagesSortInput
+}
+
+input MessagesSearchInput {
+  seqNo: NumberSearchInput
   groupsInput: MessageGroupsInput
   text: StringSearchInput
 }
@@ -233,19 +329,12 @@ input MessageGroupsInput {
   name: String
 }
 
-input StringSearchInput {
-  regex: RegexInput
-  like: LikeInput
-}
-
-input RegexInput {
-  value: String
-  not: Boolean = false
-}
-
-input LikeInput {
-  value: String
-  not: Boolean = false
+input MessagesSortInput {
+  seqNo: Sort
+  code: Sort
+  name: Sort
+  text: Sort
+  groupCode: Sort
 }
 
 type Mutation {

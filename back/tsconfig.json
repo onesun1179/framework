@@ -17,6 +17,7 @@
     "strict": true,
     "paths": {
       "@common/*" : ["./src/common/*"],
+      "@auth/*" : ["./src/auth/*"],
       "@util/*" : ["./src/common/util/*"],
       "@modules/code/*" : ["./src/modules/code/*"],
       "@modules/auth/*" : ["./src/modules/auth/*"],

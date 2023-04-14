@@ -1,26 +1,21 @@
-import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
+import { Nullable } from '@common/types';
+import { RoutesSearchInput } from '@modules/route/dto/input/search/routes.search.input';
+import { RoutesSortInput } from '@modules/route/dto/input/sort/routes.sort.input';
 
 @InputType()
 @ArgsType()
 export class RoutesInput {
-  @Field(() => Boolean, {
+  @Field(() => RoutesSearchInput, {
     nullable: true,
-    defaultValue: false,
   })
-  rootYn = false;
+  @Type(() => RoutesSearchInput)
+  search?: Nullable<RoutesSearchInput>;
 
-  @Field(() => [Int], {
+  @Field(() => RoutesSortInput, {
     nullable: true,
   })
-  seqNos?: Array<number>;
-
-  @Field(() => String, {
-    nullable: true,
-  })
-  path?: string;
-
-  @Field(() => Int, {
-    nullable: true,
-  })
-  parentSeqNo?: number;
+  @Type(() => RoutesSortInput)
+  sort?: Nullable<RoutesSortInput>;
 }

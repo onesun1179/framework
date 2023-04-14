@@ -9,6 +9,7 @@ import { UtilPaging } from '@common/utils/util.paging';
 import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
 import { UpdateMessageGroupInput } from '@modules/message/dto/input/update-message-group.input';
 import { CustomRepository } from '@common/docorator/CustomRepository';
+import { Nullable } from '@common/types';
 
 @CustomRepository(MessageGroup)
 export class MessageGroupRepository extends EntityRepository<MessageGroup> {
@@ -36,12 +37,13 @@ export class MessageGroupRepository extends EntityRepository<MessageGroup> {
   }
 
   async paging(
-    pagingRequest: PagingInput,
-    messageGroupsInput: MessageGroupsInput,
+    pagingInput?: Nullable<PagingInput>,
+    messageGroupsInput?: Nullable<MessageGroupsInput>,
   ): Promise<PagedMessageGroups> {
     return await UtilPaging.getRes<MessageGroup>({
-      pagingRequest,
+      pagingInput,
       builder: this.createQueryBuilder('mg').where(
+        // @ts-ignore
         MessageGroupRepository.getWhereByMessageGroupsInput(messageGroupsInput),
       ),
       classRef: PagedMessageGroups,

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { MessageService } from '../services/message.service';
 import { Message } from '../entities/message';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger, UseGuards } from '@nestjs/common';
 import { MessageGroup } from '../entities/message-group';
 
 import { MessagesInput } from '@modules/message/dto/input/messages.input';
@@ -20,33 +20,58 @@ import { UpdateMessageInput } from '@modules/message/dto/input/update-message.in
 import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
 import { MessageRepository } from '@modules/message/repositories/message.repository';
 import { MessageGroupRepository } from '@modules/message/repositories/message-group.repository';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { GqlError } from '@common/errors/GqlError';
+import { MessageConstant } from '@common/constants/message.constant';
+import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 
 @Resolver(() => Message)
+@UseGuards(GqlAuthGuard)
 export class MessageResolver {
   constructor(
     private messageService: MessageService,
     private dataSource: DataSource,
     private messageRepository: MessageRepository,
     private messageGroupRepository: MessageGroupRepository,
+    @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
   private readonly logger = new Logger(MessageResolver.name);
 
   /**************************************
    *              QUERY
    ***************************************/
-  @Query(() => Message, {
-    nullable: true,
-  })
-  message(
+  @Query(() => Message)
+  async messageBySeqNo(
     @Args('seqNo', {
       type: () => Int,
     })
-    seqNo: Message['seqNo'],
-  ): Promise<Message | null> {
-    return this.messageRepository
-      .createQueryBuilder(`message`)
-      .where(`message.seqNo = :seqNo`, { seqNo })
-      .getOne();
+    seqNo: number,
+  ): Promise<Message> {
+    return this.messageRepository.findOneOrFail({
+      where: {
+        seqNo,
+      },
+    });
+  }
+
+  @Query(() => Message)
+  async messageByCode(
+    @Args('groupCode', {
+      type: () => String,
+    })
+    groupCode: string,
+    @Args('code', {
+      type: () => String,
+    })
+    code: string,
+  ): Promise<Message> {
+    return this.messageRepository.findOneOrFail({
+      where: {
+        groupCode,
+        code,
+      },
+    });
   }
 
   @Query(() => PagedMessages)
@@ -55,18 +80,14 @@ export class MessageResolver {
       type: () => PagingInput,
       nullable: true,
     })
-    paging?: PagingInput,
+    pagingInput: PagingInput,
     @Args('request', {
       type: () => MessagesInput,
       nullable: true,
     })
-    req?: MessagesInput,
+    messagesInput: MessagesInput,
   ): Promise<PagedMessages> {
-    console.log({
-      paging,
-      req,
-    });
-    return await this.messageRepository.paging(paging, req);
+    return await this.messageRepository.paging(pagingInput, messagesInput);
   }
 
   /**************************************
@@ -74,14 +95,12 @@ export class MessageResolver {
    ***************************************/
 
   @ResolveField(() => MessageGroup)
-  async group(@Parent() { code }: Message) {
-    return await this.dataSource.transaction(async (entityManager) => {
-      return await entityManager
-        .createQueryBuilder(MessageGroup, 'mg')
-        .where(`mg.code = :code`, {
-          code,
-        })
-        .getOne();
+  async group(@Parent() { groupCode, group }: Message) {
+    if (group) {
+      return group;
+    }
+    return this.messageGroupRepository.findOneByOrFail({
+      code: groupCode,
     });
   }
 
@@ -94,11 +113,18 @@ export class MessageResolver {
       type: () => UpdateMessageInput,
     })
     updateMessageInput: UpdateMessageInput,
-  ): Promise<Message | null> {
-    if (await this.messageRepository.hasRow(updateMessageInput.seqNo)) {
+  ): Promise<Message> {
+    if (
+      await this.messageRepository.exist({
+        where: {
+          seqNo: updateMessageInput.seqNo,
+        },
+      })
+    ) {
       return this.messageRepository.saveCustom(updateMessageInput);
+    } else {
+      throw new GqlError(MessageConstant.NOT_FOUND_VALUE([]));
     }
-    return null;
   }
 
   @Mutation(() => Message)
@@ -117,7 +143,11 @@ export class MessageResolver {
     })
     seqNos: Array<Message['seqNo']>,
   ): Promise<boolean> {
-    await this.messageRepository.delete(seqNos);
+    await Promise.all(
+      seqNos.map((seqNo) => this.cache.del(`message|${seqNo}`)),
+    );
+    const r = await this.messageRepository.delete(seqNos);
+    console.log(r);
     return true;
   }
 }

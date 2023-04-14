@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { RouteController } from './route.controller';
 import { RouteService } from './route.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Route } from '@modules/route/dto/route';
@@ -18,7 +17,6 @@ import { RoleRouteMapRepository } from '@modules/role/repositories/role-route-ma
       RoleRouteMapRepository,
     ]),
   ],
-  controllers: [RouteController],
   providers: [RouteService, RouteResolver],
   exports: [RouteService],
 })

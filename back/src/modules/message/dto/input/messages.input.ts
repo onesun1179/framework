@@ -1,22 +1,21 @@
-import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
-import { MessageGroupsInput } from '@modules/message/dto/input/message-groups.input';
-import { StringSearchInput } from '@common/dto/inputs/string-search.input';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { MessagesSearchInput } from '@modules/message/dto/input/search/messages.search.input';
+import { MessagesSortInput } from '@modules/message/dto/input/sort/messages.sort.input';
+import { Type } from 'class-transformer';
+import { Nullable } from '@common/types';
 
 @InputType()
 @ArgsType()
 export class MessagesInput {
-  @Field(() => [Int], {
+  @Field(() => MessagesSearchInput, {
     nullable: true,
   })
-  seqNos?: Array<number>;
+  @Type(() => MessagesSearchInput)
+  search?: Nullable<MessagesSearchInput>;
 
-  @Field(() => MessageGroupsInput, {
+  @Field(() => MessagesSortInput, {
     nullable: true,
   })
-  groupsInput?: MessageGroupsInput;
-
-  @Field(() => StringSearchInput, {
-    nullable: true,
-  })
-  text?: StringSearchInput;
+  @Type(() => MessagesSortInput)
+  sort?: Nullable<MessagesSortInput>;
 }

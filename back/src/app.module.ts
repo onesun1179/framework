@@ -67,6 +67,10 @@ const initYn = false;
     }),
     CacheModule.register({
       isGlobal: true,
+      isCacheableValue(v) {
+        console.log({ v });
+        return true;
+      },
     }),
     // DevtoolsModule.register({
     //   http: process.env.NODE_ENV !== 'production',
@@ -100,7 +104,6 @@ const initYn = false;
       driver: ApolloDriver,
       debug: true,
       playground: false,
-      autoTransformHttpErrors: true,
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
         path: resolve(process.cwd(), 'src', '..', '..', 'front', 'graphql.ts'),
@@ -477,6 +480,12 @@ export class AppModule implements OnModuleInit {
             code: '0001',
             text: `SQL_FAIL({{0}})`,
             name: 'SQL FAIL',
+          }),
+          Message.create({
+            group: errorMG,
+            code: '0002',
+            text: `존재하지 않는 값 입니다.`,
+            name: 'NOT FOUNT VALUE',
           }),
         ]);
       });

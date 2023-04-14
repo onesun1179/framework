@@ -8,20 +8,114 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum Sort {
+    ASC = "ASC",
+    DESC = "DESC"
+}
+
 export interface PagingInput {
     skip?: Nullable<number>;
     take?: Nullable<number>;
 }
 
 export interface RoutesInput {
+    search?: Nullable<RoutesSearchInput>;
+    sort?: Nullable<RoutesSortInput>;
+}
+
+export interface RoutesSearchInput {
+    path?: Nullable<NumberSearchInput>;
+    frontComponentId?: Nullable<StringSearchInput>;
     rootYn?: Nullable<boolean>;
-    seqNos?: Nullable<number[]>;
-    path?: Nullable<string>;
-    parentSeqNo?: Nullable<number>;
+}
+
+export interface NumberSearchInput {
+    equal?: Nullable<EqualNumberSearchInput>;
+    any?: Nullable<AnyNumberSearchInput>;
+    in?: Nullable<InNumberSearchInput>;
+    isNull?: Nullable<boolean>;
+    lessThan?: Nullable<number>;
+    lessThanOrEqual?: Nullable<number>;
+    moreThan?: Nullable<number>;
+    moreThanOrEqual?: Nullable<number>;
+    between?: Nullable<BetweenNumberSearchInput>;
+}
+
+export interface EqualNumberSearchInput {
+    value: number;
+    not?: Nullable<boolean>;
+}
+
+export interface AnyNumberSearchInput {
+    value: Nullable<number>[];
+    not?: Nullable<boolean>;
+}
+
+export interface InNumberSearchInput {
+    value: Nullable<number>[];
+    not?: Nullable<boolean>;
+}
+
+export interface BetweenNumberSearchInput {
+    from: number;
+    to: number;
+}
+
+export interface StringSearchInput {
+    regex?: Nullable<RegexStringSearchInput>;
+    like?: Nullable<LikeStringSearchInput>;
+    equal?: Nullable<EqualStringSearchInput>;
+    ilike?: Nullable<IlikeStringSearchInput>;
+    any?: Nullable<AnyStringSearchInput>;
+    in?: Nullable<InStringSearchInput>;
+    isNull?: Nullable<boolean>;
+}
+
+export interface RegexStringSearchInput {
+    value: string;
+    not?: Nullable<boolean>;
+}
+
+export interface LikeStringSearchInput {
+    value: string;
+    not?: Nullable<boolean>;
+}
+
+export interface EqualStringSearchInput {
+    value: string;
+    not?: Nullable<boolean>;
+}
+
+export interface IlikeStringSearchInput {
+    value: string;
+    not?: Nullable<boolean>;
+}
+
+export interface AnyStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface InStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface RoutesSortInput {
+    seqNo?: Nullable<Sort>;
+    code?: Nullable<Sort>;
+    name?: Nullable<Sort>;
+    text?: Nullable<Sort>;
+    groupCode?: Nullable<Sort>;
 }
 
 export interface MessagesInput {
-    seqNos?: Nullable<number[]>;
+    search?: Nullable<MessagesSearchInput>;
+    sort?: Nullable<MessagesSortInput>;
+}
+
+export interface MessagesSearchInput {
+    seqNo?: Nullable<NumberSearchInput>;
     groupsInput?: Nullable<MessageGroupsInput>;
     text?: Nullable<StringSearchInput>;
 }
@@ -32,19 +126,12 @@ export interface MessageGroupsInput {
     name?: Nullable<string>;
 }
 
-export interface StringSearchInput {
-    regex?: Nullable<RegexInput>;
-    like?: Nullable<LikeInput>;
-}
-
-export interface RegexInput {
-    value?: Nullable<string>;
-    not?: Nullable<boolean>;
-}
-
-export interface LikeInput {
-    value?: Nullable<string>;
-    not?: Nullable<boolean>;
+export interface MessagesSortInput {
+    seqNo?: Nullable<Sort>;
+    code?: Nullable<Sort>;
+    name?: Nullable<Sort>;
+    text?: Nullable<Sort>;
+    groupCode?: Nullable<Sort>;
 }
 
 export interface InsertRoleInput {
@@ -284,16 +371,6 @@ export interface GqlUser {
     role: GqlRole;
 }
 
-export interface GqlPagedRoutes {
-    list: GqlRoute[];
-    total: number;
-}
-
-export interface GqlRouteTree {
-    fullPath: string;
-    depth: number;
-}
-
 export interface GqlMessageGroup {
     createdAt: DateTime;
     updatedAt: DateTime;
@@ -320,6 +397,16 @@ export interface GqlPagedMessages {
     total: number;
 }
 
+export interface GqlRouteTree {
+    fullPath: string;
+    depth: number;
+}
+
+export interface GqlPagedRoutes {
+    list: GqlRoute[];
+    total: number;
+}
+
 export interface GqlPagedMessageGroups {
     list: GqlMessageGroup[];
     total: number;
@@ -330,10 +417,12 @@ export interface IQuery {
     user(id: string): GqlUser | Promise<GqlUser>;
     role(seqNo: number): Nullable<GqlRoleGroup> | Promise<Nullable<GqlRoleGroup>>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<GqlRoleFrontComponentMap> | Promise<Nullable<GqlRoleFrontComponentMap>>;
-    message(seqNo: number): Nullable<GqlMessage> | Promise<Nullable<GqlMessage>>;
+    message(seqNo: number): GqlMenu | Promise<GqlMenu>;
     rootMenus(): GqlMenu[] | Promise<GqlMenu[]>;
-    route(seqNo: number): GqlRoute | Promise<GqlRoute>;
+    routeBySeqNo(seqNo: number): GqlRoute | Promise<GqlRoute>;
     routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesInput>): GqlPagedRoutes | Promise<GqlPagedRoutes>;
+    messageBySeqNo(seqNo: number): GqlMessage | Promise<GqlMessage>;
+    messageByCode(groupCode: string, code: string): GqlMessage | Promise<GqlMessage>;
     messages(paging?: Nullable<PagingInput>, request?: Nullable<MessagesInput>): GqlPagedMessages | Promise<GqlPagedMessages>;
     messageGroup(code: string): GqlMessageGroup | Promise<GqlMessageGroup>;
     messageGroups(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupsInput>): GqlPagedMessageGroups | Promise<GqlPagedMessageGroups>;

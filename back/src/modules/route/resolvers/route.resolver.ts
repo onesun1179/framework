@@ -20,11 +20,13 @@ import { PagedRoutes } from '@modules/route/dto/paged-routes';
 import { PagingInput } from '@common/dto/inputs/paging.input';
 import { RoutesInput } from '@modules/route/dto/routes.input';
 import { InsertRouteInput } from '@modules/route/dto/insert-route.input';
+import { RouteRepository } from '@modules/route/repositories/route.repository';
 
 @Resolver(() => Route)
 export class RouteResolver {
   constructor(
     private routeService: RouteService,
+    private routeRepository: RouteRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
   logger = new Logger(RouteResolver.name);
@@ -33,13 +35,13 @@ export class RouteResolver {
    *              QUERY
    ***************************************/
   @Query(() => Route)
-  async route(
+  async routeBySeqNo(
     @Args('seqNo', {
       type: () => Int,
     })
     seqNo: Route['seqNo'],
   ) {
-    return await this.dataSource.manager.findOne(Route, {
+    return await this.routeRepository.findOneOrFail({
       where: {
         seqNo,
       },
@@ -52,16 +54,14 @@ export class RouteResolver {
       type: () => PagingInput,
       nullable: true,
     })
-    paging: PagingInput,
+    pagingInput: PagingInput,
     @Args('request', {
       type: () => RoutesInput,
       nullable: true,
     })
-    req: RoutesInput,
+    routesInput: RoutesInput,
   ): Promise<PagedRoutes> {
-    return this.dataSource.transaction(async (e) => {
-      return this.routeService.getPaging(e, paging, req);
-    });
+    return this.routeRepository.paging(pagingInput, routesInput);
   }
 
   /**************************************

@@ -3,11 +3,12 @@ import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { PagingInput } from '@common/dto/inputs/paging.input';
 import { Type } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
+import { Nullable } from '@common/types';
 
 export class UtilPaging {
   static async getRes<Entity extends ObjectLiteral>(p: {
     builder: SelectQueryBuilder<Entity>;
-    pagingRequest?: PagingInput;
+    pagingInput?: Nullable<PagingInput>;
   }): Promise<{
     list: Entity[];
     total: number;
@@ -15,16 +16,16 @@ export class UtilPaging {
   static async getRes<Entity extends ObjectLiteral>(p: {
     builder: SelectQueryBuilder<Entity>;
     classRef: Type;
-    pagingRequest?: PagingInput;
+    pagingInput?: Nullable<PagingInput>;
   }): Promise<Type>;
   static async getRes<Entity extends ObjectLiteral>({
     builder,
     classRef,
-    pagingRequest,
+    pagingInput,
   }: {
     builder: SelectQueryBuilder<Entity>;
     classRef?: Type;
-    pagingRequest?: PagingInput;
+    pagingInput?: Nullable<PagingInput>;
   }): Promise<
     | {
         list: Entity[];
@@ -33,8 +34,8 @@ export class UtilPaging {
     | Type
   > {
     const [list, total] = await builder
-      .skip(pagingRequest?.skip || undefined)
-      .take(pagingRequest?.take || undefined)
+      .skip(pagingInput?.skip || undefined)
+      .take(pagingInput?.take || undefined)
       .getManyAndCount();
 
     if (classRef) {

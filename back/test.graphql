@@ -1,43 +1,12 @@
-mutation {
-    updateMessageGroup(updateMessageGroupInput: {
-        name: "test",
-        code: "EE1"
-    }) {
-        code
-        name
-    }
-}
-
-mutation {
-    insertMessage(insertMessageInput: {
-        groupCode: "E",
-        code: "0001000",
-        name : "test"
-        text: "중복 오류"
-    }) {
-        text
-    }
-}
-
-mutation {
-    deleteMessage(seqNo: 1)
-}
-
 query {
-    message(seqNo: 1) {
-        seqNo
-    }
-
-    messages(request: {
-        text:  : {
-
-    }
+    routes(request: {
+        search: {
+            rootYn: true
+        }
     }) {
         list {
             seqNo
-            groupCode
-            code
-            text
         }
+        total
     }
 }

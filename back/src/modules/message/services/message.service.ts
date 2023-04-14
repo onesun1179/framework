@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { MessageRepository } from '@modules/message/repositories/message.repository';
 import { MsgCode } from '@modules/message/dto/msg-code';
+import { Message } from '@modules/message/entities/message';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
@@ -12,6 +13,32 @@ export class MessageService {
   ) {}
 
   private readonly logger = new Logger(MessageService.name);
+
+  async getMessageBySeqNo(seqNo: number): Promise<Message | null> {
+    return (
+      (await this.cache.get<Message>(`message|${seqNo}`)) ??
+      (await (async () => {
+        const msg = await this.messageRepository.findOne({
+          where: {
+            seqNo,
+          },
+        });
+        msg && (await this.cache.set(`message|${seqNo}`, msg));
+        return msg;
+      })())
+    );
+  }
+  async getMessageByCode(
+    groupCode: string,
+    code: string,
+  ): Promise<Message | null> {
+    return await this.messageRepository.findOne({
+      where: {
+        groupCode,
+        code,
+      },
+    });
+  }
 
   async getTextByMsgCode(msgCode: MsgCode): Promise<{
     result: true;
@@ -26,7 +53,6 @@ export class MessageService {
     result: boolean;
     text: string | null;
   }> {
-    console.log(msgCode);
     const msg = await this.messageRepository.findOne({
       where: {
         groupCode: msgCode.groupCode,

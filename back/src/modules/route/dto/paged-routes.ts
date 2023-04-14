@@ -1,5 +1,5 @@
 import { ObjectType } from '@nestjs/graphql';
-import { PagingOutput } from '@common/dto/paging.output';
+import { PagingOutput } from '@common/dto/outputs/paging.output';
 import { Route } from '@modules/route/dto/route';
 
 @ObjectType('GqlPagedRoutes')
