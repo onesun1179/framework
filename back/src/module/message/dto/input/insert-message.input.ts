@@ -1,5 +1,5 @@
 import { ArgsType, InputType, PickType } from '@nestjs/graphql';
-import { MessageEntity } from '@modules/message/entity';
+import { MessageEntity } from '@modules/message/entity/message.entity';
 
 @InputType()
 @ArgsType()

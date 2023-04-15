@@ -6,16 +6,14 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity';
-import { UserEntity } from '@modules/user/entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import {
-  RoleFrontComponentMapEntity,
-  RoleGroupEntity,
-  RoleRouteMapEntity,
-} from '@modules/role/entity';
-import { MenuRoleMapEntity } from '@modules/menu/entity';
 import { Nullable } from 'src/common/type';
+import { CommonEntity } from '@common/entity/common.entity';
+import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { RoleRouteMapEntity } from '@modules/role/entity/role-route-map.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
 
 @Entity('role')
 @InputType({

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '@modules/user/entity';
-import { LoginUser } from '@modules/user';
 import { MetadataConstant } from '@common/constants/metadata.constant';
-import { UserRepository } from '@modules/user/repository';
-import { RoleRepository } from '@modules/role/repository';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { LoginUser } from '@modules/user/user.type';
+import { UserEntity } from '@modules/user/entity/user.entity';
 
 @Injectable()
 export class UserService {

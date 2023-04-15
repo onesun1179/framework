@@ -1,8 +1,8 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '@common/entity';
-import { RouteEntity } from '@modules/route/entity';
-import { RoleEntity } from '@modules/role/entity';
+import { CommonEntity } from '@common/entity/common.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @Entity('role_route_map')
 @InputType({

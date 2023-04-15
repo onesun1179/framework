@@ -6,10 +6,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity';
-import { RoleEntity } from '@modules/role/entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Nullable } from 'src/common/type';
+import { CommonEntity } from '@common/entity/common.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
 
 @Entity('role_group')
 @InputType({

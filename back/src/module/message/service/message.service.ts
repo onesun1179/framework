@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { MessageRepository } from '@modules/message/repository';
-import { MsgCode } from '@modules/message/dto';
-import { MessageEntity } from '@modules/message/entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { MessageRepository } from '@modules/message/repository/message.repository';
+import { MessageEntity } from '@modules/message/entity/message.entity';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 @Injectable()
 export class MessageService {

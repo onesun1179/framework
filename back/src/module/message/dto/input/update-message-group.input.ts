@@ -5,8 +5,8 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { MessageGroupEntity } from '@modules/message/entity';
 import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
+import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
 
 @InputType()
 @ArgsType()

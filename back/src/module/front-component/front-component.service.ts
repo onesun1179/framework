@@ -1,31 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, In } from 'typeorm';
-import {
-  AllFrontComponentEntity,
-  FrontComponentEntity,
-} from '@modules/front-component/entity';
 import { difference, isNil } from 'lodash';
-import { RoleFrontComponentMapEntity } from '@modules/role/entity';
-import { RouteEntity } from '@modules/route/entity';
-import { RouteService } from '@modules/route';
-import {
-  AllFrontComponentRepository,
-  FrontComponentRepository,
-} from '@modules/front-component/repository';
-import {
-  InsertAllFrontComponentInput,
-  InsertFrontComponentInput,
-  UpdateAllFrontComponentInput,
-  UpdateFrontComponentInput,
-} from '@modules/front-component/dto/input';
+import { RouteService } from '@modules/route/route.service';
+import { InsertAllFrontComponentInput } from '@modules/front-component/dto/input/insert-all-front-component.input';
+import { UpdateAllFrontComponentInput } from '@modules/front-component/dto/input/update-all-front-component.input';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
+import { InsertFrontComponentInput } from '@modules/front-component/dto/input/insert-front-component.input';
+import { UpdateFrontComponentInput } from '@modules/front-component/dto/input/update-front-component.input';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @Injectable()
 export class FrontComponentService {
   constructor(
     private routeService: RouteService,
     private dataSource: DataSource,
-    private frontComponentRepository: FrontComponentRepository,
-    private allFrontComponentRepository: AllFrontComponentRepository,
   ) {}
 
   async saveAllFrontComponent(

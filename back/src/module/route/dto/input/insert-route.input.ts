@@ -6,7 +6,7 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { RouteEntity } from '@modules/route/entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @InputType()
 export class InsertRouteInput extends IntersectionType(

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserService } from '@modules/user';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '@modules/user/entity';
-import { UserResolver } from '@modules/user/resolver';
-import { UserRepository } from '@modules/user/repository';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { RoleRepository } from '@modules/role/repository';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { UserService } from '@modules/user/user.service';
+import { UserResolver } from '@modules/user/resolver/user.resolver';
 
 @Module({
   imports: [

@@ -7,15 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Type } from 'class-transformer';
-
-import { Builder } from 'builder-pattern';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '@common/entity';
 import { Nullable } from '@common/type';
-import { IconEntity } from '@modules/icon/entity';
-import { MenuRoleMapEntity } from '@modules/menu/entity';
-import { RouteEntity } from '@modules/route/entity';
-import { MenuByAuthOutput } from '@modules/menu/dto/output';
+import { CommonEntity } from '@common/entity/common.entity';
+import { IconEntity } from '@modules/icon/entity/icon.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @Entity('menu')
 @InputType({
@@ -70,18 +67,4 @@ export class MenuEntity extends CommonEntity {
   })
   @Type(() => RouteEntity)
   route?: Nullable<RouteEntity>;
-
-  toMenuByAuthOutput(): MenuByAuthOutput | null {
-    if (this.menuRoleMaps && this.menuRoleMaps.length > 0) {
-      const { orderNo, roleSeqNo } = this.menuRoleMaps[0];
-
-      return Builder(MenuByAuthOutput, {
-        ...this,
-        orderNo,
-        roleSeqNo,
-      }).build();
-    }
-
-    return null;
-  }
 }

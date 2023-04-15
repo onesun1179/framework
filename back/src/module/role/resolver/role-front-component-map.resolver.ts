@@ -6,13 +6,12 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { RoleEntity, RoleFrontComponentMapEntity } from '@modules/role/entity';
 import { Logger } from '@nestjs/common';
-import {
-  AllFrontComponentEntity,
-  FrontComponentEntity,
-} from '@modules/front-component/entity';
-import { RoleFrontComponentMapRepository } from '@modules/role/repository';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { RoleFrontComponentMapRepository } from '@modules/role/repository/role-front-component-map.repository';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
 
 @Resolver(() => RoleFrontComponentMapEntity)
 export class RoleFrontComponentMapResolver {
@@ -26,9 +25,9 @@ export class RoleFrontComponentMapResolver {
     nullable: true,
   })
   async roleFrontComponentMap(
-    @Args('roleSeqNo', { type: () => Int }) roleSeqNo: RoleEntity['seqNo'],
+    @Args('roleSeqNo', { type: () => Int }) roleSeqNo: number,
     @Args('frontComponentId', { type: () => String })
-    frontComponentId: FrontComponentEntity['id'],
+    frontComponentId: string,
   ): Promise<RoleFrontComponentMapEntity | null> {
     return await this.roleFrontComponentMapRepository.findOneBy({
       roleSeqNo,

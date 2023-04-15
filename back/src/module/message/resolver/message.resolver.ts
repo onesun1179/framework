@@ -7,27 +7,24 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { MessageService } from '@modules/message/service';
-import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
 import { Inject, Logger, UseGuards } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 import { PagingInput } from '@common/dto/input/paging.input';
-import {
-  MessageGroupRepository,
-  MessageRepository,
-} from '@modules/message/repository';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
-import { MessagesOutput } from '@modules/message/dto/output';
-import {
-  InsertMessageInput,
-  MessagesInput,
-  UpdateMessageInput,
-} from '@modules/message/dto/input';
+import { MessageEntity } from '@modules/message/entity/message.entity';
+import { MessageService } from '@modules/message/service/message.service';
+import { MessageRepository } from '@modules/message/repository/message.repository';
+import { MessageGroupRepository } from '@modules/message/repository/message-group.repository';
+import { MessagesOutput } from '@modules/message/dto/output/messages.output';
+import { MessagesInput } from '@modules/message/dto/input/messages.input';
+import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
+import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
+import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
 
 @Resolver(() => MessageEntity)
 @UseGuards(GqlAuthGuard)

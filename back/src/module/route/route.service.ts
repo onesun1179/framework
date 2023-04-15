@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RouteEntity } from '@modules/route/entity';
 import { EntityManager, In } from 'typeorm';
 import { difference } from 'lodash';
-import { FrontComponentEntity } from '@modules/front-component/entity';
-import { RouteRepository } from 'src/module/route/repository';
-import { InsertRouteInput, UpdateRouteInput } from '@modules/route/dto/input';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { InsertRouteInput } from '@modules/route/dto/input/insert-route.input';
+import { UpdateRouteInput } from '@modules/route/dto/input/update-route.input';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @Injectable()
 export class RouteService {
@@ -72,8 +72,8 @@ export class RouteService {
 
   async updateFrontComponentByRoute(
     entityManager: EntityManager,
-    routeSeqNos: Array<RouteEntity['seqNo']>,
-    frontComponentId: FrontComponentEntity['id'],
+    routeSeqNos: Array<number>,
+    frontComponentId: string,
   ) {
     const seqNos = await entityManager
       .find(RouteEntity, {

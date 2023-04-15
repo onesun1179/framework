@@ -4,8 +4,8 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { InsertRoleInput } from '@modules/role/dto';
-import { RoleEntity } from '@modules/role/entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { InsertRoleInput } from '@modules/role/dto/insert-role.input';
 
 @InputType()
 export class UpdateRoleInput extends IntersectionType(

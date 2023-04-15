@@ -8,16 +8,12 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity';
 import { Nullable } from '@common/type';
-import { MenuEntity } from '@modules/menu/entity';
 import { Type } from 'class-transformer';
-import { RoleEntity } from '@modules/role/entity';
+import { CommonEntity } from '@common/entity/common.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
 
-console.log({
-  MenuEntity,
-  RoleEntity,
-});
 @Entity('menu_role_map')
 @InputType({
   isAbstract: true,

@@ -2,18 +2,36 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CodeMapEntity {
+type MessageGroupEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
-  childSeqNo: Int!
-  parentSeqNo: Int!
+  code: String!
+  name: String!
+  messages: [MessageEntity!]!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type MessageEntity {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  seqNo: Float!
+  code: String!
+  name: String!
+  text: String!
+  groupCode: String
+  group: MessageGroupEntity!
+}
+
+type MessagesOutput {
+  list: [MessageEntity!]!
+  total: Int!
+}
 
 type RoleGroupEntity {
   createdAt: DateTime!
@@ -37,32 +55,6 @@ type IconEntity {
   menus: [MenuEntity!]!
 }
 
-type MenuByAuthOutput {
-  children: [MenuByAuthOutput!]!
-}
-
-type MenuEntity {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Int!
-  name: String!
-  iconSeqNo: Int
-  routeSeqNo: Int
-  roles: [RoleEntity!]!
-  icon: IconEntity
-  route: RouteEntity
-}
-
-type AllFrontComponentEntity {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  id: String!
-  frontComponentId: String
-  frontComponent: FrontComponentEntity
-}
-
 type RoleFrontComponentMapEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -73,6 +65,15 @@ type RoleFrontComponentMapEntity {
   role: RoleEntity!
   frontComponent: FrontComponentEntity!
   allFrontComponent: AllFrontComponentEntity!
+}
+
+type AllFrontComponentEntity {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  id: String!
+  frontComponentId: String
+  frontComponent: FrontComponentEntity
 }
 
 type FrontComponentEntity {
@@ -99,6 +100,19 @@ type RouteEntity {
   treeInfo: RouteTreeOutput!
 }
 
+type MenuEntity {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  seqNo: Int!
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
+  roles: [RoleEntity!]!
+  icon: IconEntity
+  route: RouteEntity
+}
+
 type RoleEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -123,34 +137,16 @@ type UserEntity {
   role: RoleEntity!
 }
 
-type MenusOutput {
-  list: [MenuEntity!]!
-  total: Int!
-}
-
-type MessageGroupEntity {
+type CodeMapEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
-  code: String!
-  name: String!
-  messages: [MessageEntity!]!
+  childSeqNo: Int!
+  parentSeqNo: Int!
 }
 
-type MessageEntity {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Float!
-  code: String!
-  name: String!
-  text: String!
-  groupCode: String
-  group: MessageGroupEntity!
-}
-
-type MessagesOutput {
-  list: [MessageEntity!]!
+type RoutesOutput {
+  list: [RouteEntity!]!
   total: Int!
 }
 
@@ -159,9 +155,13 @@ type RouteTreeOutput {
   depth: Int!
 }
 
-type RoutesOutput {
-  list: [RouteEntity!]!
+type MenusOutput {
+  list: [MenuEntity!]!
   total: Int!
+}
+
+type MenuByAuthOutput {
+  children: [MenuByAuthOutput!]!
 }
 
 type MessageGroupsOutput {
@@ -357,7 +357,6 @@ type Mutation {
   insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput!): RoleGroupEntity!
   updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput!): RoleGroupEntity!
   removeRoleGroup(seqNo: Int!): RoleGroupEntity!
-  insertRoute(req: InsertRouteInput!): RouteEntity!
   updateMessage(updateMessageInput: UpdateMessageInput!): MessageEntity!
   insertMessage(insertMessageInput: InsertMessageInput!): MessageEntity!
   deleteMessages(seqNos: [Int!]!): Boolean!
@@ -400,15 +399,6 @@ input UpdateRoleGroupInput {
   parentSeqNo: Int
   roleSeqNos: [Int!]
   childSeqNos: [Int!]
-}
-
-input InsertRouteInput {
-  path: String!
-  frontComponentId: String
-  parentSeqNo: Int
-  childSeqNos: [Int!]
-  roleSeqNos: [Int!]
-  menuSeqNos: [Int!]
 }
 
 input UpdateMessageInput {

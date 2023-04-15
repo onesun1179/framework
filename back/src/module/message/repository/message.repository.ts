@@ -1,19 +1,17 @@
-import { MessageEntity } from '@modules/message/entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { FindOptionsOrder } from 'typeorm';
-import { UtilPaging } from '@util';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { Nullable } from 'src/common/type';
 import { UtilSearch } from '@common/util/Util.search';
 import { UtilSort } from '@common/util/Util.sort';
 import { EntityRepository } from '@common/repository/entity.repository';
-import {
-  InsertMessageInput,
-  MessagesInput,
-  UpdateMessageInput,
-} from '@modules/message/dto/input';
-import { MessagesOutput } from '@modules/message/dto/output';
+import { MessageEntity } from '@modules/message/entity/message.entity';
+import { MessagesInput } from '@modules/message/dto/input/messages.input';
+import { MessagesOutput } from '@modules/message/dto/output/messages.output';
+import { UtilPaging } from '@common/util/Util.paging';
+import { InsertMessageInput } from '@modules/message/dto/input/insert-message.input';
+import { UpdateMessageInput } from '@modules/message/dto/input/update-message.input';
 
 @CustomRepository(MessageEntity)
 export class MessageRepository extends EntityRepository<MessageEntity> {

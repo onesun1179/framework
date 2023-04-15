@@ -1,55 +1,57 @@
 import { CacheModule, Module, OnModuleInit } from '@nestjs/common';
 import { join, resolve } from 'path';
-import { MenuEntity, MenuRoleMapEntity } from '@modules/menu/entity';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {
-  CodeModule,
-  IconModule,
-  MenuModule,
-  MessageModule,
-  RoleModule,
-  RouteModule,
-  UserModule,
-} from './module';
 import { ConfigModule } from '@nestjs/config';
 import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
-import { AuthModule } from '@auth/auth.module';
+
 import { DataSource } from 'typeorm';
-import { FileModule } from './file';
+
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
 import { LoggingPlugin } from '@common/plugin/LoggingPlugin';
-import { RouteEntity } from '@modules/route/entity';
-import { UserEntity } from '@modules/user/entity';
-import {
-  IconEntity,
-  IconGroupEntity,
-  IconIconGroupMapEntity,
-} from '@modules/icon/entity';
-import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
-import { RoleEntity, RoleFrontComponentMapEntity } from '@modules/role/entity';
-import {
-  AllFrontComponentEntity,
-  FrontComponentEntity,
-} from '@modules/front-component/entity';
+
 import { Builder } from 'builder-pattern';
-import { FrontComponentModule } from '@modules/front-component';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { GqlErrorFilter } from '@common/filter/GqlErrorFilter';
-import { QueryExceptionFilter, ValidationErrorFilter } from '@common/filter';
 import { ValidationPipe } from '@nestjs/common/pipes';
+import { AuthModule } from '@auth/auth.module';
+import { RoleModule } from '@modules/role/role.module';
+import { CodeModule } from '@modules/code/code.module';
+import { UserModule } from '@modules/user/user.module';
+import { RouteModule } from '@modules/route/route.module';
+import { MenuModule } from '@modules/menu/menu.module';
+import { MessageModule } from '@modules/message/message.module';
+import { FrontComponentModule } from '@modules/front-component/front-component.module';
+import { IconModule } from '@modules/icon/icon.module';
+import { FileModule } from '@file/file.module';
+import { QueryExceptionFilter } from '@common/filter/QueryExceptionFilter';
+import { ValidationErrorFilter } from '@common/filter/ValidationErrorFilter';
+import { IconEntity } from '@modules/icon/entity/icon.entity';
+import { IconGroupEntity } from '@modules/icon/entity/icon-group.entity';
+import { IconIconGroupMapEntity } from '@modules/icon/entity/icon-icon-group-map.entity';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
+import { MessageEntity } from '@modules/message/entity/message.entity';
 
 const initYn = false;
 
 // const initYn = true;
 @Module({
+  controllers: [AppController],
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'resource'),
@@ -101,6 +103,7 @@ const initYn = false;
     MessageModule,
     FrontComponentModule,
     IconModule,
+    FileModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,
@@ -110,9 +113,7 @@ const initYn = false;
         path: resolve(process.cwd(), 'src', '..', '..', 'front', 'graphql.ts'),
       },
     }),
-    FileModule,
   ],
-  controllers: [AppController],
   providers: [
     AppService,
     LoggingPlugin,

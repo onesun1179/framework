@@ -1,7 +1,8 @@
 import { Repository } from 'typeorm';
-import { RoleGroupEntity } from '@modules/role/entity';
-import { InsertRoleGroupInput, UpdateRoleGroupInput } from '@modules/role/dto';
 import { CustomRepository } from '@common/decorator/CustomRepository';
+import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
+import { InsertRoleGroupInput } from '@modules/role/dto/insert-role-group.input';
+import { UpdateRoleGroupInput } from '@modules/role/dto/update-role-group.input';
 
 @CustomRepository(RoleGroupEntity)
 export class RoleGroupRepository extends Repository<RoleGroupEntity> {

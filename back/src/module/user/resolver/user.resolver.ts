@@ -1,9 +1,9 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
-import { UserEntity } from '@modules/user/entity';
-import { RoleEntity } from '@modules/role/entity';
-import { RoleRepository } from '@modules/role/repository';
-import { UserRepository } from '@modules/user/repository';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RoleEntity } from '@modules/role/entity/role.entity';
 
 @Resolver(() => UserEntity)
 export class UserResolver {

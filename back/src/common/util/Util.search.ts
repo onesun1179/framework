@@ -1,10 +1,4 @@
 import {
-  NonNullableNumberSearchInput,
-  NonNullableStringSearchInput,
-  NullableNumberSearchInput,
-  NullableStringSearchInput,
-} from '@common/dto/input/search';
-import {
   And,
   Any,
   Between,
@@ -21,10 +15,14 @@ import {
   Not,
 } from 'typeorm';
 import { entries, isBoolean, isNil } from 'lodash';
-import { UtilCommon } from '@util';
 import { Regexp } from '@common/typeorm/find-operators/Regexp';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+import { NonNullableStringSearchInput } from '@common/dto/input/search/non-nullable-string.search.input';
+import { NullableStringSearchInput } from '@common/dto/input/search/nullable-string.search.input';
+import { NullableNumberSearchInput } from '@common/dto/input/search/nullable-number.search.input';
+import { NonNullableNumberSearchInput } from '@common/dto/input/search/non-nullable-number.search.input';
+import { UtilCommon } from '@common/util/Util.common';
 
 export class UtilSearch {
   static getFindOptionsWhere<T extends ObjectLiteral>(

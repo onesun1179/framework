@@ -1,8 +1,9 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '@common/entity';
-import { IconEntity, IconGroupEntity } from '@modules/icon/entity';
 import { Type } from 'class-transformer';
+import { CommonEntity } from '@common/entity/common.entity';
+import { IconEntity } from '@modules/icon/entity/icon.entity';
+import { IconGroupEntity } from '@modules/icon/entity/icon-group.entity';
 
 @Entity('icon_icon_group_map')
 @InputType({

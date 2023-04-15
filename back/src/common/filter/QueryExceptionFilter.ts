@@ -1,9 +1,9 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
-import { MessageService } from '@modules/message/service';
-import { MsgCode } from '@modules/message/dto';
 import { GqlError } from '@common/error/GqlError';
 import { GqlErrorFilter } from '@common/filter/GqlErrorFilter';
+import { MessageService } from '@modules/message/service/message.service';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 @Catch(QueryFailedError)
 export class QueryExceptionFilter implements ExceptionFilter {

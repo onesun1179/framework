@@ -1,9 +1,9 @@
 import { Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { RoleEntity } from '@modules/role/entity';
-import { UserEntity } from '@modules/user/entity';
-import { MenuEntity } from '@modules/menu/entity';
-import { RouteEntity } from '@modules/route/entity';
 import { Nullable } from 'src/common/type';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @InputType()
 export class InsertRoleInput extends PickType(RoleEntity, [

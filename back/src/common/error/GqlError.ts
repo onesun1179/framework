@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql/error';
-import { MsgCode } from '@modules/message/dto';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 export class GqlError extends GraphQLError {
   msgCode: MsgCode;

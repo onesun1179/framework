@@ -6,30 +6,23 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { FrontComponentService } from '@modules/front-component';
-import {
-  AllFrontComponentEntity,
-  FrontComponentEntity,
-} from '@modules/front-component/entity';
-import { RoleEntity } from '@modules/role/entity';
-import { RouteEntity } from '@modules/route/entity';
+
 import { CurrentUser } from '@common/decorator/CurrentUser';
 import { AfterAT } from '@auth/interfaces/AfterAT';
-import {
-  AllFrontComponentRepository,
-  FrontComponentRepository,
-} from '@modules/front-component/repository';
-import {
-  RoleFrontComponentMapRepository,
-  RoleRepository,
-} from '@modules/role/repository';
-import { RouteRepository } from 'src/module/route/repository';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '@auth/guard';
-import {
-  InsertFrontComponentInput,
-  UpdateFrontComponentInput,
-} from '@modules/front-component/dto/input';
+import { FrontComponentService } from '@modules/front-component/front-component.service';
+import { AllFrontComponentRepository } from '@modules/front-component/repository/all-front-component.repository';
+import { FrontComponentRepository } from '@modules/front-component/repository/front-component.repository';
+import { RoleFrontComponentMapRepository } from '@modules/role/repository/role-front-component-map.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
+import { InsertFrontComponentInput } from '@modules/front-component/dto/input/insert-front-component.input';
+import { UpdateFrontComponentInput } from '@modules/front-component/dto/input/update-front-component.input';
 
 @Resolver(() => FrontComponentEntity)
 @UseGuards(GqlAuthGuard)

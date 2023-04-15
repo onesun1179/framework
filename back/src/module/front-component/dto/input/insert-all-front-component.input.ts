@@ -5,7 +5,7 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { AllFrontComponentEntity } from '@modules/front-component/entity';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
 
 @InputType()
 @ArgsType()

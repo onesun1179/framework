@@ -1,4 +1,4 @@
-import { FieldCommentConstant } from '@common/constants';
+import { FieldCommentConstant } from '@common/constants/field-comment.constant';
 
 export class UtilField {
   static getFieldComment(...fields: Array<keyof typeof FieldCommentConstant>) {

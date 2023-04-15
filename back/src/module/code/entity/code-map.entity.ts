@@ -1,8 +1,8 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CodeEntity } from '@modules/code/entity';
-import { CommonEntity } from '@common/entity';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
+import { CommonEntity } from '@common/entity/common.entity';
+import { CodeEntity } from '@modules/code/entity/code.entity';
 
 @Entity('code_map')
 @ObjectType()

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
   Args,
   Int,
@@ -7,27 +8,23 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import {
-  RoleEntity,
-  RoleFrontComponentMapEntity,
-  RoleGroupEntity,
-} from '@modules/role/entity';
-import { MenuEntity } from '@modules/menu/entity';
-import { RouteEntity } from '@modules/route/entity';
-import { Logger } from '@nestjs/common';
-import { RolesResolver } from '@modules/role/resolver';
-import { InsertRoleInput, UpdateRoleInput } from '@modules/role/dto';
-import { FrontComponentEntity } from '@modules/front-component/entity';
-import {
-  RoleGroupRepository,
-  RoleRepository,
-  RoleRouteMapRepository,
-} from '@modules/role/repository';
+import { RoleEntity } from '../entity/role.entity';
+import { RoleRepository } from '../repository/role.repository';
+import { RolesResolver } from './roles.resolver';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { RoleGroupRepository } from '@modules/role/repository/role-group.repository';
+import { RoleRouteMapRepository } from '@modules/role/repository/role-route-map.repository';
+import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { InsertRoleInput } from '@modules/role/dto/insert-role.input';
+import { UpdateRoleInput } from '@modules/role/dto/update-role.input';
 import { GqlError } from '@common/error/GqlError';
-import { MessageConstant } from '@common/constants';
-import { RouteRepository } from 'src/module/route/repository';
-import { UserEntity } from '@modules/user/entity';
-import { UserRepository } from '@modules/user/repository';
+import { MessageConstant } from '@common/constants/message.constant';
 
 @Resolver(() => RoleEntity)
 export class RoleResolver {

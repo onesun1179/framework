@@ -7,14 +7,17 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { RoleService } from '@modules/role';
-import { RoleEntity, RoleGroupEntity } from '@modules/role/entity';
 import { Logger } from '@nestjs/common';
-import { InsertRoleGroupInput, UpdateRoleGroupInput } from '@modules/role/dto';
 import { isNumber } from 'lodash';
-import { RoleGroupRepository, RoleRepository } from '@modules/role/repository';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
+import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
+import { RoleService } from '@modules/role/role.service';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RoleGroupRepository } from '@modules/role/repository/role-group.repository';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { InsertRoleGroupInput } from '@modules/role/dto/insert-role-group.input';
+import { UpdateRoleGroupInput } from '@modules/role/dto/update-role-group.input';
 
 @Resolver(() => RoleGroupEntity)
 export class RoleGroupResolver {

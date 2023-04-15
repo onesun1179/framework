@@ -1,6 +1,7 @@
 import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { RoleEntity, RoleGroupEntity } from '@modules/role/entity';
 import { Nullable } from 'src/common/type';
+import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
 
 @InputType()
 @ArgsType()

@@ -1,4 +1,4 @@
-import { MsgCode } from '@modules/message/dto';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 const make =
   (groupCode: string, code: string) =>

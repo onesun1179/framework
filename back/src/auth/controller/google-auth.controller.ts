@@ -1,8 +1,9 @@
 import { Controller, Get, Logger, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
+import { AuthService } from '@auth/auth.service';
+import { ACCESS_TOKEN_COOKIE_NAME } from '@auth/auth.constant';
 import { LoginUser } from '@modules/user/user.type';
-import { ACCESS_TOKEN_COOKIE_NAME, AuthService } from '@auth';
 
 @Controller('auth/google')
 export class GoogleAuthController {

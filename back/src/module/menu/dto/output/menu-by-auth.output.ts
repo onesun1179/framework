@@ -4,7 +4,8 @@ import {
   OmitType,
   PickType,
 } from '@nestjs/graphql';
-import { MenuEntity, MenuRoleMapEntity } from '@modules/menu/entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
 
 @ObjectType()
 export class MenuByAuthOutput extends IntersectionType(

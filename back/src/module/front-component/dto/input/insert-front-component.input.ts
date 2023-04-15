@@ -1,6 +1,6 @@
 import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { FrontComponentEntity } from '@modules/front-component/entity';
 import { Nullable } from 'src/common/type';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
 
 @InputType()
 @ArgsType()

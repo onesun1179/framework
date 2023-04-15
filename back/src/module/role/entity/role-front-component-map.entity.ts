@@ -1,12 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '@common/entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { RoleEntity } from '@modules/role/entity';
-import {
-  AllFrontComponentEntity,
-  FrontComponentEntity,
-} from '@modules/front-component/entity';
+
 import { Type } from 'class-transformer';
+import { CommonEntity } from '@common/entity/common.entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
 
 @Entity('role_front_component_map')
 @InputType({

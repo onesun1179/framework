@@ -6,8 +6,6 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity';
-import { MessageGroupEntity } from '@modules/message/entity';
 import {
   IsInt,
   IsNotEmpty,
@@ -17,6 +15,8 @@ import {
 } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
+import { CommonEntity } from '@common/entity/common.entity';
+import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
 
 @Entity('message')
 @InputType({

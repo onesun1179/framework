@@ -1,6 +1,7 @@
 import { ArgsType, Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
 import { Nullable } from 'src/common/type';
+import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
+import { MessageEntity } from '@modules/message/entity/message.entity';
 
 @InputType()
 @ArgsType()

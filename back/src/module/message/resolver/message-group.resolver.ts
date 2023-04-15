@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -6,22 +7,20 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { MessageGroupService, MessageService } from '@modules/message/service';
-import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
-
-import { InjectDataSource } from '@nestjs/typeorm';
+import { MessageGroupEntity } from '../entity/message-group.entity';
+import { MessageService } from '../service/message.service';
+import { MessageGroupService } from '@modules/message/service/message-group.service';
+import { MessageGroupRepository } from '@modules/message/repository/message-group.repository';
 import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { MessageGroupsOutput } from '@modules/message/dto/output/message-groups.output';
 import { PagingInput } from '@common/dto/input/paging.input';
-import { MessageGroupRepository } from '@modules/message/repository';
-import { Logger } from '@nestjs/common';
+import { MessageGroupsInput } from '@modules/message/dto/input/message-groups.input';
+import { MessageEntity } from '@modules/message/entity/message.entity';
+import { UpdateMessageGroupInput } from '@modules/message/dto/input/update-message-group.input';
+import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
 import { GqlError } from '@common/error/GqlError';
-import { MessageGroupsOutput } from '@modules/message/dto/output';
-import {
-  InsertMessageGroupInput,
-  MessageGroupsInput,
-  UpdateMessageGroupInput,
-} from '@modules/message/dto/input';
-import { MsgCode } from '@modules/message/dto';
+import { MsgCode } from '@modules/message/dto/msg-code';
 
 @Resolver(() => MessageGroupEntity)
 export class MessageGroupResolver {

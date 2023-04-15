@@ -1,14 +1,14 @@
 import { CustomRepository } from '@common/decorator/CustomRepository';
-import { MenuEntity } from '@modules/menu/entity';
 import { FindOptionsOrder, Repository } from 'typeorm';
 import { Nullable } from 'src/common/type';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { UtilSearch } from '@common/util/Util.search';
 import { UtilSort } from '@common/util/Util.sort';
-import { UtilPaging } from '@util';
-import { MenusInput } from '@modules/menu/dto/input';
-import { MenusOutput } from '@modules/menu/dto/output';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenusInput } from '@modules/menu/dto/input/menus.input';
+import { MenusOutput } from '@modules/menu/dto/output/menus.output';
+import { UtilPaging } from '@common/util/Util.paging';
 
 @CustomRepository(MenuEntity)
 export class MenuRepository extends Repository<MenuEntity> {

@@ -1,7 +1,7 @@
 import { GqlError } from '@common/error/GqlError';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { GqlArgumentsHost } from '@nestjs/graphql';
-import { MessageService } from '@modules/message/service';
+import { MessageService } from '@modules/message/service/message.service';
 
 @Catch(GqlError)
 export class GqlErrorFilter implements ExceptionFilter {

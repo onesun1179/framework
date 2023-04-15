@@ -1,22 +1,14 @@
 import { Module } from '@nestjs/common';
-import { MenuService } from '@modules/menu';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MenuByAuthOutput } from '@modules/menu/dto/output';
-
-import { MenuByAuthResolver, MenuResolver } from '@modules/menu/resolver';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import {
-  MenuRepository,
-  MenuRoleMapRepository,
-} from '@modules/menu/repository';
-import { RoleRepository } from '@modules/role/repository';
-import { MenuEntity, MenuRoleMapEntity } from '@modules/menu/entity';
-
-console.log({
-  test: 1,
-  MenuEntity,
-  MenuByAuthOutput,
-});
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
+import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { MenuService } from '@modules/menu/menu.service';
+import { MenuResolver } from '@modules/menu/resolver/menu.resolver';
+import { MenuByAuthResolver } from '@modules/menu/resolver/menu-by-auth.resolver';
 
 @Module({
   imports: [

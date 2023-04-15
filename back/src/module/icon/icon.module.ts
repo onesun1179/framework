@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { IconResolver, IconService } from '@modules/icon';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  IconEntity,
-  IconGroupEntity,
-  IconGroupTreeEntity,
-  IconIconGroupMapEntity,
-} from '@modules/icon/entity';
+import { IconEntity } from '@modules/icon/entity/icon.entity';
+import { IconGroupTreeEntity } from '@modules/icon/entity/icon-group-tree.entity';
+import { IconGroupEntity } from '@modules/icon/entity/icon-group.entity';
+import { IconIconGroupMapEntity } from '@modules/icon/entity/icon-icon-group-map.entity';
+import { IconService } from '@modules/icon/icon.service';
+import { IconResolver } from '@modules/icon/icon.resolver';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { CustomRepository } from '@common/decorator/CustomRepository';
-import { CodeEntity } from '@modules/code/entity';
 import { Repository } from 'typeorm';
+import { CodeEntity } from '../entity/code.entity';
 
 @CustomRepository(CodeEntity)
 export class CodeRepository extends Repository<CodeEntity> {}

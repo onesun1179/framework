@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
-import { MessageService } from '@modules/message/service';
+import { MessageService } from '@modules/message/service/message.service';
 
 @Catch(ValidationError)
 export class ValidationErrorFilter implements ExceptionFilter {

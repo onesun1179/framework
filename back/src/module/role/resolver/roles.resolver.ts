@@ -1,6 +1,6 @@
 import { Resolver } from '@nestjs/graphql';
-import { RoleService } from '@modules/role';
-import { RoleEntity } from '@modules/role/entity';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { RoleService } from '@modules/role/role.service';
 
 @Resolver(() => [RoleEntity])
 export class RolesResolver {

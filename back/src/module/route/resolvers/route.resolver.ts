@@ -1,31 +1,29 @@
 import {
   Args,
   Int,
-  Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { RouteService } from '@modules/route';
-import { RouteEntity } from '@modules/route/entity';
 import { Logger } from '@nestjs/common';
-import { RoleEntity, RoleRouteMapEntity } from '@modules/role/entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-import { RoutesOutput, RouteTreeOutput } from '@modules/route/dto/output';
+import { RouteEntity } from '@modules/route/entity/route.entity';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RoutesOutput } from '@modules/route/dto/output/routes.output';
 import { PagingInput } from '@common/dto/input/paging.input';
-import { RouteRepository } from 'src/module/route/repository';
-import { RoleRepository } from '@modules/role/repository';
-import { InsertRouteInput, RoutesInput } from '@modules/route/dto/input';
+import { RoutesInput } from '@modules/route/dto/input/routes.input';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { RoleRouteMapEntity } from '@modules/role/entity/role-route-map.entity';
+import { RouteTreeOutput } from '@modules/route/dto/output/route-tree.output';
 
 @Resolver(() => RouteEntity)
 export class RouteResolver {
   logger = new Logger(RouteResolver.name);
 
   constructor(
-    private routeService: RouteService,
     private routeRepository: RouteRepository,
     private roleRepository: RoleRepository,
     @InjectDataSource() private dataSource: DataSource,
@@ -126,17 +124,17 @@ export class RouteResolver {
   /**************************************
    *           MUTATION
    ***************************************/
-  @Mutation(() => RouteEntity)
-  async insertRoute(
-    @Args('req', {
-      type: () => InsertRouteInput,
-    })
-    req: InsertRouteInput,
-  ): Promise<RouteEntity> {
-    return await this.dataSource.transaction(async (e) => {
-      return this.routeService.save(e, req);
-    });
-  }
+  // @Mutation(() => RouteEntity)
+  // async insertRoute(
+  //   @Args('req', {
+  //     type: () => InsertRouteInput,
+  //   })
+  //   req: InsertRouteInput,
+  // ): Promise<RouteEntity> {
+  //   return await this.dataSource.transaction(async (e) => {
+  //     return this.routeService.save(e, req);
+  //   });
+  // }
 
   // @Mutation(() => RouteEntity)
   // async updateRoute(

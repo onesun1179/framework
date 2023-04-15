@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MenuRepository } from '@modules/menu/repository';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
 
 @Injectable()
 export class MenuService {

@@ -1,10 +1,11 @@
 import { Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '@common/entity';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { RoleFrontComponentMapEntity } from '@modules/role/entity';
-import { RouteEntity } from '@modules/route/entity';
-import { AllFrontComponentEntity } from '@modules/front-component/entity';
+
 import { Nullable } from 'src/common/type';
+import { CommonEntity } from '@common/entity/common.entity';
+import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @Entity('front_component')
 @InputType({

@@ -7,23 +7,21 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Logger, UseGuards } from '@nestjs/common';
-import { MenuEntity } from '@modules/menu/entity';
-import { MenuService } from '@modules/menu';
-import { RoleEntity } from '@modules/role/entity';
-import { IconEntity } from '@modules/icon/entity';
-import { GqlAuthGuard } from '@auth/guard';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
+import { MenuEntity } from '../entity/menu.entity';
+import { MenuService } from '@modules/menu/menu.service';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
+import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
 import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { MenusOutput } from '@modules/menu/dto/output/menus.output';
+import { PagingInput } from '@common/dto/input/paging.input';
+import { MenusInput } from '@modules/menu/dto/input/menus.input';
+import { RoleEntity } from '@modules/role/entity/role.entity';
+import { IconEntity } from '@modules/icon/entity/icon.entity';
 import { isNil } from 'lodash';
-import { RouteEntity } from '@modules/route/entity';
-import {
-  MenuRepository,
-  MenuRoleMapRepository,
-} from '@modules/menu/repository';
-import { RoleRepository } from '@modules/role/repository';
-import { MenusOutput } from '@modules/menu/dto/output';
-import { PagingInput } from '@common/dto/input';
-import { MenusInput } from '@modules/menu/dto/input';
+import { RouteEntity } from '@modules/route/entity/route.entity';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuEntity)

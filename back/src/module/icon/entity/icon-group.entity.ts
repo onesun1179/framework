@@ -1,12 +1,11 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '@common/entity';
-import {
-  IconGroupTreeEntity,
-  IconIconGroupMapEntity,
-} from '@modules/icon/entity';
+
 import { Nullable } from 'src/common/type';
 import { Type } from 'class-transformer';
+import { CommonEntity } from '@common/entity/common.entity';
+import { IconIconGroupMapEntity } from '@modules/icon/entity/icon-icon-group-map.entity';
+import { IconGroupTreeEntity } from '@modules/icon/entity/icon-group-tree.entity';
 
 @Entity('icon_group')
 @InputType({
