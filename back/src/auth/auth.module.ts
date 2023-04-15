@@ -2,13 +2,12 @@ import { Global, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from './auth.constant';
-import { GoogleAuthController } from './controller/google-auth.controller';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { GoogleStrategy } from './strategy/google.strategy';
-import { GqlAuthGuard } from './guard/gql-auth.guard';
+import { GoogleAuthController } from '@auth/controller';
+import { GoogleStrategy, JwtStrategy } from '@auth/strategy';
+import { GqlAuthGuard } from '@auth/guard';
 import { AuthService } from './auth.service';
 import { UserModule } from '@modules/user/user.module';
-import { AuthResolver } from './resolvers/auth.resolver';
+import { AuthResolver } from '@auth/resolvers';
 
 @Global()
 @Module({

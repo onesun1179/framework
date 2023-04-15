@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@modules/user/user.service';
 import { LoginUser } from '@modules/user/user.type';
-import { AccessToken } from './interfaces/AccessToken';
-import { User } from '@modules/user/models/user';
+import { AccessToken } from '@auth/interfaces';
+import { UserEntity } from '@modules/user/entity';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   async login(loginUser: LoginUser) {
-    const user = await User.findOneBy({
+    const user = await UserEntity.findOneBy({
       id: loginUser.id,
     }).then(async (u) => {
       if (!u) {

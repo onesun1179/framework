@@ -1,5 +1,5 @@
-import { User } from '@modules/user/models/user';
-import { JwtStrategy } from '../strategy/jwt.strategy';
+import { UserEntity } from '@modules/user/entity/user.entity';
+import { JwtStrategy } from '@auth/strategy';
 
 // iss: 토큰 발급자 (issuer)
 // sub: 토큰 제목 (subject)
@@ -9,7 +9,7 @@ import { JwtStrategy } from '../strategy/jwt.strategy';
 //   iat: 토큰이 발급된 시간 (issued at), 이 값을 사용하여 토큰의 age 가 얼마나 되었는지 판단 할 수 있습니다.
 //   jti: JWT의 고유 식별자로서, 주로 중복적인 처리를 방지하기 위하여 사용됩니다. 일회용 토큰에 사용하면 유용합니다.
 export class AccessToken extends JwtStrategy {
-  userId!: User['id'];
+  userId!: UserEntity['id'];
   googleAccessToken!: string;
   iat!: number;
   exp!: number;

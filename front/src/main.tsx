@@ -13,7 +13,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NonIndexRouteObject } from "react-router/dist/lib/context";
 import { onErrorLink } from "./graphql/errorHandling";
 import FrontCRoute from "@src/component/common/FrontCRoute";
-import { GqlRoute } from "@gqlType";
+import { RouteEntity, RoutesOutput } from "@gqlType";
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -28,45 +28,59 @@ const client = new ApolloClient({
 
 const ROUTES_QUERY = gql`
 	query {
-		routes(request: { rootYn: true }) {
+		routes(request: { search: { parentSeqNo: { isNull: true } } }) {
 			list {
 				seqNo
+				parentSeqNo
 				path
+				treeInfo {
+					depth
+					fullPath
+				}
 				frontComponentId
 				children {
 					seqNo
+					parentSeqNo
 					path
+					treeInfo {
+						depth
+						fullPath
+					}
 					frontComponentId
 					children {
 						seqNo
+						parentSeqNo
 						path
+						treeInfo {
+							depth
+							fullPath
+						}
 						frontComponentId
 						children {
 							seqNo
+							parentSeqNo
 							path
+							treeInfo {
+								depth
+								fullPath
+							}
 							frontComponentId
 							children {
 								seqNo
+								parentSeqNo
 								path
+								treeInfo {
+									depth
+									fullPath
+								}
 								frontComponentId
 								children {
 									seqNo
+									parentSeqNo
 									path
-									frontComponentId
-									children {
-										seqNo
-										path
-										frontComponentId
-										children {
-											seqNo
-											path
-											frontComponentId
-											children {
-												seqNo
-												path
-												frontComponentId
-											}
-										}
+									treeInfo {
+										depth
+										fullPath
 									}
 								}
 							}
@@ -78,22 +92,17 @@ const ROUTES_QUERY = gql`
 	}
 `;
 
-type RouteType = GqlRoute & {
+type RouteType = RouteEntity & {
 	children: Array<RouteType>;
 };
 
 const { data } = await client.query<{
-	routes: {
-		list: Array<RouteType>;
-	};
+	routes: RoutesOutput;
 }>({
 	query: ROUTES_QUERY,
 });
 
 function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
-	console.log({
-		frontComponentId: routeType.frontComponentId,
-	});
 	return {
 		path: routeType.path,
 		element: routeType.frontComponentId ? (
@@ -105,6 +114,7 @@ function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 		children: routeType.children.map((o) => makeRouteObject(o)),
 	};
 }
+
 const router = createBrowserRouter(
 	data.routes.list.map((o) => makeRouteObject(o))
 );

@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from "react";
 import { Menu, MenuProps } from "antd";
 import { gql, useQuery } from "@apollo/client";
-import { Icon as IconType, Menu as MenuType, Route, RouteTree } from "@gqlType";
+
 import SvgPathToIcon from "@src/component/common/SvgPathToIcon";
 import { Link } from "react-router-dom";
 

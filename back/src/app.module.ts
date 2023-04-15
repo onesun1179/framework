@@ -5,45 +5,46 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CodeModule } from '@modules/code/code.module';
-import { UserModule } from '@modules/user/user.module';
-import { MenuModule } from '@modules/menu/menu.module';
-import { RouteModule } from '@modules/route/route.module';
+import { CodeModule } from './module/code/code.module';
+import { UserModule } from './module/user/user.module';
+import { MenuModule } from './module/menu/menu.module';
+import { RouteModule } from './module/route/route.module';
 
-import { RoleModule } from '@modules/role/role.module';
-import { MessageModule } from '@modules/message/message.module';
+import { RoleModule } from './module/role/role.module';
+import { MessageModule } from './module/message/message.module';
 import { ConfigModule } from '@nestjs/config';
-import { IconModule } from '@modules/icon/icon.module';
+import { IconModule } from './module/icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from '@auth/auth.module';
 import { DataSource } from 'typeorm';
-import { FileModule } from './file/file.module';
+import { FileModule } from './file';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as fs from 'fs';
-import { LoggingPlugin } from '@common/plugins/LoggingPlugin';
-import { Route } from '@modules/route/dto/route';
-import { User } from '@modules/user/models/user';
-import { IconGroup } from '@modules/icon/model/icon-group';
-import { Icon } from '@modules/icon/model/icon';
-import { IconIconGroupMap } from '@modules/icon/model/icon-icon-group-map';
-import { Menu } from '@modules/menu/model/menu';
-import { MenuRoleMap } from '@modules/menu/model/menu-role-map';
-import { MenuRoleMapTree } from '@modules/menu/model/menu-role-map-tree';
-import { MessageGroup } from '@modules/message/entities/message-group';
-import { Role } from '@modules/role/entities/role.entity';
-import { AllFrontComponent } from '@modules/front-component/entities/all-front-component.entity';
-import { FrontComponent } from '@modules/front-component/entities/front-component.entity';
+import { LoggingPlugin } from '@common/plugin/LoggingPlugin';
+import { RouteEntity } from '@modules/route/entity';
+import { UserEntity } from '@modules/user/entity';
+import {
+  IconEntity,
+  IconGroupEntity,
+  IconIconGroupMapEntity,
+} from '@modules/icon/entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
+import { RoleEntity, RoleFrontComponentMapEntity } from '@modules/role/entity';
+import {
+  AllFrontComponentEntity,
+  FrontComponentEntity,
+} from '@modules/front-component/entity';
 import { Builder } from 'builder-pattern';
-import { RoleFrontComponentMap } from '@modules/role/entities/role-front-component-map.entity';
-import { FrontComponentModule } from '@modules/front-component/front-component.module';
+import { FrontComponentModule } from './module/front-component/front-component.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { GqlErrorFilter } from '@common/filters/GqlErrorFilter';
-import { Message } from '@modules/message/entities/message';
-import { QueryExceptionFilter } from '@common/filters/QueryExceptionFilter';
-import { ValidationErrorFilter } from '@common/filters/ValidationErrorFilter';
+import { GqlErrorFilter } from '@common/filter/GqlErrorFilter';
+import { QueryExceptionFilter } from '@common/filter/QueryExceptionFilter';
+import { ValidationErrorFilter } from '@common/filter/ValidationErrorFilter';
 import { ValidationPipe } from '@nestjs/common/pipes';
 
 const initYn = false;
@@ -190,7 +191,7 @@ export class AppModule implements OnModuleInit {
       await this.dataSource.transaction(async (entityManager) => {
         await entityManager.save(
           iconGroupNames.map((o) =>
-            IconGroup.create({
+            IconGroupEntity.create({
               name: o.name,
               seqNo: o.seqNo,
             }),
@@ -199,7 +200,7 @@ export class AppModule implements OnModuleInit {
 
         await entityManager.save(
           icons.map((o) =>
-            Icon.create({
+            IconEntity.create({
               name: o.name,
               filePath: o.filePath,
               seqNo: o.seqNo,
@@ -209,7 +210,7 @@ export class AppModule implements OnModuleInit {
 
         await entityManager.save(
           icons.map((o) =>
-            IconIconGroupMap.create({
+            IconIconGroupMapEntity.create({
               iconSeqNo: o.seqNo,
               iconGroupSeqNo: o.groupSeqNo,
             }),
@@ -224,23 +225,23 @@ export class AppModule implements OnModuleInit {
           guest,
           developer,
         ] = await entityManager.save([
-          AllFrontComponent.create({
+          AllFrontComponentEntity.create({
             id: 'Home',
           }),
-          AllFrontComponent.create({
+          AllFrontComponentEntity.create({
             id: 'MenuManagement',
           }),
-          AllFrontComponent.create({
+          AllFrontComponentEntity.create({
             id: 'FrameworkMenuManagement',
           }),
-          AllFrontComponent.create({
+          AllFrontComponentEntity.create({
             id: 'FrameworkMessageManagement',
           }),
-          Role.create({
+          RoleEntity.create({
             name: '최초 가입자',
             identifier: 'guest',
           }),
-          Role.create({
+          RoleEntity.create({
             name: '개발자',
           }),
         ]);
@@ -251,55 +252,55 @@ export class AppModule implements OnModuleInit {
           frameworkMenuManagementFC,
           frameworkMessageManagementFC,
         ] = await entityManager.save([
-          FrontComponent.create({
+          FrontComponentEntity.create({
             id: 'home',
           }),
-          FrontComponent.create({
+          FrontComponentEntity.create({
             id: 'menuManage',
           }),
-          FrontComponent.create({
+          FrontComponentEntity.create({
             id: 'frameworkMenuManagement',
           }),
-          FrontComponent.create({
+          FrontComponentEntity.create({
             id: 'frameworkMessageManagement',
           }),
         ]);
 
         await entityManager.save([
-          Builder(AllFrontComponent, {
+          Builder(AllFrontComponentEntity, {
             ...homeAFC,
             frontComponent: homeFC,
           }).build(),
-          Builder(AllFrontComponent, {
+          Builder(AllFrontComponentEntity, {
             ...menuManagementAFC,
             frontComponent: menuManageFC,
           }).build(),
-          Builder(AllFrontComponent, {
+          Builder(AllFrontComponentEntity, {
             ...frameworkMenuManagementAFC,
             frontComponent: frameworkMenuManagementFC,
           }).build(),
-          Builder(AllFrontComponent, {
+          Builder(AllFrontComponentEntity, {
             ...frameworkMessageManagementAFC,
             frontComponent: frameworkMessageManagementFC,
           }).build(),
         ]);
 
         const homeRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: '/',
             frontComponent: homeFC,
           }),
         );
 
         const manageRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: 'manage',
             parent: homeRoute,
           }),
         );
 
         const menuManageRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: 'menu',
             frontComponent: menuManageFC,
             parent: manageRoute,
@@ -307,14 +308,14 @@ export class AppModule implements OnModuleInit {
         );
 
         const frameworkRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: 'framework',
             parent: homeRoute,
           }),
         );
 
         const frameworkMenuRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: 'menu',
             frontComponent: frameworkMenuManagementFC,
             parent: frameworkRoute,
@@ -322,7 +323,7 @@ export class AppModule implements OnModuleInit {
         );
 
         const frameworkMessageRoute = await entityManager.save(
-          Route.create({
+          RouteEntity.create({
             path: 'message',
             frontComponent: frameworkMessageManagementFC,
             parent: frameworkRoute,
@@ -330,27 +331,27 @@ export class AppModule implements OnModuleInit {
         );
 
         await entityManager.save([
-          RoleFrontComponentMap.create({
+          RoleFrontComponentMapEntity.create({
             role: guest,
             frontComponent: homeFC,
             allFrontComponent: homeAFC,
           }),
-          RoleFrontComponentMap.create({
+          RoleFrontComponentMapEntity.create({
             role: developer,
             frontComponent: homeFC,
             allFrontComponent: homeAFC,
           }),
-          RoleFrontComponentMap.create({
+          RoleFrontComponentMapEntity.create({
             role: developer,
             frontComponent: menuManageFC,
             allFrontComponent: menuManagementAFC,
           }),
-          RoleFrontComponentMap.create({
+          RoleFrontComponentMapEntity.create({
             role: developer,
             frontComponent: frameworkMenuManagementFC,
             allFrontComponent: frameworkMenuManagementAFC,
           }),
-          RoleFrontComponentMap.create({
+          RoleFrontComponentMapEntity.create({
             role: developer,
             frontComponent: frameworkMessageManagementFC,
             allFrontComponent: frameworkMessageManagementAFC,
@@ -358,15 +359,15 @@ export class AppModule implements OnModuleInit {
         ]);
 
         await entityManager.save([
-          User.create({
+          UserEntity.create({
             id: '102494101026679318764',
             role: developer,
           }),
-          User.create({
+          UserEntity.create({
             id: '107731247344180282964',
             role: developer,
           }),
-          User.create({
+          UserEntity.create({
             id: '116029307585897477435',
             role: developer,
           }),
@@ -379,109 +380,147 @@ export class AppModule implements OnModuleInit {
           frameworkMenuManagementMenu,
           frameworkMessageManagementMenu,
         ] = await entityManager.save([
-          Menu.create({
+          MenuEntity.create({
             name: '관리',
             route: manageRoute,
           }),
-          Menu.create({
+          MenuEntity.create({
             name: '권한별 메뉴 관리',
             route: menuManageRoute,
           }),
-          Menu.create({
+          MenuEntity.create({
             name: '프레임워크',
             route: frameworkRoute,
           }),
-          Menu.create({
+          MenuEntity.create({
             name: '메뉴 관리',
             route: frameworkMenuRoute,
           }),
-          Menu.create({
+          MenuEntity.create({
             name: '메세지 관리',
             route: frameworkMessageRoute,
           }),
         ]);
 
         const [
-          manageMRM,
-          menuManageMRM,
-          frameworkMRM,
-          frameworkMenuMRM,
-          frameworkMessageMRM,
+          devManageMenuMRM,
+          devFrameworkMenuMRM,
+          guestManageMenuMRM,
+          guestFrameworkMenuMRM,
         ] = await entityManager.save([
-          MenuRoleMap.create({
+          MenuRoleMapEntity.create({
             role: developer,
             menu: manageMenu,
             orderNo: 1,
           }),
-          MenuRoleMap.create({
-            role: developer,
-            menu: menuManageMenu,
-            orderNo: 1,
-          }),
-          MenuRoleMap.create({
+          MenuRoleMapEntity.create({
             role: developer,
             menu: frameworkMenu,
             orderNo: 2,
           }),
-          MenuRoleMap.create({
-            role: developer,
-            menu: frameworkMenuManagementMenu,
+          MenuRoleMapEntity.create({
+            role: guest,
+            menu: manageMenu,
             orderNo: 1,
           }),
-          MenuRoleMap.create({
-            role: developer,
-            menu: frameworkMessageManagementMenu,
+          MenuRoleMapEntity.create({
+            role: guest,
+            menu: frameworkMenu,
             orderNo: 2,
           }),
         ]);
 
         await entityManager.save([
-          MenuRoleMapTree.create({
-            parentMenuRoleMap: manageMRM,
-            childMenuRoleMap: menuManageMRM,
+          MenuRoleMapEntity.create({
+            role: developer,
+            menu: menuManageMenu,
+            parent: devManageMenuMRM,
+            orderNo: 1,
           }),
-          MenuRoleMapTree.create({
-            parentMenuRoleMap: frameworkMRM,
-            childMenuRoleMap: frameworkMenuMRM,
+          MenuRoleMapEntity.create({
+            role: developer,
+            menu: frameworkMenuManagementMenu,
+            parent: devFrameworkMenuMRM,
+            orderNo: 1,
           }),
-          MenuRoleMapTree.create({
-            parentMenuRoleMap: frameworkMRM,
-            childMenuRoleMap: frameworkMessageMRM,
+          MenuRoleMapEntity.create({
+            role: developer,
+            menu: frameworkMessageManagementMenu,
+            parent: devFrameworkMenuMRM,
+            orderNo: 2,
           }),
+
+          MenuRoleMapEntity.create({
+            role: guest,
+            menu: menuManageMenu,
+            parent: guestManageMenuMRM,
+            orderNo: 1,
+          }),
+          MenuRoleMapEntity.create({
+            role: guest,
+            menu: frameworkMenuManagementMenu,
+            parent: guestFrameworkMenuMRM,
+            orderNo: 1,
+          }),
+          MenuRoleMapEntity.create({
+            role: guest,
+            menu: frameworkMessageManagementMenu,
+            parent: guestFrameworkMenuMRM,
+            orderNo: 2,
+          }),
+
+          // MenuRoleMapEntity.create({
+          //   role: developer,
+          //   menu: menuManageMenu,
+          //   parent: guestManageMenuMRM,
+          //   orderNo: 1,
+          // }),
+          // MenuRoleMapEntity.create({
+          //   role: developer,
+          //   menu: frameworkMenuManagementMenu,
+          //   parent: guestFrameworkMenuMRM,
+          //   orderNo: 1,
+          // }),
+          // MenuRoleMapEntity.create({
+          //   role: developer,
+          //   menu: frameworkMessageManagementMenu,
+          //   parent: guestFrameworkMenuMRM,
+          //   orderNo: 2,
+          // }),
         ]);
 
         const errorMG = await entityManager.save(
-          MessageGroup.create({
+          MessageGroupEntity.create({
             name: '에러 메세지',
             code: 'E',
           }),
         );
         const primaryMG = await entityManager.save(
-          MessageGroup.create({
+          MessageGroupEntity.create({
             name: '일반 메세지',
             code: 'P',
           }),
         );
         await entityManager.save([
-          Message.create({
+          MessageEntity.create({
             group: primaryMG,
             code: '0000',
             text: '{{0}}',
             name: '일반',
           }),
-          Message.create({
+          MessageEntity.create({
             group: errorMG,
             code: '0000',
             text: '실패',
             name: '실패',
           }),
-          Message.create({
+          MessageEntity.create({
             group: errorMG,
             code: '0001',
             text: `SQL_FAIL({{0}})`,
             name: 'SQL FAIL',
           }),
-          Message.create({
+          MessageEntity.create({
             group: errorMG,
             code: '0002',
             text: `존재하지 않는 값 입니다.`,

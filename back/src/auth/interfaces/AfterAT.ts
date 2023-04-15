@@ -1,7 +1,7 @@
-import { Role } from '@modules/role/entities/role.entity';
-import { User } from '@modules/user/models/user';
+import { RoleEntity } from '@modules/role/entity';
+import { UserEntity } from '@modules/user/entity';
 
 export class AfterAT {
-  userId!: User['id'];
-  roleSeqNo!: Role['seqNo'];
+  userId!: UserEntity['id'];
+  roleSeqNo!: RoleEntity['seqNo'];
 }

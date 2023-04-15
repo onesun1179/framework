@@ -1,4 +1,4 @@
-import { MsgCode } from '@modules/message/dto/msg-code';
+import { MsgCode } from '@modules/message/dto';
 
 export class Response<T = null> {
   data!: T;

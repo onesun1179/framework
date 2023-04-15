@@ -18,22 +18,22 @@ export interface PagingInput {
     take?: Nullable<number>;
 }
 
-export interface RoutesInput {
-    search?: Nullable<RoutesSearchInput>;
-    sort?: Nullable<RoutesSortInput>;
+export interface MenusInput {
+    search?: Nullable<MenusSearchInput>;
+    sort?: Nullable<MenusSortInput>;
 }
 
-export interface RoutesSearchInput {
-    path?: Nullable<NumberSearchInput>;
-    frontComponentId?: Nullable<StringSearchInput>;
-    rootYn?: Nullable<boolean>;
+export interface MenusSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    iconSeqNo?: Nullable<NullableNumberSearchInput>;
+    routeSeqNo?: Nullable<NullableNumberSearchInput>;
 }
 
-export interface NumberSearchInput {
+export interface NonNullableNumberSearchInput {
     equal?: Nullable<EqualNumberSearchInput>;
-    any?: Nullable<AnyNumberSearchInput>;
-    in?: Nullable<InNumberSearchInput>;
-    isNull?: Nullable<boolean>;
+    any?: Nullable<NonNullableAnyNumberSearchInput>;
+    in?: Nullable<NonNullableInNumberSearchInput>;
     lessThan?: Nullable<number>;
     lessThanOrEqual?: Nullable<number>;
     moreThan?: Nullable<number>;
@@ -46,13 +46,13 @@ export interface EqualNumberSearchInput {
     not?: Nullable<boolean>;
 }
 
-export interface AnyNumberSearchInput {
-    value: Nullable<number>[];
+export interface NonNullableAnyNumberSearchInput {
+    value: number[];
     not?: Nullable<boolean>;
 }
 
-export interface InNumberSearchInput {
-    value: Nullable<number>[];
+export interface NonNullableInNumberSearchInput {
+    value: number[];
     not?: Nullable<boolean>;
 }
 
@@ -61,14 +61,13 @@ export interface BetweenNumberSearchInput {
     to: number;
 }
 
-export interface StringSearchInput {
+export interface NonNullableStringSearchInput {
     regex?: Nullable<RegexStringSearchInput>;
     like?: Nullable<LikeStringSearchInput>;
     equal?: Nullable<EqualStringSearchInput>;
     ilike?: Nullable<IlikeStringSearchInput>;
-    any?: Nullable<AnyStringSearchInput>;
-    in?: Nullable<InStringSearchInput>;
-    isNull?: Nullable<boolean>;
+    any?: Nullable<NonNullableAnyStringSearchInput>;
+    in?: Nullable<NonNullableInStringSearchInput>;
 }
 
 export interface RegexStringSearchInput {
@@ -91,14 +90,51 @@ export interface IlikeStringSearchInput {
     not?: Nullable<boolean>;
 }
 
-export interface AnyStringSearchInput {
-    value: Nullable<string>[];
+export interface NonNullableAnyStringSearchInput {
+    value: string[];
     not?: Nullable<boolean>;
 }
 
-export interface InStringSearchInput {
-    value: Nullable<string>[];
+export interface NonNullableInStringSearchInput {
+    value: string[];
     not?: Nullable<boolean>;
+}
+
+export interface NullableNumberSearchInput {
+    equal?: Nullable<EqualNumberSearchInput>;
+    any?: Nullable<NullableAnyNumberSearchInput>;
+    in?: Nullable<NullableInNumberSearchInput>;
+    isNull?: Nullable<boolean>;
+    lessThan?: Nullable<number>;
+    lessThanOrEqual?: Nullable<number>;
+    moreThan?: Nullable<number>;
+    moreThanOrEqual?: Nullable<number>;
+    between?: Nullable<BetweenNumberSearchInput>;
+}
+
+export interface NullableAnyNumberSearchInput {
+    value: Nullable<number>[];
+    not?: Nullable<boolean>;
+}
+
+export interface NullableInNumberSearchInput {
+    value: Nullable<number>[];
+    not?: Nullable<boolean>;
+}
+
+export interface MenusSortInput {
+    seqNo?: Nullable<Sort>;
+}
+
+export interface RoutesInput {
+    search?: Nullable<RoutesSearchInput>;
+    sort?: Nullable<RoutesSortInput>;
+}
+
+export interface RoutesSearchInput {
+    path?: Nullable<NonNullableStringSearchInput>;
+    frontComponentId?: Nullable<NonNullableStringSearchInput>;
+    parentSeqNo?: Nullable<NullableNumberSearchInput>;
 }
 
 export interface RoutesSortInput {
@@ -115,9 +151,9 @@ export interface MessagesInput {
 }
 
 export interface MessagesSearchInput {
-    seqNo?: Nullable<NumberSearchInput>;
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
     groupsInput?: Nullable<MessageGroupsInput>;
-    text?: Nullable<StringSearchInput>;
+    text?: Nullable<NonNullableStringSearchInput>;
 }
 
 export interface MessageGroupsInput {
@@ -227,68 +263,41 @@ export interface UpdateAllFrontComponentInput {
     frontComponentId?: Nullable<string>;
 }
 
-export interface GqlCodeMap {
+export interface CodeMapEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     childSeqNo: number;
     parentSeqNo: number;
-    child: GqlCode;
-    parent: GqlCode;
 }
 
-export interface GqlCode {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    seqNo: number;
-    name: string;
-    children?: Nullable<GqlCodeMap[]>;
-    parents?: Nullable<GqlCodeMap[]>;
-}
-
-export interface GqlRoleGroup {
+export interface RoleGroupEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     seqNo: number;
     name: string;
     parentSeqNo?: Nullable<number>;
-    roles: GqlRole[];
-    children: GqlRoleGroup[];
-    parent?: Nullable<GqlRoleGroup>;
+    roles: RoleEntity[];
+    children: RoleGroupEntity[];
+    parent?: Nullable<RoleGroupEntity>;
 }
 
-export interface GqlMenuRoleMap {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    seqNo: number;
-    menuSeqNo: number;
-    roleSeqNo: number;
-    role: GqlRole;
-    orderNo: number;
-}
-
-export interface GqlIconGroup {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    seqNo: number;
-    name: string;
-}
-
-export interface GqlIcon {
+export interface IconEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     seqNo: number;
     name: string;
     filePath: string;
-    menus: GqlMenu[];
+    menus: MenuEntity[];
 }
 
-export interface GqlMenu {
+export interface MenuByAuthOutput {
+    children: MenuByAuthOutput[];
+}
+
+export interface MenuEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
@@ -296,45 +305,44 @@ export interface GqlMenu {
     name: string;
     iconSeqNo?: Nullable<number>;
     routeSeqNo?: Nullable<number>;
-    roles: GqlRole[];
-    icon?: Nullable<GqlIcon>;
-    children: GqlMenu[];
-    route?: Nullable<GqlRoute>;
+    roles: RoleEntity[];
+    icon?: Nullable<IconEntity>;
+    route?: Nullable<RouteEntity>;
 }
 
-export interface GqlAllFrontComponent {
+export interface AllFrontComponentEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     id: string;
     frontComponentId?: Nullable<string>;
-    frontComponent?: Nullable<GqlFrontComponent>;
+    frontComponent?: Nullable<FrontComponentEntity>;
 }
 
-export interface GqlRoleFrontComponentMap {
+export interface RoleFrontComponentMapEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     roleSeqNo: number;
     frontComponentId: string;
     allFrontComponentId: string;
-    role: GqlRole;
-    frontComponent: GqlFrontComponent;
-    allFrontComponent: GqlAllFrontComponent;
+    role: RoleEntity;
+    frontComponent: FrontComponentEntity;
+    allFrontComponent: AllFrontComponentEntity;
 }
 
-export interface GqlFrontComponent {
+export interface FrontComponentEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     id: string;
-    allFrontComponent?: Nullable<GqlAllFrontComponent>;
-    allFrontComponents: GqlAllFrontComponent[];
-    roles: GqlRole[];
-    routes: GqlRoute[];
+    allFrontComponent?: Nullable<AllFrontComponentEntity>;
+    allFrontComponents: AllFrontComponentEntity[];
+    roles: RoleEntity[];
+    routes: RouteEntity[];
 }
 
-export interface GqlRoute {
+export interface RouteEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
@@ -342,12 +350,12 @@ export interface GqlRoute {
     path: string;
     frontComponentId?: Nullable<string>;
     parentSeqNo?: Nullable<number>;
-    children: GqlRoute[];
-    roles: GqlRole[];
-    routeTree: GqlRouteTree;
+    children: RouteEntity[];
+    roles: RoleEntity[];
+    treeInfo: RouteTreeOutput;
 }
 
-export interface GqlRole {
+export interface RoleEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
@@ -355,32 +363,37 @@ export interface GqlRole {
     name: string;
     identifier?: Nullable<string>;
     roleGroupSeqNo?: Nullable<number>;
-    roleGroup?: Nullable<GqlRoleGroup>;
-    users: GqlUser[];
-    menus: GqlMenu[];
-    routes: GqlRoute[];
-    frontComponents: GqlFrontComponent[];
+    roleGroup?: Nullable<RoleGroupEntity>;
+    users: UserEntity[];
+    menus: MenuEntity[];
+    routes: RouteEntity[];
+    frontComponents: FrontComponentEntity[];
 }
 
-export interface GqlUser {
+export interface UserEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     id: string;
     roleSeqNo: number;
-    role: GqlRole;
+    role: RoleEntity;
 }
 
-export interface GqlMessageGroup {
+export interface MenusOutput {
+    list: MenuEntity[];
+    total: number;
+}
+
+export interface MessageGroupEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     code: string;
     name: string;
-    messages: GqlMessage[];
+    messages: MessageEntity[];
 }
 
-export interface GqlMessage {
+export interface MessageEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
@@ -389,64 +402,65 @@ export interface GqlMessage {
     name: string;
     text: string;
     groupCode?: Nullable<string>;
-    group: GqlMessageGroup;
+    group: MessageGroupEntity;
 }
 
-export interface GqlPagedMessages {
-    list: GqlMessage[];
+export interface MessagesOutput {
+    list: MessageEntity[];
     total: number;
 }
 
-export interface GqlRouteTree {
+export interface RouteTreeOutput {
     fullPath: string;
     depth: number;
 }
 
-export interface GqlPagedRoutes {
-    list: GqlRoute[];
+export interface RoutesOutput {
+    list: RouteEntity[];
     total: number;
 }
 
-export interface GqlPagedMessageGroups {
-    list: GqlMessageGroup[];
+export interface MessageGroupsOutput {
+    list: MessageGroupEntity[];
     total: number;
 }
 
 export interface IQuery {
     authCheck(): boolean | Promise<boolean>;
-    user(id: string): GqlUser | Promise<GqlUser>;
-    role(seqNo: number): Nullable<GqlRoleGroup> | Promise<Nullable<GqlRoleGroup>>;
-    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<GqlRoleFrontComponentMap> | Promise<Nullable<GqlRoleFrontComponentMap>>;
-    message(seqNo: number): GqlMenu | Promise<GqlMenu>;
-    rootMenus(): GqlMenu[] | Promise<GqlMenu[]>;
-    routeBySeqNo(seqNo: number): GqlRoute | Promise<GqlRoute>;
-    routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesInput>): GqlPagedRoutes | Promise<GqlPagedRoutes>;
-    messageBySeqNo(seqNo: number): GqlMessage | Promise<GqlMessage>;
-    messageByCode(groupCode: string, code: string): GqlMessage | Promise<GqlMessage>;
-    messages(paging?: Nullable<PagingInput>, request?: Nullable<MessagesInput>): GqlPagedMessages | Promise<GqlPagedMessages>;
-    messageGroup(code: string): GqlMessageGroup | Promise<GqlMessageGroup>;
-    messageGroups(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupsInput>): GqlPagedMessageGroups | Promise<GqlPagedMessageGroups>;
-    frontComponent(id: string): Nullable<GqlFrontComponent> | Promise<Nullable<GqlFrontComponent>>;
-    allFrontComponent(id: string): Nullable<GqlAllFrontComponent> | Promise<Nullable<GqlAllFrontComponent>>;
-    icon(seqNo: number): GqlIcon | Promise<GqlIcon>;
+    user(id: string): UserEntity | Promise<UserEntity>;
+    role(seqNo: number): Nullable<RoleGroupEntity> | Promise<Nullable<RoleGroupEntity>>;
+    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMapEntity> | Promise<Nullable<RoleFrontComponentMapEntity>>;
+    messageBySeqNo(seqNo: number): MessageEntity | Promise<MessageEntity>;
+    menus(pagingInput?: Nullable<PagingInput>, menusInput?: Nullable<MenusInput>): MenusOutput | Promise<MenusOutput>;
+    menuByAuth(menuSeqNo: number): MenuByAuthOutput | Promise<MenuByAuthOutput>;
+    routeBySeqNo(seqNo: number): RouteEntity | Promise<RouteEntity>;
+    routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesInput>): RoutesOutput | Promise<RoutesOutput>;
+    messageByCode(groupCode: string, code: string): MessageEntity | Promise<MessageEntity>;
+    messages(pagingInput?: Nullable<PagingInput>, messagesInput?: Nullable<MessagesInput>): MessagesOutput | Promise<MessagesOutput>;
+    messageGroup(code: string): MessageGroupEntity | Promise<MessageGroupEntity>;
+    messageGroups(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupsInput>): MessageGroupsOutput | Promise<MessageGroupsOutput>;
+    frontComponentById(frontComponentId: string): FrontComponentEntity | Promise<FrontComponentEntity>;
+    allFrontComponentById(allFrontComponentId: string): AllFrontComponentEntity | Promise<AllFrontComponentEntity>;
+    allFrontComponentByAuth(frontComponentId: string): Nullable<AllFrontComponentEntity> | Promise<Nullable<AllFrontComponentEntity>>;
+    icon(seqNo: number): IconEntity | Promise<IconEntity>;
 }
 
 export interface IMutation {
-    insertRole(insertRoleInput: InsertRoleInput): GqlRole | Promise<GqlRole>;
-    updateRole(updateRoleInput: UpdateRoleInput): GqlRole | Promise<GqlRole>;
-    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput): GqlRoleGroup | Promise<GqlRoleGroup>;
-    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput): GqlRoleGroup | Promise<GqlRoleGroup>;
-    removeRoleGroup(seqNo: number): GqlRoleGroup | Promise<GqlRoleGroup>;
-    insertRoute(req: InsertRouteInput): GqlRoute | Promise<GqlRoute>;
-    updateMessage(updateMessageInput: UpdateMessageInput): GqlMessage | Promise<GqlMessage>;
-    insertMessage(insertMessageInput: InsertMessageInput): GqlMessage | Promise<GqlMessage>;
+    insertRole(insertRoleInput: InsertRoleInput): RoleEntity | Promise<RoleEntity>;
+    updateRole(updateRoleInput: UpdateRoleInput): RoleEntity | Promise<RoleEntity>;
+    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput): RoleGroupEntity | Promise<RoleGroupEntity>;
+    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput): RoleGroupEntity | Promise<RoleGroupEntity>;
+    removeRoleGroup(seqNo: number): RoleGroupEntity | Promise<RoleGroupEntity>;
+    insertRoute(req: InsertRouteInput): RouteEntity | Promise<RouteEntity>;
+    updateMessage(updateMessageInput: UpdateMessageInput): MessageEntity | Promise<MessageEntity>;
+    insertMessage(insertMessageInput: InsertMessageInput): MessageEntity | Promise<MessageEntity>;
     deleteMessages(seqNos: number[]): boolean | Promise<boolean>;
-    updateMessageGroup(updateMessageGroupInput: UpdateMessageGroupInput): Nullable<GqlMessageGroup> | Promise<Nullable<GqlMessageGroup>>;
-    insertMessageGroup(insertMessageGroupInput: InsertMessageGroupInput): GqlMessageGroup | Promise<GqlMessageGroup>;
-    insertFrontComponent(insertFrontComponentInput: InsertFrontComponentInput): GqlFrontComponent | Promise<GqlFrontComponent>;
-    updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentInput): GqlFrontComponent | Promise<GqlFrontComponent>;
-    insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentInput): GqlAllFrontComponent | Promise<GqlAllFrontComponent>;
-    updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentInput): GqlAllFrontComponent | Promise<GqlAllFrontComponent>;
+    updateMessageGroup(updateMessageGroupInput: UpdateMessageGroupInput): Nullable<MessageGroupEntity> | Promise<Nullable<MessageGroupEntity>>;
+    insertMessageGroup(insertMessageGroupInput: InsertMessageGroupInput): MessageGroupEntity | Promise<MessageGroupEntity>;
+    insertFrontComponent(insertFrontComponentInput: InsertFrontComponentInput): FrontComponentEntity | Promise<FrontComponentEntity>;
+    updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentInput): FrontComponentEntity | Promise<FrontComponentEntity>;
+    insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentInput): AllFrontComponentEntity | Promise<AllFrontComponentEntity>;
+    updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentInput): AllFrontComponentEntity | Promise<AllFrontComponentEntity>;
 }
 
 export type DateTime = any;
