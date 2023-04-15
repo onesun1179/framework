@@ -13,9 +13,6 @@ export class GraphqlCacheInterceptor implements NestInterceptor {
     @Inject(CACHE_MANAGER) protected readonly cacheManager: Cache,
     protected readonly reflector: Reflector,
   ) {}
-  private getGqlCtx(ctx: ExecutionContextHost): GqlExecutionContext {
-    return GqlExecutionContext.create(ctx);
-  }
 
   intercept(
     context: ExecutionContextHost,
@@ -35,5 +32,9 @@ export class GraphqlCacheInterceptor implements NestInterceptor {
       cacheMetadata,
     });
     return next.handle();
+  }
+
+  private getGqlCtx(ctx: ExecutionContextHost): GqlExecutionContext {
+    return GqlExecutionContext.create(ctx);
   }
 }

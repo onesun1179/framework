@@ -6,7 +6,7 @@ import { EntityManager } from 'typeorm/entity-manager/EntityManager';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { isArray } from 'lodash';
-import { UtilCommon } from '@util/Util.common';
+import { UtilCommon } from '@util';
 
 export class EntityRepository<
   Entity extends BaseEntity,

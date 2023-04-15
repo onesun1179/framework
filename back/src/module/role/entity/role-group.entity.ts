@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity/common.entity';
-import { RoleEntity } from './role.entity';
+import { CommonEntity } from '@common/entity';
+import { RoleEntity } from '@modules/role/entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Nullable } from 'src/common/type';
 

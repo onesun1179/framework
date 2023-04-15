@@ -1,8 +1,7 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CommonEntity } from '@common/entity/common.entity';
-import { IconEntity } from '../../icon/entity/icon.entity';
-import { IconGroupEntity } from '../../icon/entity/icon-group.entity';
+import { CommonEntity } from '@common/entity';
+import { IconEntity, IconGroupEntity } from '@modules/icon/entity';
 import { Type } from 'class-transformer';
 
 @Entity('icon_icon_group_map')
@@ -13,11 +12,11 @@ import { Type } from 'class-transformer';
 export class IconIconGroupMapEntity extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)
-  iconSeqNo!: IconEntity['seqNo'];
+  iconSeqNo!: number;
 
   @PrimaryColumn()
   @Field(() => Int)
-  iconGroupSeqNo!: IconGroupEntity['seqNo'];
+  iconGroupSeqNo!: number;
 
   @ManyToOne(() => IconEntity, (o) => o.iconIconGroupMaps)
   @JoinColumn({

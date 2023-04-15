@@ -7,28 +7,31 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Logger, UseGuards } from '@nestjs/common';
-import { MenuService } from '../menu.service';
-import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
-import { MenuRepository } from '@modules/menu/repository';
+import { MenuService } from '@modules/menu';
+import { GqlAuthGuard } from '@auth/guard';
+import {
+  MenuRepository,
+  MenuRoleMapRepository,
+} from '@modules/menu/repository';
 import { RoleRepository } from '@modules/role/repository';
-import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
-import { MenuByAuthOutput } from '@modules/menu/dto/output/menu-by-auth.output';
+import { MenuByAuthOutput } from '@modules/menu/dto/output';
 import { CurrentUser } from '@common/decorator/CurrentUser';
 import { AfterAT } from '@auth/interfaces/AfterAT';
-import { MessageConstant } from '@common/constants/message.constant';
+import { MessageConstant } from '@common/constants';
 import { GqlError } from '@common/error/GqlError';
-import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuByAuthOutput)
 export class MenuByAuthResolver {
+  private readonly logger = new Logger(MenuByAuthResolver.name);
+
   constructor(
     private readonly menuService: MenuService,
     private readonly menuRepository: MenuRepository,
     private readonly menuRoleMapRepository: MenuRoleMapRepository,
     private readonly roleRepository: RoleRepository,
   ) {}
-  private readonly logger = new Logger(MenuByAuthResolver.name);
 
   /**************************************
    *              QUERY

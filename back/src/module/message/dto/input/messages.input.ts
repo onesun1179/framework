@@ -1,7 +1,8 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { MessagesSearchInput, MessagesSortInput } from '@modules/message/dto';
 import { Type } from 'class-transformer';
 import { Nullable } from 'src/common/type';
+import { MessagesSearchInput } from '@modules/message/dto/input/messages-search.input';
+import { MessagesSortInput } from '@modules/message/dto/input/messages-sort.input';
 
 @InputType()
 @ArgsType()

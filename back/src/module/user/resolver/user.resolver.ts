@@ -7,11 +7,12 @@ import { UserRepository } from '@modules/user/repository';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
+  logger = new Logger(UserResolver.name);
+
   constructor(
     private userRepository: UserRepository,
     private roleRepository: RoleRepository,
   ) {}
-  logger = new Logger(UserResolver.name);
 
   /**************************************
    *              QUERY

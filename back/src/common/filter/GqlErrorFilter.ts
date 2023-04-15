@@ -6,6 +6,7 @@ import { MessageService } from '@modules/message/service';
 @Catch(GqlError)
 export class GqlErrorFilter implements ExceptionFilter {
   constructor(private ms: MessageService) {}
+
   async catch(e: GqlError, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
 

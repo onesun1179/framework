@@ -3,6 +3,7 @@ import { MsgCode } from '@modules/message/dto';
 
 export class GqlError extends GraphQLError {
   msgCode: MsgCode;
+
   constructor(msgCode: MsgCode) {
     super('', {
       extensions: {

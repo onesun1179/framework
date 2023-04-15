@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '@common/entity/common.entity';
+import { CommonEntity } from '@common/entity';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { RoleEntity } from '../../role/entity/role.entity';
+import { RoleEntity } from '@modules/role/entity';
 import {
   AllFrontComponentEntity,
   FrontComponentEntity,

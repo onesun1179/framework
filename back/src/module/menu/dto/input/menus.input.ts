@@ -1,7 +1,8 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { Nullable } from '@common/type';
-import { MenusSearchInput, MenusSortInput } from '@modules/menu/dto';
+import { MenusSearchInput } from '@modules/menu/dto/input/menus-search.input';
+import { MenusSortInput } from '@modules/menu/dto/input/menus-sort.input';
 
 @InputType()
 @ArgsType()

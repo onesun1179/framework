@@ -7,12 +7,12 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class MessageService {
+  private readonly logger = new Logger(MessageService.name);
+
   constructor(
     private messageRepository: MessageRepository,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
-
-  private readonly logger = new Logger(MessageService.name);
 
   async getMessageBySeqNo(seqNo: number): Promise<MessageEntity | null> {
     return (
@@ -28,6 +28,7 @@ export class MessageService {
       })())
     );
   }
+
   async getMessageByCode(
     groupCode: string,
     code: string,

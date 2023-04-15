@@ -1,10 +1,10 @@
 import { Repository } from 'typeorm';
 import { FrontComponentEntity } from '@modules/front-component/entity';
+import { CustomRepository } from '@common/decorator/CustomRepository';
 import {
   InsertFrontComponentInput,
   UpdateFrontComponentInput,
-} from '@modules/front-component/dto';
-import { CustomRepository } from '@common/decorator/CustomRepository';
+} from '@modules/front-component/dto/input';
 
 @CustomRepository(FrontComponentEntity)
 export class FrontComponentRepository extends Repository<FrontComponentEntity> {

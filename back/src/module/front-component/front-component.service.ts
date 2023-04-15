@@ -7,17 +7,17 @@ import {
 import { difference, isNil } from 'lodash';
 import { RoleFrontComponentMapEntity } from '@modules/role/entity';
 import { RouteEntity } from '@modules/route/entity';
+import { RouteService } from '@modules/route';
+import {
+  AllFrontComponentRepository,
+  FrontComponentRepository,
+} from '@modules/front-component/repository';
 import {
   InsertAllFrontComponentInput,
   InsertFrontComponentInput,
   UpdateAllFrontComponentInput,
   UpdateFrontComponentInput,
-} from '@modules/front-component/dto';
-import { RouteService } from '../route/route.service';
-import {
-  AllFrontComponentRepository,
-  FrontComponentRepository,
-} from '@modules/front-component/repository';
+} from '@modules/front-component/dto/input';
 
 @Injectable()
 export class FrontComponentService {
@@ -164,6 +164,7 @@ export class FrontComponentService {
       );
     }
   }
+
   async updateFrontComponentByAllFrontComponent(
     entityManager: EntityManager,
     allFrontComponentIds: Array<AllFrontComponentEntity['id']>,

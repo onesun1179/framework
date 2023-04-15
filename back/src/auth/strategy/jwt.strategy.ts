@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ACCESS_TOKEN_COOKIE_NAME, JWT_SECRET } from '../auth.constant';
+import { ACCESS_TOKEN_COOKIE_NAME, JWT_SECRET } from '@auth';
 import { AccessToken } from '@auth/interfaces';
 
 @Injectable()

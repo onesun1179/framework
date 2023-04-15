@@ -4,7 +4,7 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { InsertRoleInput } from '../../role/dto/insert-role.input';
+import { InsertRoleInput } from '@modules/role/dto';
 import { RoleEntity } from '@modules/role/entity';
 
 @InputType()

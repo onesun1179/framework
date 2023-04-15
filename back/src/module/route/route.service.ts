@@ -3,13 +3,14 @@ import { RouteEntity } from '@modules/route/entity';
 import { EntityManager, In } from 'typeorm';
 import { difference } from 'lodash';
 import { FrontComponentEntity } from '@modules/front-component/entity';
-import { RouteRepository } from '@modules/route/repositories';
-import { InsertRouteInput, UpdateRouteInput } from '@modules/route/dto';
+import { RouteRepository } from 'src/module/route/repository';
+import { InsertRouteInput, UpdateRouteInput } from '@modules/route/dto/input';
 
 @Injectable()
 export class RouteService {
-  constructor(private routeRepository: RouteRepository) {}
   private readonly logger = new Logger(RouteService.name);
+
+  constructor(private routeRepository: RouteRepository) {}
 
   async save(
     e: EntityManager,
@@ -60,6 +61,7 @@ export class RouteService {
 
     return route;
   }
+
   async hasSeqNo(e: EntityManager, seqNo: number): Promise<boolean> {
     return await e
       .countBy(RouteEntity, {

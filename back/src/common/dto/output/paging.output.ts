@@ -10,5 +10,6 @@ export function PagingOutput<T>(classRef: Type<T>): any {
     @Field(() => Int)
     total!: number;
   }
+
   return PaginatedType;
 }

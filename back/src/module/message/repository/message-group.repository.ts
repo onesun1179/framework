@@ -1,17 +1,17 @@
 import { EntityRepository } from '@common/repository/entity.repository';
 import { MessageGroupEntity } from '@modules/message/entity';
-import {
-  InsertMessageGroupInput,
-  MessageGroupsInput,
-  MessageGroupsOutput,
-  UpdateMessageGroupInput,
-} from '@modules/message/dto';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { In, Like } from 'typeorm';
 import { PagingInput } from '@common/dto/input/paging.input';
-import { UtilPaging } from '@util/Util.paging';
+import { UtilPaging } from '@util';
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { Nullable } from 'src/common/type';
+import {
+  InsertMessageGroupInput,
+  MessageGroupsInput,
+  UpdateMessageGroupInput,
+} from '@modules/message/dto/input';
+import { MessageGroupsOutput } from '@modules/message/dto/output';
 
 @CustomRepository(MessageGroupEntity)
 export class MessageGroupRepository extends EntityRepository<MessageGroupEntity> {

@@ -12,10 +12,10 @@ import {
   RoleFrontComponentMapEntity,
   RoleGroupEntity,
 } from '@modules/role/entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuEntity } from '@modules/menu/entity';
 import { RouteEntity } from '@modules/route/entity';
 import { Logger } from '@nestjs/common';
-import { RolesResolver } from './roles.resolver';
+import { RolesResolver } from '@modules/role/resolver';
 import { InsertRoleInput, UpdateRoleInput } from '@modules/role/dto';
 import { FrontComponentEntity } from '@modules/front-component/entity';
 import {
@@ -24,13 +24,15 @@ import {
   RoleRouteMapRepository,
 } from '@modules/role/repository';
 import { GqlError } from '@common/error/GqlError';
-import { MessageConstant } from '@common/constants/message.constant';
-import { RouteRepository } from '@modules/route/repositories';
+import { MessageConstant } from '@common/constants';
+import { RouteRepository } from 'src/module/route/repository';
 import { UserEntity } from '@modules/user/entity';
 import { UserRepository } from '@modules/user/repository';
 
 @Resolver(() => RoleEntity)
 export class RoleResolver {
+  private readonly logger = new Logger(RolesResolver.name);
+
   constructor(
     private roleRepository: RoleRepository,
     private userRepository: UserRepository,
@@ -38,7 +40,6 @@ export class RoleResolver {
     private roleGroupRepository: RoleGroupRepository,
     private roleRouteMapRepository: RoleRouteMapRepository,
   ) {}
-  private readonly logger = new Logger(RolesResolver.name);
 
   /**************************************
    *              QUERY

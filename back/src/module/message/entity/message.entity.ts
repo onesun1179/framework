@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { CommonEntity } from '@common/entity/common.entity';
-import { MessageGroupEntity } from './message-group.entity';
+import { CommonEntity } from '@common/entity';
+import { MessageGroupEntity } from '@modules/message/entity';
 import {
   IsInt,
   IsNotEmpty,

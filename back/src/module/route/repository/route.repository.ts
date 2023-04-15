@@ -1,13 +1,13 @@
 import { FindManyOptions, Repository } from 'typeorm';
 import { RouteEntity } from '@modules/route/entity';
-import { PagingInput } from '@common/dto/input/paging.input';
-import { UtilPaging } from '@util/Util.paging';
-import { RoutesInput } from '@modules/route/dto';
+import { PagingInput } from '@common/dto/input';
+import { UtilPaging } from '@util';
+import { RoutesInput } from '@modules/route/dto/input';
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { Nullable } from 'src/common/type';
-import { MessagesOutput } from '@modules/message/dto';
 import { UtilSearch } from '@common/util/Util.search';
 import { UtilSort } from '@common/util/Util.sort';
+import { MessagesOutput } from '@modules/message/dto/output';
 
 @CustomRepository(RouteEntity)
 export class RouteRepository extends Repository<RouteEntity> {

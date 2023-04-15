@@ -1,7 +1,8 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { Nullable } from 'src/common/type';
-import { RoutesSearchInput, RoutesSortInput } from '@modules/route/dto';
+import { RoutesSearchInput } from '@modules/route/dto/input/search';
+import { RoutesSortInput } from '@modules/route/dto/input/sort';
 
 @InputType()
 @ArgsType()

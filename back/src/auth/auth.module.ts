@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JWT_SECRET } from './auth.constant';
+import { JWT_SECRET } from '@auth';
 import { GoogleAuthController } from '@auth/controller';
 import { GoogleStrategy, JwtStrategy } from '@auth/strategy';
 import { GqlAuthGuard } from '@auth/guard';

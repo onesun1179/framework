@@ -1,9 +1,9 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { Nullable } from 'src/common/type';
-import { MessageGroupsInput } from '@modules/message/dto';
 import { NonNullableStringSearchInput } from '@common/dto/input/search/non-nullable-string.search.input';
 import { Type } from 'class-transformer';
 import { NonNullableNumberSearchInput } from '@common/dto/input/search/non-nullable-number.search.input';
+import { MessageGroupsInput } from '@modules/message/dto/input/message-groups.input';
 
 @InputType()
 @ArgsType()

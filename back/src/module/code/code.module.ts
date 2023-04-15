@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CodeService } from './code.service';
+import { CodeService } from '@modules/code';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CodeEntity, CodeMapEntity } from '@modules/code/entity';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';

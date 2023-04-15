@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { FrontComponentService } from './front-component.service';
+import { FrontComponentService } from '@modules/front-component';
 import {
   AllFrontComponentResolver,
   FrontComponentResolver,
@@ -14,12 +14,12 @@ import {
   AllFrontComponentRepository,
   FrontComponentRepository,
 } from '@modules/front-component/repository';
-import { RouteModule } from '../route/route.module';
+import { RouteModule } from '@modules/route';
 import {
   RoleFrontComponentMapRepository,
   RoleRepository,
 } from '@modules/role/repository';
-import { RouteRepository } from '@modules/route/repositories';
+import { RouteRepository } from 'src/module/route/repository';
 
 @Module({
   imports: [

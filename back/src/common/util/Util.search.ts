@@ -1,4 +1,9 @@
-import { NonNullableStringSearchInput } from '@common/dto/input/search/non-nullable-string.search.input';
+import {
+  NonNullableNumberSearchInput,
+  NonNullableStringSearchInput,
+  NullableNumberSearchInput,
+  NullableStringSearchInput,
+} from '@common/dto/input/search';
 import {
   And,
   Any,
@@ -15,14 +20,11 @@ import {
   MoreThanOrEqual,
   Not,
 } from 'typeorm';
-import { NullableNumberSearchInput } from '@common/dto/input/search/nullable-number.search.input';
 import { entries, isBoolean, isNil } from 'lodash';
-import { UtilCommon } from '@util/Util.common';
+import { UtilCommon } from '@util';
 import { Regexp } from '@common/typeorm/find-operators/Regexp';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { NullableStringSearchInput } from '@common/dto/input/search/nullable-string.search.input';
-import { NonNullableNumberSearchInput } from '@common/dto/input/search/non-nullable-number.search.input';
 
 export class UtilSearch {
   static getFindOptionsWhere<T extends ObjectLiteral>(
@@ -45,6 +47,7 @@ export class UtilSearch {
       return r;
     }, {});
   }
+
   static string(
     param: NonNullableStringSearchInput | NullableStringSearchInput,
   ): Array<FindOperator<string>> {

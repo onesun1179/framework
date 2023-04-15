@@ -7,6 +7,7 @@ export class UtilCommon {
       return func();
     }
   }
+
   static applyFuncWithArg<T>(arg: T, func: (arg: T) => any) {
     func(arg);
   }

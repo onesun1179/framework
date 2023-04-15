@@ -6,7 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { FrontComponentService } from '../front-component.service';
+import { FrontComponentService } from '@modules/front-component';
 import {
   AllFrontComponentEntity,
   FrontComponentEntity,
@@ -15,27 +15,29 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import {
-  InsertAllFrontComponentInput,
-  UpdateAllFrontComponentInput,
-} from '@modules/front-component/dto';
+
 import {
   AllFrontComponentRepository,
   FrontComponentRepository,
 } from '@modules/front-component/repository';
 import { CurrentUser } from '@common/decorator/CurrentUser';
 import { AfterAT } from '@auth/interfaces/AfterAT';
+import {
+  InsertAllFrontComponentInput,
+  UpdateAllFrontComponentInput,
+} from '@modules/front-component/dto/input';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => AllFrontComponentEntity)
 export class AllFrontComponentResolver {
+  private readonly logger = new Logger(AllFrontComponentResolver.name);
+
   constructor(
     private allFrontComponentRepository: AllFrontComponentRepository,
     private frontComponentRepository: FrontComponentRepository,
     private readonly frontComponentService: FrontComponentService,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
-  private readonly logger = new Logger(AllFrontComponentResolver.name);
 
   /**************************************
    *              QUERY

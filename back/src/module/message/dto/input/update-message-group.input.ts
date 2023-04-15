@@ -6,7 +6,7 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { MessageGroupEntity } from '@modules/message/entity';
-import { InsertMessageGroupInput } from '@modules/message/dto';
+import { InsertMessageGroupInput } from '@modules/message/dto/input/insert-message-group.input';
 
 @InputType()
 @ArgsType()

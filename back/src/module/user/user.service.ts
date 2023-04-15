@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@modules/user/entity';
-import { LoginUser } from './user.type';
+import { LoginUser } from '@modules/user';
 import { MetadataConstant } from '@common/constants/metadata.constant';
 import { UserRepository } from '@modules/user/repository';
 import { RoleRepository } from '@modules/role/repository';

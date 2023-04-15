@@ -7,11 +7,12 @@ import { UserEntity } from '@modules/user/entity';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
   ) {}
-  private readonly logger = new Logger(AuthService.name);
 
   async login(loginUser: LoginUser) {
     const user = await UserEntity.findOneBy({

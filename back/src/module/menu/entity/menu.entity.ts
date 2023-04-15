@@ -6,19 +6,17 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MenuByAuthOutput } from '@modules/menu/dto/output/menu-by-auth.output';
-import { CommonEntity } from '@common/entity/common.entity';
-import { MenuRoleMapEntity } from './menu-role-map.entity';
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { IconEntity } from '@modules/icon/entity/icon.entity';
-import { RouteEntity } from '@modules/route/entity/route.entity';
-import { Nullable } from '@common/type';
 import { Type } from 'class-transformer';
-import { Builder } from 'builder-pattern';
 
-console.log({
-  MenuByAuthOutput,
-});
+import { Builder } from 'builder-pattern';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { CommonEntity } from '@common/entity';
+import { Nullable } from '@common/type';
+import { IconEntity } from '@modules/icon/entity';
+import { MenuRoleMapEntity } from '@modules/menu/entity';
+import { RouteEntity } from '@modules/route/entity';
+import { MenuByAuthOutput } from '@modules/menu/dto/output';
+
 @Entity('menu')
 @InputType({
   isAbstract: true,

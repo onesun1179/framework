@@ -6,16 +6,17 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { IconService } from './icon.service';
+import { IconService } from '@modules/icon';
 import { Logger } from '@nestjs/common';
 import { IconEntity } from '@modules/icon/entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuEntity } from '@modules/menu/entity';
 import * as process from 'process';
 
 @Resolver(() => IconEntity)
 export class IconResolver {
-  constructor(private readonly iconService: IconService) {}
   private readonly logger = new Logger(IconResolver.name);
+
+  constructor(private readonly iconService: IconService) {}
 
   @Query(() => IconEntity)
   async icon(@Args('seqNo', { type: () => Int }) seqNo: IconEntity['seqNo']) {

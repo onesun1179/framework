@@ -1,5 +1,5 @@
-import { UserEntity } from '@modules/user/entity/user.entity';
-import { JwtStrategy } from '@auth/strategy';
+import { UserEntity } from "@modules/user/entity";
+import { JwtStrategy } from "@auth/strategy";
 
 // iss: 토큰 발급자 (issuer)
 // sub: 토큰 제목 (subject)

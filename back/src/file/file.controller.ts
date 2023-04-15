@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { FileService } from './file.service';
+import { FileService } from '@file';
 import * as fs from 'fs';
 import { join } from 'path';
 

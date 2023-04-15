@@ -6,7 +6,7 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { RoleGroupEntity } from '@modules/role/entity';
-import { InsertRoleGroupInput } from '../../role/dto/insert-role-group.input';
+import { InsertRoleGroupInput } from '@modules/role/dto';
 
 @InputType()
 @ArgsType()

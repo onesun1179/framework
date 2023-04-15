@@ -5,6 +5,7 @@
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
+    "check:orphans-check" : "npx madge --ts-config tsconfig.json src --image dependency-graph.png",
     "clean": "rm -f ./src/**/*.js",
     "gql.cp": "cp ./src/schema.gql ../front/schema.gql",
     "build": "nest build",

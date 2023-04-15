@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { CommonEntity } from '@common/entity/common.entity';
-import { MessageEntity } from './message.entity';
+import { CommonEntity } from '@common/entity';
+import { MessageEntity } from '@modules/message/entity';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';

@@ -11,28 +11,28 @@ import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
 
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import {
-  InsertMessageGroupInput,
-  MessageGroupsInput,
-  MessageGroupsOutput,
-  MsgCode,
-  UpdateMessageGroupInput,
-} from '@modules/message/dto';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { MessageGroupRepository } from '@modules/message/repository';
 import { Logger } from '@nestjs/common';
 import { GqlError } from '@common/error/GqlError';
+import { MessageGroupsOutput } from '@modules/message/dto/output';
+import {
+  InsertMessageGroupInput,
+  MessageGroupsInput,
+  UpdateMessageGroupInput,
+} from '@modules/message/dto/input';
+import { MsgCode } from '@modules/message/dto';
 
 @Resolver(() => MessageGroupEntity)
 export class MessageGroupResolver {
+  private readonly logger = new Logger(MessageGroupResolver.name);
+
   constructor(
     private readonly messageService: MessageService,
     private readonly messageGroupService: MessageGroupService,
     private readonly messageGroupRepository: MessageGroupRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
-
-  private readonly logger = new Logger(MessageGroupResolver.name);
 
   /**************************************
    *              QUERY

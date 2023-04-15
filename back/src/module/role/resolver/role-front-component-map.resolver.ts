@@ -16,10 +16,12 @@ import { RoleFrontComponentMapRepository } from '@modules/role/repository';
 
 @Resolver(() => RoleFrontComponentMapEntity)
 export class RoleFrontComponentMapResolver {
+  private readonly logger = new Logger(RoleFrontComponentMapResolver.name);
+
   constructor(
     private roleFrontComponentMapRepository: RoleFrontComponentMapRepository,
   ) {}
-  private readonly logger = new Logger(RoleFrontComponentMapResolver.name);
+
   @Query(() => RoleFrontComponentMapEntity, {
     nullable: true,
   })
@@ -33,6 +35,7 @@ export class RoleFrontComponentMapResolver {
       frontComponentId,
     });
   }
+
   @ResolveField(() => RoleEntity)
   async role(
     @Parent() { roleSeqNo }: RoleFrontComponentMapEntity,

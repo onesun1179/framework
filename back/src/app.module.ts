@@ -1,19 +1,21 @@
 import { CacheModule, Module, OnModuleInit } from '@nestjs/common';
 import { join, resolve } from 'path';
+import { MenuEntity, MenuRoleMapEntity } from '@modules/menu/entity';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CodeModule } from './module/code/code.module';
-import { UserModule } from './module/user/user.module';
-import { MenuModule } from './module/menu/menu.module';
-import { RouteModule } from './module/route/route.module';
-
-import { RoleModule } from './module/role/role.module';
-import { MessageModule } from './module/message/message.module';
+import {
+  CodeModule,
+  IconModule,
+  MenuModule,
+  MessageModule,
+  RoleModule,
+  RouteModule,
+  UserModule,
+} from './module';
 import { ConfigModule } from '@nestjs/config';
-import { IconModule } from './module/icon/icon.module';
 import * as process from 'process';
 import * as shell from 'shelljs';
 import * as Joi from 'joi';
@@ -30,8 +32,6 @@ import {
   IconGroupEntity,
   IconIconGroupMapEntity,
 } from '@modules/icon/entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
-import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
 import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
 import { RoleEntity, RoleFrontComponentMapEntity } from '@modules/role/entity';
 import {
@@ -39,15 +39,15 @@ import {
   FrontComponentEntity,
 } from '@modules/front-component/entity';
 import { Builder } from 'builder-pattern';
-import { FrontComponentModule } from './module/front-component/front-component.module';
+import { FrontComponentModule } from '@modules/front-component';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { GqlErrorFilter } from '@common/filter/GqlErrorFilter';
-import { QueryExceptionFilter } from '@common/filter/QueryExceptionFilter';
-import { ValidationErrorFilter } from '@common/filter/ValidationErrorFilter';
+import { QueryExceptionFilter, ValidationErrorFilter } from '@common/filter';
 import { ValidationPipe } from '@nestjs/common/pipes';
 
 const initYn = false;
+
 // const initYn = true;
 @Module({
   imports: [

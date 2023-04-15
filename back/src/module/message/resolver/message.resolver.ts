@@ -11,12 +11,6 @@ import { MessageService } from '@modules/message/service';
 import { MessageEntity, MessageGroupEntity } from '@modules/message/entity';
 import { Inject, Logger, UseGuards } from '@nestjs/common';
 
-import {
-  InsertMessageInput,
-  MessagesInput,
-  MessagesOutput,
-  UpdateMessageInput,
-} from '@modules/message/dto';
 import { DataSource } from 'typeorm';
 import { PagingInput } from '@common/dto/input/paging.input';
 import {
@@ -28,10 +22,18 @@ import { Cache } from 'cache-manager';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
+import { MessagesOutput } from '@modules/message/dto/output';
+import {
+  InsertMessageInput,
+  MessagesInput,
+  UpdateMessageInput,
+} from '@modules/message/dto/input';
 
 @Resolver(() => MessageEntity)
 @UseGuards(GqlAuthGuard)
 export class MessageResolver {
+  private readonly logger = new Logger(MessageResolver.name);
+
   constructor(
     private messageService: MessageService,
     private dataSource: DataSource,
@@ -39,7 +41,6 @@ export class MessageResolver {
     private messageGroupRepository: MessageGroupRepository,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
-  private readonly logger = new Logger(MessageResolver.name);
 
   /**************************************
    *              QUERY
@@ -139,6 +140,7 @@ export class MessageResolver {
   ): Promise<MessageEntity> {
     return await this.messageRepository.saveCustom(insertMessageInput);
   }
+
   @Mutation(() => Boolean)
   async deleteMessages(
     @Args('seqNos', {

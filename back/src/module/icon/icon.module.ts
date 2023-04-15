@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { IconService } from './icon.service';
-import { IconResolver } from './icon.resolver';
+import { IconResolver, IconService } from '@modules/icon';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   IconEntity,

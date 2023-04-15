@@ -3,6 +3,7 @@ import { MenuRepository } from '@modules/menu/repository';
 
 @Injectable()
 export class MenuService {
-  constructor(private menuRepository: MenuRepository) {}
   private readonly logger = new Logger(MenuService.name);
+
+  constructor(private menuRepository: MenuRepository) {}
 }

@@ -6,7 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { FrontComponentService } from '../front-component.service';
+import { FrontComponentService } from '@modules/front-component';
 import {
   AllFrontComponentEntity,
   FrontComponentEntity,
@@ -16,10 +16,6 @@ import { RouteEntity } from '@modules/route/entity';
 import { CurrentUser } from '@common/decorator/CurrentUser';
 import { AfterAT } from '@auth/interfaces/AfterAT';
 import {
-  InsertFrontComponentInput,
-  UpdateFrontComponentInput,
-} from '@modules/front-component/dto';
-import {
   AllFrontComponentRepository,
   FrontComponentRepository,
 } from '@modules/front-component/repository';
@@ -27,9 +23,13 @@ import {
   RoleFrontComponentMapRepository,
   RoleRepository,
 } from '@modules/role/repository';
-import { RouteRepository } from '@modules/route/repositories';
+import { RouteRepository } from 'src/module/route/repository';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
+import { GqlAuthGuard } from '@auth/guard';
+import {
+  InsertFrontComponentInput,
+  UpdateFrontComponentInput,
+} from '@modules/front-component/dto/input';
 
 @Resolver(() => FrontComponentEntity)
 @UseGuards(GqlAuthGuard)

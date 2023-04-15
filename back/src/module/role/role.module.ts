@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RoleService } from './role.service';
+import { RoleController, RoleService } from '@modules/role';
 import {
   RoleEntity,
   RoleFrontComponentMapEntity,
@@ -13,7 +13,6 @@ import {
   RoleResolver,
   RolesResolver,
 } from '@modules/role/resolver';
-import { RoleController } from './role.controller';
 import {
   RoleFrontComponentMapRepository,
   RoleGroupRepository,
@@ -22,7 +21,7 @@ import {
 } from '@modules/role/repository';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
 import { UserRepository } from '@modules/user/repository';
-import { RouteRepository } from '@modules/route/repositories';
+import { RouteRepository } from 'src/module/route/repository';
 
 @Global()
 @Module({

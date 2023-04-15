@@ -7,7 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { RoleService } from '../role.service';
+import { RoleService } from '@modules/role';
 import { RoleEntity, RoleGroupEntity } from '@modules/role/entity';
 import { Logger } from '@nestjs/common';
 import { InsertRoleGroupInput, UpdateRoleGroupInput } from '@modules/role/dto';
@@ -18,12 +18,13 @@ import { MessageConstant } from '@common/constants/message.constant';
 
 @Resolver(() => RoleGroupEntity)
 export class RoleGroupResolver {
+  private readonly logger = new Logger(RoleGroupResolver.name);
+
   constructor(
     private roleService: RoleService,
     private roleRepository: RoleRepository,
     private roleGroupRepository: RoleGroupRepository,
   ) {}
-  private readonly logger = new Logger(RoleGroupResolver.name);
 
   /**************************************
    *              QUERY
@@ -87,6 +88,7 @@ export class RoleGroupResolver {
       return null;
     }
   }
+
   /**************************************
    *           MUTATION
    ***************************************/
