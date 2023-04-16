@@ -24,11 +24,17 @@ export class MenuRepository extends Repository<MenuEntity> {
       const { search, sort } = menusInput;
 
       if (search) {
-        where = UtilSearch.getFindOptionsWhere(search);
+        where = {
+          ...where,
+          ...UtilSearch.getFindOptionsWhere(search),
+        };
       }
 
       if (sort) {
-        order = UtilSort.getFindOptionsOrder(sort);
+        order = {
+          ...order,
+          ...UtilSort.getFindOptionsOrder(sort),
+        };
       }
     }
 

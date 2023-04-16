@@ -18,7 +18,9 @@ import { RouteEntity } from '@modules/route/entity/route.entity';
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType({
+  isAbstract: true,
+})
 export class MenuEntity extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

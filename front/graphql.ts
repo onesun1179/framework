@@ -126,6 +126,27 @@ export interface MenusSortInput {
     seqNo?: Nullable<Sort>;
 }
 
+export interface MenuRoleMapsInput {
+    search?: Nullable<MenuRoleMapsSearchInput>;
+    sort?: Nullable<MenuRoleMapsSortInput>;
+}
+
+export interface MenuRoleMapsSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    roleSeqNo?: Nullable<NonNullableNumberSearchInput>;
+    menuSeqNo?: Nullable<NonNullableNumberSearchInput>;
+    orderNo?: Nullable<NonNullableNumberSearchInput>;
+    parentSeqNo?: Nullable<NullableNumberSearchInput>;
+    menu?: Nullable<MenusSearchInput>;
+}
+
+export interface MenuRoleMapsSortInput {
+    seqNo?: Nullable<Sort>;
+    menuSeqNo?: Nullable<Sort>;
+    roleSeqNo?: Nullable<Sort>;
+    menu?: Nullable<MenusSortInput>;
+}
+
 export interface RoutesInput {
     search?: Nullable<RoutesSearchInput>;
     sort?: Nullable<RoutesSortInput>;
@@ -302,6 +323,19 @@ export interface IconEntity {
     menus: MenuEntity[];
 }
 
+export interface MenuEntity {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
+    seqNo: number;
+    name: string;
+    iconSeqNo?: Nullable<number>;
+    routeSeqNo?: Nullable<number>;
+    roles: RoleEntity[];
+    icon?: Nullable<IconEntity>;
+    route?: Nullable<RouteEntity>;
+}
+
 export interface RoleFrontComponentMapEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
@@ -347,17 +381,18 @@ export interface RouteEntity {
     treeInfo: RouteTreeOutput;
 }
 
-export interface MenuEntity {
+export interface MenuRoleMapEntity {
     createdAt: DateTime;
     updatedAt: DateTime;
     desc?: Nullable<string>;
     seqNo: number;
-    name: string;
-    iconSeqNo?: Nullable<number>;
-    routeSeqNo?: Nullable<number>;
-    roles: RoleEntity[];
-    icon?: Nullable<IconEntity>;
-    route?: Nullable<RouteEntity>;
+    menuSeqNo: number;
+    roleSeqNo: number;
+    parentSeqNo?: Nullable<number>;
+    orderNo: number;
+    menu: MenuEntity;
+    role: RoleEntity;
+    parent?: Nullable<MenuRoleMapEntity>;
 }
 
 export interface RoleEntity {
@@ -407,8 +442,9 @@ export interface MenusOutput {
     total: number;
 }
 
-export interface MenuByAuthOutput {
-    children: MenuByAuthOutput[];
+export interface MenuRoleMapsOutput {
+    list: MenuRoleMapEntity[];
+    total: number;
 }
 
 export interface MessageGroupsOutput {
@@ -421,11 +457,14 @@ export interface IQuery {
     user(id: string): UserEntity | Promise<UserEntity>;
     role(seqNo: number): Nullable<RoleGroupEntity> | Promise<Nullable<RoleGroupEntity>>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMapEntity> | Promise<Nullable<RoleFrontComponentMapEntity>>;
-    messageBySeqNo(seqNo: number): MessageEntity | Promise<MessageEntity>;
+    menu(menuSeqNo: number): MenuEntity | Promise<MenuEntity>;
     menus(pagingInput?: Nullable<PagingInput>, menusInput?: Nullable<MenusInput>): MenusOutput | Promise<MenusOutput>;
-    menuByAuth(menuSeqNo: number): MenuByAuthOutput | Promise<MenuByAuthOutput>;
+    menuRoleMap(seqNo: number): MenuRoleMapEntity | Promise<MenuRoleMapEntity>;
+    menuByAuthByMenuAndRole(menuSeqNo: number, roleSeqNo: number): MenuRoleMapEntity | Promise<MenuRoleMapEntity>;
+    menuRoleMaps(pagingInput?: Nullable<PagingInput>, menuByAuthsInput?: Nullable<MenuRoleMapsInput>): MenuRoleMapsOutput | Promise<MenuRoleMapsOutput>;
     routeBySeqNo(seqNo: number): RouteEntity | Promise<RouteEntity>;
     routes(paging?: Nullable<PagingInput>, request?: Nullable<RoutesInput>): RoutesOutput | Promise<RoutesOutput>;
+    messageBySeqNo(seqNo: number): MessageEntity | Promise<MessageEntity>;
     messageByCode(groupCode: string, code: string): MessageEntity | Promise<MessageEntity>;
     messages(pagingInput?: Nullable<PagingInput>, messagesInput?: Nullable<MessagesInput>): MessagesOutput | Promise<MessagesOutput>;
     messageGroup(code: string): MessageGroupEntity | Promise<MessageGroupEntity>;

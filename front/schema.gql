@@ -55,6 +55,19 @@ type IconEntity {
   menus: [MenuEntity!]!
 }
 
+type MenuEntity {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  seqNo: Int!
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
+  roles: [RoleEntity!]!
+  icon: IconEntity
+  route: RouteEntity
+}
+
 type RoleFrontComponentMapEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -100,17 +113,18 @@ type RouteEntity {
   treeInfo: RouteTreeOutput!
 }
 
-type MenuEntity {
+type MenuRoleMapEntity {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
-  name: String!
-  iconSeqNo: Int
-  routeSeqNo: Int
-  roles: [RoleEntity!]!
-  icon: IconEntity
-  route: RouteEntity
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+  parentSeqNo: Int
+  orderNo: Int!
+  menu: MenuEntity!
+  role: RoleEntity!
+  parent: MenuRoleMapEntity
 }
 
 type RoleEntity {
@@ -160,8 +174,9 @@ type MenusOutput {
   total: Int!
 }
 
-type MenuByAuthOutput {
-  children: [MenuByAuthOutput!]!
+type MenuRoleMapsOutput {
+  list: [MenuRoleMapEntity!]!
+  total: Int!
 }
 
 type MessageGroupsOutput {
@@ -174,11 +189,14 @@ type Query {
   user(id: String!): UserEntity!
   role(seqNo: Int!): RoleGroupEntity
   roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMapEntity
-  messageBySeqNo(seqNo: Int!): MessageEntity!
+  menu(menuSeqNo: Int!): MenuEntity!
   menus(pagingInput: PagingInput, menusInput: MenusInput): MenusOutput!
-  menuByAuth(menuSeqNo: Int!): MenuByAuthOutput!
+  menuRoleMap(seqNo: Int!): MenuRoleMapEntity!
+  menuByAuthByMenuAndRole(menuSeqNo: Int!, roleSeqNo: Int!): MenuRoleMapEntity!
+  menuRoleMaps(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapsInput): MenuRoleMapsOutput!
   routeBySeqNo(seqNo: Int!): RouteEntity!
   routes(paging: PagingInput, request: RoutesInput): RoutesOutput!
+  messageBySeqNo(seqNo: Int!): MessageEntity!
   messageByCode(groupCode: String!, code: String!): MessageEntity!
   messages(pagingInput: PagingInput, messagesInput: MessagesInput): MessagesOutput!
   messageGroup(code: String!): MessageGroupEntity!
@@ -305,6 +323,27 @@ input MenusSortInput {
 enum Sort {
   ASC
   DESC
+}
+
+input MenuRoleMapsInput {
+  search: MenuRoleMapsSearchInput
+  sort: MenuRoleMapsSortInput
+}
+
+input MenuRoleMapsSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  roleSeqNo: NonNullableNumberSearchInput
+  menuSeqNo: NonNullableNumberSearchInput
+  orderNo: NonNullableNumberSearchInput
+  parentSeqNo: NullableNumberSearchInput
+  menu: MenusSearchInput
+}
+
+input MenuRoleMapsSortInput {
+  seqNo: Sort
+  menuSeqNo: Sort
+  roleSeqNo: Sort
+  menu: MenusSortInput
 }
 
 input RoutesInput {

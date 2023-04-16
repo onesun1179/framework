@@ -8,11 +8,8 @@ import {
 } from '@nestjs/graphql';
 import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
-import { MenuEntity } from '../entity/menu.entity';
 import { MenuService } from '@modules/menu/menu.service';
 import { MenuRepository } from '@modules/menu/repository/menu.repository';
-import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MenusOutput } from '@modules/menu/dto/output/menus.output';
@@ -22,6 +19,9 @@ import { RoleEntity } from '@modules/role/entity/role.entity';
 import { IconEntity } from '@modules/icon/entity/icon.entity';
 import { isNil } from 'lodash';
 import { RouteEntity } from '@modules/route/entity/route.entity';
+import { MenuEntity } from '@modules/menu/entity/menu.entity';
+import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuEntity)
@@ -41,11 +41,11 @@ export class MenuResolver {
    ***************************************/
 
   @Query(() => MenuEntity)
-  async messageBySeqNo(
+  async menu(
     @Args('menuSeqNo', {
       type: () => Int,
     })
-    menuSeqNo: MenuEntity['seqNo'],
+    menuSeqNo: number,
   ) {
     return await this.menuRepository.findOneOrFail({
       where: {
@@ -73,6 +73,41 @@ export class MenuResolver {
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
+
+  // @ResolveField(() => MenuByAuthOutput, {
+  //   nullable: true,
+  // })
+  // async byAuth(
+  //   @Parent() { seqNo: menuSeqNo }: MenuEntity,
+  //   @CurrentUser() { roleSeqNo }: AfterAT,
+  // ): Promise<MenuByAuthOutput | null> {
+  //   const menu = await this.menuRepository
+  //     .createQueryBuilder('menu')
+  //     .innerJoinAndSelect(`menu.menuRoleMaps`, `mrm`)
+  //     .where(
+  //       `
+  //     mrm.menuSeqNo = :menuSeqNo AND
+  //     mrm.roleSeqNo = :roleSeqNo
+  //     `,
+  //       {
+  //         menuSeqNo,
+  //         roleSeqNo,
+  //       },
+  //     )
+  //     .getOne();
+  //
+  //   if (menu?.menuRoleMaps && menu.menuRoleMaps.length > 0) {
+  //     const byAuth = menu.menuRoleMaps[0];
+  //     return Builder(MenuByAuthOutput, {
+  //       roleSeqNo,
+  //       parentSeqNo: byAuth.parentSeqNo,
+  //       seqNo: byAuth.seqNo,
+  //       orderNo: byAuth.orderNo,
+  //     }).build();
+  //   }
+  //
+  //   return null;
+  // }
 
   @ResolveField(() => [RoleEntity])
   async roles(@Parent() { seqNo }: MenuEntity): Promise<Array<RoleEntity>> {

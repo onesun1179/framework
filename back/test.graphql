@@ -1,6 +1,10 @@
 query {
-    menuByAuth(menuSeqNo: 1) {
-        name
-        orderNo
+    menuRoleMaps {
+        list {
+
+            parent {
+                seqNo
+            }
+        }
     }
 }
