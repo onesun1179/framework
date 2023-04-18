@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, In } from 'typeorm';
 import { difference, isNil } from 'lodash';
 import { RouteService } from '@modules/route/route.service';
-import { InsertAllFrontComponentInput } from '@modules/front-component/dto/input/insert-all-front-component.input';
-import { UpdateAllFrontComponentInput } from '@modules/front-component/dto/input/update-all-front-component.input';
-import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
-import { InsertFrontComponentInput } from '@modules/front-component/dto/input/insert-front-component.input';
-import { UpdateFrontComponentInput } from '@modules/front-component/dto/input/update-front-component.input';
-import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
-import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
-import { RouteEntity } from '@modules/route/entity/route.entity';
+import { InsertAllFrontComponentEntityInput } from '@modules/front-component/dto/input/insert-all-front-component-entity.input';
+import { UpdateAllFrontComponentEntityInput } from '@modules/front-component/dto/input/update-all-front-component-entity.input';
+import { AllFrontComponentEntity } from '@modules/front-component/dto/output/entity/all-front-component.entity';
+import { InsertFrontComponentEntityInput } from '@modules/front-component/dto/input/insert-front-component-entity.input';
+import { UpdateFrontComponentEntityInput } from '@modules/front-component/dto/input/update-front-component-entity.input';
+import { FrontComponentEntity } from '@modules/front-component/dto/output/entity/front-component.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/dto/output/entity/role-front-component-map.entity';
+import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
 
 @Injectable()
 export class FrontComponentService {
@@ -19,7 +19,7 @@ export class FrontComponentService {
   ) {}
 
   async saveAllFrontComponent(
-    p: InsertAllFrontComponentInput | UpdateAllFrontComponentInput,
+    p: InsertAllFrontComponentEntityInput | UpdateAllFrontComponentEntityInput,
   ): Promise<AllFrontComponentEntity> {
     return this.dataSource.manager.transaction(async (entityManager) => {
       return await entityManager.save(
@@ -32,7 +32,7 @@ export class FrontComponentService {
   }
 
   async saveFrontComponent(
-    p: InsertFrontComponentInput | UpdateFrontComponentInput,
+    p: InsertFrontComponentEntityInput | UpdateFrontComponentEntityInput,
   ): Promise<FrontComponentEntity> {
     return this.dataSource.manager.transaction(async (entityManager) => {
       if (p.routeSeqNos) {

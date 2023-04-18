@@ -2,24 +2,25 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RouteService } from '@modules/route/route.service';
-import { RouteEntity } from '@modules/route/entity/route.entity';
-import { RoleRouteMapEntity } from '@modules/role/entity/role-route-map.entity';
+import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
+import { RoleRouteMapEntity } from '@modules/role/dto/output/entity/role-route-map.entity';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { RouteRepository } from '@modules/route/repository/route.repository';
-import { RoleRouteMapRepository } from '@modules/role/repository/role-route-map.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
+import { RoleRouteMapEntityRepository } from '@modules/role/repository/role-route-map-entity.repository';
+import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
 import { RouteResolver } from '@modules/route/resolvers/route.resolver';
+import { RouteEntityResolver } from '@modules/route/resolvers/route-entity.resolver';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RouteEntity, RoleRouteMapEntity]),
     TypeOrmExModule.forCustomRepository([
-      RouteRepository,
-      RoleRouteMapRepository,
-      RoleRepository,
+      RouteEntityRepository,
+      RoleRouteMapEntityRepository,
+      RoleEntityRepository,
     ]),
   ],
-  providers: [RouteResolver, RouteService],
+  providers: [RouteResolver, RouteService, RouteEntityResolver],
   exports: [RouteService],
 })
 export class RouteModule {}

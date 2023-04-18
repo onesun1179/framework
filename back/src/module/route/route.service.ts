@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
 import { difference } from 'lodash';
-import { RouteRepository } from '@modules/route/repository/route.repository';
-import { InsertRouteInput } from '@modules/route/dto/input/insert-route.input';
-import { UpdateRouteInput } from '@modules/route/dto/input/update-route.input';
-import { RouteEntity } from '@modules/route/entity/route.entity';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
+import { InsertRouteEntityInput } from '@modules/route/dto/input/insert-route-entity.input';
+import { UpdateRouteEntityInput } from '@modules/route/dto/input/update-route-entity.input';
+import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
 
 @Injectable()
 export class RouteService {
   private readonly logger = new Logger(RouteService.name);
 
-  constructor(private routeRepository: RouteRepository) {}
+  constructor(private routeRepository: RouteEntityRepository) {}
 
   async save(
     e: EntityManager,
-    p: InsertRouteInput | UpdateRouteInput,
+    p: InsertRouteEntityInput | UpdateRouteEntityInput,
   ): Promise<RouteEntity> {
     const route = await e.save(
       RouteEntity.create({
-        seqNo: p instanceof UpdateRouteInput ? p.seqNo : undefined,
+        seqNo: p instanceof UpdateRouteEntityInput ? p.seqNo : undefined,
         path: p.path,
         parentSeqNo: p.parentSeqNo,
         frontComponentId: p.frontComponentId,

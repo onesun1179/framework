@@ -7,7 +7,9 @@ module.exports = {
 		"plugin:prettier/recommended"
 	],
 	rules: {
-		"import/no-unresolved" : "off"
+		"import/no-unresolved" : "off",
+		"@typescript-eslint/no-non-null-assertion" : "off"
+
 	},
 	"settings": {
 		"import/parsers": {

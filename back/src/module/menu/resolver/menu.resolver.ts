@@ -9,145 +9,109 @@ import {
 import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 import { MenuService } from '@modules/menu/menu.service';
-import { MenuRepository } from '@modules/menu/repository/menu.repository';
-import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { MenusOutput } from '@modules/menu/dto/output/menus.output';
-import { PagingInput } from '@common/dto/input/paging.input';
-import { MenusInput } from '@modules/menu/dto/input/menus.input';
-import { RoleEntity } from '@modules/role/entity/role.entity';
-import { IconEntity } from '@modules/icon/entity/icon.entity';
+import { MenuEntityRepository } from '@modules/menu/repository/menu-entity.repository';
+import { MenuRoleMapEntityRepository } from '@modules/menu/repository/menu-role-map-entity.repository';
+import { MenuOutput } from '@modules/menu/dto/output/menu.output';
+import { CurrentUser } from '@common/decorator/CurrentUser';
+import { AfterAT } from '@auth/interfaces/AfterAT';
+import { IconOutput } from '@modules/icon/dto/output/icon.output';
 import { isNil } from 'lodash';
-import { RouteEntity } from '@modules/route/entity/route.entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
-import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
+import { IconEntityRepository } from '@modules/icon/repository/icon-entity.repository';
+import { RouteOutput } from '@modules/route/dto/output/route.output';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
 
 @UseGuards(GqlAuthGuard)
-@Resolver(() => MenuEntity)
+@Resolver(() => MenuOutput)
 export class MenuResolver {
   private readonly logger = new Logger(MenuResolver.name);
 
   constructor(
     private readonly menuService: MenuService,
-    private readonly menuRepository: MenuRepository,
-    private readonly menuRoleMapRepository: MenuRoleMapRepository,
-    private readonly roleRepository: RoleRepository,
-    @InjectDataSource() private dataSource: DataSource,
+    private readonly menuEntityRepository: MenuEntityRepository,
+    private readonly routeRepository: RouteEntityRepository,
+    private readonly iconEntityRepository: IconEntityRepository,
+    private readonly menuRoleMapRepository: MenuRoleMapEntityRepository,
   ) {}
+
+  @Query(() => MenuOutput)
+  async menu(
+    @Args('seqNo', {
+      type: () => Int,
+    })
+    seqNo: number,
+  ): Promise<MenuOutput> {
+    return await this.menuRoleMapRepository
+      .createQueryBuilder(`mrm`)
+      .innerJoinAndSelect(`mrm.menu`, 'm')
+      .where(`mrm.seqNo = :seqNo`, {
+        seqNo,
+      })
+      .getOneOrFail()
+      .then((r) => r.toMenuOutput());
+  }
+
+  @Query(() => [MenuOutput])
+  async menus(@CurrentUser() { roleSeqNo }: AfterAT): Promise<MenuOutput[]> {
+    return await this.menuRoleMapRepository
+      .createQueryBuilder(`mrm`)
+      .innerJoinAndSelect(`mrm.menu`, 'm')
+      .where(`mrm.roleSeqNo = :roleSeqNo AND mrm.parentSeqNo IS NULL`, {
+        roleSeqNo,
+      })
+      .getMany()
+      .then((r) => r.map((o) => o.toMenuOutput()));
+  }
 
   /**************************************
    *              QUERY
    ***************************************/
 
-  @Query(() => MenuEntity)
-  async menu(
-    @Args('menuSeqNo', {
-      type: () => Int,
-    })
-    menuSeqNo: number,
-  ) {
-    return await this.menuRepository.findOneOrFail({
-      where: {
-        seqNo: menuSeqNo,
-      },
-    });
+  @ResolveField(() => [MenuOutput])
+  async children(
+    @Parent() { seqNo: parentSeqNo }: MenuOutput,
+  ): Promise<MenuOutput[]> {
+    return await this.menuRoleMapRepository
+      .createQueryBuilder(`mrm`)
+      .innerJoinAndSelect(`mrm.menu`, 'm')
+      .where(
+        `
+      mrm.parentSeqNo = :parentSeqNo
+      `,
+        {
+          parentSeqNo,
+        },
+      )
+      .getMany()
+      .then((r) => r.map((o) => o.toMenuOutput()));
   }
 
-  @Query(() => MenusOutput)
-  async menus(
-    @Args('pagingInput', {
-      type: () => PagingInput,
-      nullable: true,
-    })
-    pagingInput: PagingInput,
-    @Args('menusInput', {
-      type: () => MenusInput,
-      nullable: true,
-    })
-    menusInput: MenusInput,
-  ): Promise<MenusOutput> {
-    return await this.menuRepository.paging(pagingInput, menusInput);
-  }
-
-  /**************************************
-   *           RESOLVE_FIELD
-   ***************************************/
-
-  // @ResolveField(() => MenuByAuthOutput, {
-  //   nullable: true,
-  // })
-  // async byAuth(
-  //   @Parent() { seqNo: menuSeqNo }: MenuEntity,
-  //   @CurrentUser() { roleSeqNo }: AfterAT,
-  // ): Promise<MenuByAuthOutput | null> {
-  //   const menu = await this.menuRepository
-  //     .createQueryBuilder('menu')
-  //     .innerJoinAndSelect(`menu.menuRoleMaps`, `mrm`)
-  //     .where(
-  //       `
-  //     mrm.menuSeqNo = :menuSeqNo AND
-  //     mrm.roleSeqNo = :roleSeqNo
-  //     `,
-  //       {
-  //         menuSeqNo,
-  //         roleSeqNo,
-  //       },
-  //     )
-  //     .getOne();
-  //
-  //   if (menu?.menuRoleMaps && menu.menuRoleMaps.length > 0) {
-  //     const byAuth = menu.menuRoleMaps[0];
-  //     return Builder(MenuByAuthOutput, {
-  //       roleSeqNo,
-  //       parentSeqNo: byAuth.parentSeqNo,
-  //       seqNo: byAuth.seqNo,
-  //       orderNo: byAuth.orderNo,
-  //     }).build();
-  //   }
-  //
-  //   return null;
-  // }
-
-  @ResolveField(() => [RoleEntity])
-  async roles(@Parent() { seqNo }: MenuEntity): Promise<Array<RoleEntity>> {
-    return await this.roleRepository
-      .createQueryBuilder(`r`)
-      .innerJoin(`r.menuRoleMaps`, `mrm`)
-      .where(`mrm.menuSeqNo = :menuSeqNo`, {
-        menuSeqNo: seqNo,
-      })
-      .getMany();
-  }
-
-  @ResolveField(() => IconEntity, {
+  @ResolveField(() => IconOutput, {
     nullable: true,
   })
-  async icon(@Parent() { iconSeqNo }: MenuEntity): Promise<IconEntity | null> {
-    if (!isNil(iconSeqNo)) {
-      return await this.dataSource
-        .createQueryBuilder<IconEntity>(IconEntity, 'icon')
-        .where('icon.seqNo = :iconSeqNo', {
-          iconSeqNo,
-        })
-        .getOne();
-    }
-    return null;
+  async icon(@Parent() { iconSeqNo }: MenuOutput): Promise<IconOutput | null> {
+    if (isNil(iconSeqNo)) return null;
+    return this.iconEntityRepository
+      .createQueryBuilder(`icon`)
+      .where(`icon.seqNo = :iconSeqNo`, {
+        iconSeqNo,
+      })
+      .getOneOrFail()
+      .then((r) => r.toIconOutput());
   }
 
-  @ResolveField(() => RouteEntity, {
+  @ResolveField(() => RouteOutput, {
     nullable: true,
   })
   async route(
-    @Parent() { routeSeqNo }: MenuEntity,
-  ): Promise<RouteEntity | null> {
-    return await this.dataSource
-      .createQueryBuilder(RouteEntity, 'r')
-
-      .where(`r.seqNo = :routeSeqNo`, {
+    @Parent() { routeSeqNo }: MenuOutput,
+  ): Promise<RouteOutput | null> {
+    if (isNil(routeSeqNo)) return null;
+    return this.routeRepository
+      .createQueryBuilder(`route`)
+      .where(`route.seqNo =:routeSeqNo`, {
         routeSeqNo,
       })
-
-      .getOne();
+      .getOneOrFail()
+      .then((r) => r.toRouteOutput());
   }
 }

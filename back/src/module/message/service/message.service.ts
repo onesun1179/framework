@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { MessageRepository } from '@modules/message/repository/message.repository';
-import { MessageEntity } from '@modules/message/entity/message.entity';
+import { MessageEntityRepository } from '@modules/message/repository/message-entity.repository';
+import { MessageEntity } from '@modules/message/dto/output/entity/message.entity';
 import { MsgCode } from '@modules/message/dto/msg-code';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class MessageService {
   private readonly logger = new Logger(MessageService.name);
 
   constructor(
-    private messageRepository: MessageRepository,
+    private messageRepository: MessageEntityRepository,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 

@@ -2,13 +2,13 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { CommonEntity } from '@common/entity/common.entity';
-import { RoleEntity } from '@modules/role/entity/role.entity';
+import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
 
 @Entity('user')
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType(`UserEntityOutput`)
 export class UserEntity extends CommonEntity {
   @MaxLength(50)
   @PrimaryColumn({

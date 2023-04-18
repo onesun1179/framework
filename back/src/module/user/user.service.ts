@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { MetadataConstant } from '@common/constants/metadata.constant';
-import { UserRepository } from '@modules/user/repository/user.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
+import { UserEntityRepository } from '@modules/user/repository/user-entity.repository';
+import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
 import { LoginUser } from '@modules/user/user.type';
 import { UserEntity } from '@modules/user/entity/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    private userRepository: UserRepository,
-    private roleRepository: RoleRepository,
+    private userRepository: UserEntityRepository,
+    private roleRepository: RoleEntityRepository,
   ) {}
 
   async saveNewMember(loginUser: LoginUser): Promise<UserEntity> {

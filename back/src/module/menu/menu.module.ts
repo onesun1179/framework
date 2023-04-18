@@ -1,24 +1,34 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
-import { MenuRepository } from '@modules/menu/repository/menu.repository';
-import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
 import { MenuService } from '@modules/menu/menu.service';
+import { IconEntityRepository } from '@modules/icon/repository/icon-entity.repository';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
 import { MenuResolver } from '@modules/menu/resolver/menu.resolver';
-import { MenuByAuthResolver } from '@modules/menu/resolver/menu-by-auth.resolver';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
+import { MenuEntityRepository } from '@modules/menu/repository/menu-entity.repository';
+import { MenuRoleMapEntityRepository } from '@modules/menu/repository/menu-role-map-entity.repository';
+import { MenuEntityResolver } from '@modules/menu/resolver/menu-entity.resolver';
+import { MenuByAuthEntityResolver } from '@modules/menu/resolver/menu-by-auth-entity.resolver';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([MenuRoleMapEntity, MenuEntity]),
     TypeOrmExModule.forCustomRepository([
-      MenuRepository,
-      MenuRoleMapRepository,
-      RoleRepository,
+      MenuEntityRepository,
+      MenuRoleMapEntityRepository,
+      RoleEntityRepository,
+      IconEntityRepository,
+      RouteEntityRepository,
     ]),
   ],
-  providers: [MenuService, MenuResolver, MenuByAuthResolver],
+  providers: [
+    MenuService,
+    MenuEntityResolver,
+    MenuByAuthEntityResolver,
+    MenuResolver,
+  ],
 })
 export class MenuModule {}

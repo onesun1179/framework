@@ -33,22 +33,21 @@ import { IconModule } from '@modules/icon/icon.module';
 import { FileModule } from '@file/file.module';
 import { QueryExceptionFilter } from '@common/filter/QueryExceptionFilter';
 import { ValidationErrorFilter } from '@common/filter/ValidationErrorFilter';
-import { IconEntity } from '@modules/icon/entity/icon.entity';
-import { IconGroupEntity } from '@modules/icon/entity/icon-group.entity';
-import { IconIconGroupMapEntity } from '@modules/icon/entity/icon-icon-group-map.entity';
-import { AllFrontComponentEntity } from '@modules/front-component/entity/all-front-component.entity';
-import { RoleEntity } from '@modules/role/entity/role.entity';
-import { FrontComponentEntity } from '@modules/front-component/entity/front-component.entity';
-import { RouteEntity } from '@modules/route/entity/route.entity';
-import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
+import { IconEntity } from '@modules/icon/dto/output/entity/icon.entity';
+import { IconGroupEntity } from '@modules/icon/dto/output/entity/icon-group.entity';
+import { IconIconGroupMapEntity } from '@modules/icon/dto/output/entity/icon-icon-group-map.entity';
+import { AllFrontComponentEntity } from '@modules/front-component/dto/output/entity/all-front-component.entity';
+import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
+import { FrontComponentEntity } from '@modules/front-component/dto/output/entity/front-component.entity';
+import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/dto/output/entity/role-front-component-map.entity';
 import { UserEntity } from '@modules/user/entity/user.entity';
-import { MenuEntity } from '@modules/menu/entity/menu.entity';
-import { MenuRoleMapEntity } from '@modules/menu/entity/menu-role-map.entity';
-import { MessageGroupEntity } from '@modules/message/entity/message-group.entity';
-import { MessageEntity } from '@modules/message/entity/message.entity';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
+import { MessageGroupEntity } from '@modules/message/dto/output/entity/message-group.entity';
+import { MessageEntity } from '@modules/message/dto/output/entity/message.entity';
 
 const initYn = false;
-
 // const initYn = true;
 @Module({
   controllers: [AppController],
@@ -507,6 +506,7 @@ export class AppModule implements OnModuleInit {
             group: primaryMG,
             code: '0000',
             text: '{{0}}',
+            sysYn: true,
             name: '일반',
           }),
           MessageEntity.create({
@@ -514,18 +514,21 @@ export class AppModule implements OnModuleInit {
             code: '0000',
             text: '실패',
             name: '실패',
+            sysYn: true,
           }),
           MessageEntity.create({
             group: errorMG,
             code: '0001',
             text: `SQL_FAIL({{0}})`,
             name: 'SQL FAIL',
+            sysYn: true,
           }),
           MessageEntity.create({
             group: errorMG,
             code: '0002',
             text: `존재하지 않는 값 입니다.`,
             name: 'NOT FOUNT VALUE',
+            sysYn: true,
           }),
         ]);
       });

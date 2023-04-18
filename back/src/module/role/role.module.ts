@@ -1,33 +1,33 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { UserRepository } from '@modules/user/repository/user.repository';
-import { RouteRepository } from '@modules/route/repository/route.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
-import { RoleGroupRepository } from '@modules/role/repository/role-group.repository';
-import { RoleRouteMapRepository } from '@modules/role/repository/role-route-map.repository';
-import { RoleFrontComponentMapRepository } from '@modules/role/repository/role-front-component-map.repository';
-import { RoleEntity } from '@modules/role/entity/role.entity';
-import { RoleGroupEntity } from '@modules/role/entity/role-group.entity';
-import { RoleFrontComponentMapEntity } from '@modules/role/entity/role-front-component-map.entity';
-import { RoleRouteMapEntity } from '@modules/role/entity/role-route-map.entity';
+import { UserEntityRepository } from '@modules/user/repository/user-entity.repository';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
+import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
+import { RoleGroupEntityRepository } from '@modules/role/repository/role-group-entity.repository';
+import { RoleRouteMapEntityRepository } from '@modules/role/repository/role-route-map-entity.repository';
+import { RoleFrontComponentMapEntityRepository } from '@modules/role/repository/role-front-component-map-entity.repository';
+import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
+import { RoleGroupEntity } from '@modules/role/dto/output/entity/role-group.entity';
+import { RoleFrontComponentMapEntity } from '@modules/role/dto/output/entity/role-front-component-map.entity';
+import { RoleRouteMapEntity } from '@modules/role/dto/output/entity/role-route-map.entity';
 import { RoleService } from '@modules/role/role.service';
 import { RoleController } from '@modules/role/role.controller';
-import { RoleResolver } from '@modules/role/resolver/role.resolver';
-import { RolesResolver } from '@modules/role/resolver/roles.resolver';
-import { RoleGroupResolver } from '@modules/role/resolver/role-group.resolver';
-import { RoleFrontComponentMapResolver } from '@modules/role/resolver/role-front-component-map.resolver';
+import { RoleEntityResolver } from '@modules/role/resolver/role-entity.resolver';
+import { RoleEntitiesResolver } from '@modules/role/resolver/role-entities.resolver';
+import { RoleGroupEntityResolver } from '@modules/role/resolver/role-group-entity.resolver';
+import { RoleFrontComponentMapEntityResolver } from '@modules/role/resolver/role-front-component-map-entity.resolver';
 
 @Global()
 @Module({
   imports: [
     TypeOrmExModule.forCustomRepository([
-      UserRepository,
-      RoleRepository,
-      RouteRepository,
-      RoleGroupRepository,
-      RoleRouteMapRepository,
-      RoleFrontComponentMapRepository,
+      UserEntityRepository,
+      RoleEntityRepository,
+      RouteEntityRepository,
+      RoleGroupEntityRepository,
+      RoleRouteMapEntityRepository,
+      RoleFrontComponentMapEntityRepository,
     ]),
     TypeOrmModule.forFeature([
       RoleEntity,
@@ -40,10 +40,10 @@ import { RoleFrontComponentMapResolver } from '@modules/role/resolver/role-front
   controllers: [RoleController],
   providers: [
     RoleService,
-    RoleResolver,
-    RolesResolver,
-    RoleGroupResolver,
-    RoleFrontComponentMapResolver,
+    RoleEntityResolver,
+    RoleEntitiesResolver,
+    RoleGroupEntityResolver,
+    RoleFrontComponentMapEntityResolver,
   ],
 })
 export class RoleModule {}

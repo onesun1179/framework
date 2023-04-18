@@ -2,13 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type MessageGroupEntity {
+type MessageGroupEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   code: String!
   name: String!
-  messages: [MessageEntity!]!
+  messageEntities: [MessageEntityOutput!]!
 }
 
 """
@@ -16,7 +16,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type MessageEntity {
+type MessageEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -25,82 +25,96 @@ type MessageEntity {
   name: String!
   text: String!
   groupCode: String
-  group: MessageGroupEntity!
+  sysYn: Boolean!
+  group: MessageGroupEntityOutput!
 }
 
-type MessagesOutput {
-  list: [MessageEntity!]!
+type MessageEntitiesOutput {
+  list: [MessageEntityOutput!]!
   total: Int!
 }
 
-type RoleGroupEntity {
+type RoleGroupEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
   parentSeqNo: Int
-  roles: [RoleEntity!]!
-  children: [RoleGroupEntity!]!
-  parent: RoleGroupEntity
+  roles: [RoleEntityOutput!]!
+  children: [RoleGroupEntityOutput!]!
+  parent: RoleGroupEntityOutput
 }
 
-type IconEntity {
+type MenuOutput {
+  seqNo: Int!
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
+  menuSeqNo: Int!
+  parentSeqNo: Int
+  children: [MenuOutput!]!
+  icon: IconOutput
+  route: RouteOutput
+}
+
+type IconOutput {
+  seqNo: Int!
+  name: String!
+  filePath: String!
+}
+
+type IconEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   seqNo: Int!
   name: String!
   filePath: String!
-  menus: [MenuEntity!]!
+  menus: [MenuEntityOutput!]!
 }
 
-type MenuEntity {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Int!
-  name: String!
-  iconSeqNo: Int
-  routeSeqNo: Int
-  roles: [RoleEntity!]!
-  icon: IconEntity
-  route: RouteEntity
-}
-
-type RoleFrontComponentMapEntity {
+type RoleFrontComponentMapEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   roleSeqNo: Int!
   frontComponentId: String!
   allFrontComponentId: String!
-  role: RoleEntity!
-  frontComponent: FrontComponentEntity!
-  allFrontComponent: AllFrontComponentEntity!
+  role: RoleEntityOutput!
+  frontComponent: FrontComponentEntityOutput!
+  allFrontComponent: AllFrontComponentEntityOutput!
 }
 
-type AllFrontComponentEntity {
+type AllFrontComponentEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   id: String!
   frontComponentId: String
-  frontComponent: FrontComponentEntity
+  frontComponent: FrontComponentEntityOutput
 }
 
-type FrontComponentEntity {
+type FrontComponentEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   id: String!
-  allFrontComponent: AllFrontComponentEntity
-  allFrontComponents: [AllFrontComponentEntity!]!
-  roles: [RoleEntity!]!
-  routes: [RouteEntity!]!
+  allFrontComponent: AllFrontComponentEntityOutput
+  allFrontComponents: [AllFrontComponentEntityOutput!]!
+  roles: [RoleEntityOutput!]!
+  routes: [RouteEntityOutput!]!
 }
 
-type RouteEntity {
+type RouteOutput {
+  seqNo: Int!
+  path: String!
+  frontComponentId: String
+  parentSeqNo: Int
+  treeInfo: RouteTreeOutput!
+}
+
+type RouteEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -108,9 +122,22 @@ type RouteEntity {
   path: String!
   frontComponentId: String
   parentSeqNo: Int
-  children: [RouteEntity!]!
-  roles: [RoleEntity!]!
+  children: [RouteEntityOutput!]!
+  roles: [RoleEntityOutput!]!
   treeInfo: RouteTreeOutput!
+}
+
+type MenuEntityOutput {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  seqNo: Int!
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
+  roleEntities: [RoleEntityOutput!]!
+  iconEntity: IconEntityOutput
+  routeEntity: RouteEntityOutput
 }
 
 type MenuRoleMapEntity {
@@ -122,12 +149,12 @@ type MenuRoleMapEntity {
   roleSeqNo: Int!
   parentSeqNo: Int
   orderNo: Int!
-  menu: MenuEntity!
-  role: RoleEntity!
+  menuEntity: MenuEntityOutput!
+  roleEntity: RoleEntityOutput!
   parent: MenuRoleMapEntity
 }
 
-type RoleEntity {
+type RoleEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -135,23 +162,23 @@ type RoleEntity {
   name: String!
   identifier: String
   roleGroupSeqNo: Int
-  roleGroup: RoleGroupEntity
-  users: [UserEntity!]!
-  menus: [MenuEntity!]!
-  routes: [RouteEntity!]!
-  frontComponents: [FrontComponentEntity!]!
+  roleGroup: RoleGroupEntityOutput
+  users: [UserEntityOutput!]!
+  menus: [MenuEntityOutput!]!
+  routes: [RouteEntityOutput!]!
+  frontComponents: [FrontComponentEntityOutput!]!
 }
 
-type UserEntity {
+type UserEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
   id: String!
   roleSeqNo: Int!
-  role: RoleEntity!
+  role: RoleEntityOutput!
 }
 
-type CodeMapEntity {
+type CodeMapEntityOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -159,52 +186,54 @@ type CodeMapEntity {
   parentSeqNo: Int!
 }
 
-type RoutesOutput {
-  list: [RouteEntity!]!
-  total: Int!
-}
-
 type RouteTreeOutput {
   fullPath: String!
   depth: Int!
 }
 
-type MenusOutput {
-  list: [MenuEntity!]!
+type RouteEntitiesOutput {
+  list: [RouteEntityOutput!]!
   total: Int!
 }
 
-type MenuRoleMapsOutput {
+type MenuEntitiesOutput {
+  list: [MenuEntityOutput!]!
+  total: Int!
+}
+
+type MenuRoleMapEntitiesOutput {
   list: [MenuRoleMapEntity!]!
   total: Int!
 }
 
-type MessageGroupsOutput {
-  list: [MessageGroupEntity!]!
+type MessageGroupEntitiesOutput {
+  list: [MessageGroupEntityOutput!]!
   total: Int!
 }
 
 type Query {
   authCheck: Boolean!
-  user(id: String!): UserEntity!
-  role(seqNo: Int!): RoleGroupEntity
-  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMapEntity
-  menu(menuSeqNo: Int!): MenuEntity!
-  menus(pagingInput: PagingInput, menusInput: MenusInput): MenusOutput!
-  menuRoleMap(seqNo: Int!): MenuRoleMapEntity!
-  menuByAuthByMenuAndRole(menuSeqNo: Int!, roleSeqNo: Int!): MenuRoleMapEntity!
-  menuRoleMaps(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapsInput): MenuRoleMapsOutput!
-  routeBySeqNo(seqNo: Int!): RouteEntity!
-  routes(paging: PagingInput, request: RoutesInput): RoutesOutput!
-  messageBySeqNo(seqNo: Int!): MessageEntity!
-  messageByCode(groupCode: String!, code: String!): MessageEntity!
-  messages(pagingInput: PagingInput, messagesInput: MessagesInput): MessagesOutput!
-  messageGroup(code: String!): MessageGroupEntity!
-  messageGroups(paging: PagingInput, request: MessageGroupsInput): MessageGroupsOutput!
-  frontComponentById(frontComponentId: String!): FrontComponentEntity!
-  allFrontComponentById(allFrontComponentId: String!): AllFrontComponentEntity!
-  allFrontComponentByAuth(frontComponentId: String!): AllFrontComponentEntity
-  icon(seqNo: Int!): IconEntity!
+  user(id: String!): UserEntityOutput!
+  role(seqNo: Int!): RoleGroupEntityOutput
+  roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMapEntityOutput
+  menuEntity(seqNo: Int!): MenuEntityOutput!
+  menuEntities(pagingInput: PagingInput, menusInput: MenuEntitiesInput): MenuEntitiesOutput!
+  menuRoleMapEntity(seqNo: Int!): MenuRoleMapEntity!
+  menuRoleMapEntities(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapEntitiesInput): MenuRoleMapEntitiesOutput!
+  menu(seqNo: Int!): MenuOutput!
+  menus: [MenuOutput!]!
+  route(seqNo: Int!): RouteOutput!
+  routeBySeqNo(seqNo: Int!): RouteEntityOutput!
+  routes(paging: PagingInput, request: RouteEntitiesInput): RouteEntitiesOutput!
+  messageEntityBySeqNo(seqNo: Int!): MessageEntityOutput!
+  messageEntityByCode(groupCode: String!, code: String!): MessageEntityOutput!
+  messageEntities(pagingInput: PagingInput, messageEntitiesInput: MessageEntitiesInput): MessageEntitiesOutput!
+  messageGroupEntity(code: String!): MessageGroupEntityOutput!
+  messageGroupEntities(paging: PagingInput, request: MessageGroupEntitiesInput): MessageGroupEntitiesOutput!
+  frontComponentById(frontComponentId: String!): FrontComponentEntityOutput!
+  allFrontComponentById(allFrontComponentId: String!): AllFrontComponentEntityOutput!
+  allFrontComponentByAuth(frontComponentId: String!): AllFrontComponentEntityOutput
+  icon(seqNo: Int!): IconOutput!
 }
 
 input PagingInput {
@@ -212,12 +241,12 @@ input PagingInput {
   take: Int
 }
 
-input MenusInput {
-  search: MenusSearchInput
-  sort: MenusSortInput
+input MenuEntitiesInput {
+  search: MenuEntitiesSearchInput
+  sort: MenuEntitiesSortInput
 }
 
-input MenusSearchInput {
+input MenuEntitiesSearchInput {
   seqNo: NonNullableNumberSearchInput
   name: NonNullableStringSearchInput
   iconSeqNo: NullableNumberSearchInput
@@ -316,7 +345,7 @@ input NullableInNumberSearchInput {
   not: Boolean = false
 }
 
-input MenusSortInput {
+input MenuEntitiesSortInput {
   seqNo: Sort
 }
 
@@ -325,39 +354,39 @@ enum Sort {
   DESC
 }
 
-input MenuRoleMapsInput {
-  search: MenuRoleMapsSearchInput
-  sort: MenuRoleMapsSortInput
+input MenuRoleMapEntitiesInput {
+  search: MenuRoleMapEntitiesSearchInput
+  sort: MenuRoleMapEntitiesSortInput
 }
 
-input MenuRoleMapsSearchInput {
+input MenuRoleMapEntitiesSearchInput {
   seqNo: NonNullableNumberSearchInput
   roleSeqNo: NonNullableNumberSearchInput
   menuSeqNo: NonNullableNumberSearchInput
   orderNo: NonNullableNumberSearchInput
   parentSeqNo: NullableNumberSearchInput
-  menu: MenusSearchInput
+  menu: MenuEntitiesSearchInput
 }
 
-input MenuRoleMapsSortInput {
+input MenuRoleMapEntitiesSortInput {
   seqNo: Sort
   menuSeqNo: Sort
   roleSeqNo: Sort
-  menu: MenusSortInput
+  menu: MenuEntitiesSortInput
 }
 
-input RoutesInput {
-  search: RoutesSearchInput
-  sort: RoutesSortInput
+input RouteEntitiesInput {
+  search: RouteEntitiesSearchInput
+  sort: RouteEntitiesSortInput
 }
 
-input RoutesSearchInput {
+input RouteEntitiesSearchInput {
   path: NonNullableStringSearchInput
   frontComponentId: NonNullableStringSearchInput
   parentSeqNo: NullableNumberSearchInput
 }
 
-input RoutesSortInput {
+input RouteEntitiesSortInput {
   seqNo: Sort
   code: Sort
   name: Sort
@@ -365,24 +394,24 @@ input RoutesSortInput {
   groupCode: Sort
 }
 
-input MessagesInput {
-  search: MessagesSearchInput
-  sort: MessagesSortInput
+input MessageEntitiesInput {
+  search: MessageEntitiesSearchInput
+  sort: MessageEntitiesSortInput
 }
 
-input MessagesSearchInput {
+input MessageEntitiesSearchInput {
   seqNo: NonNullableNumberSearchInput
-  groupsInput: MessageGroupsInput
+  groupsInput: MessageGroupEntitiesInput
   text: NonNullableStringSearchInput
 }
 
-input MessageGroupsInput {
+input MessageGroupEntitiesInput {
   code: String
   codes: [String!]
   name: String
 }
 
-input MessagesSortInput {
+input MessageEntitiesSortInput {
   seqNo: Sort
   code: Sort
   name: Sort
@@ -391,23 +420,24 @@ input MessagesSortInput {
 }
 
 type Mutation {
-  insertRole(insertRoleInput: InsertRoleInput!): RoleEntity!
-  updateRole(updateRoleInput: UpdateRoleInput!): RoleEntity!
-  insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput!): RoleGroupEntity!
-  updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput!): RoleGroupEntity!
-  removeRoleGroup(seqNo: Int!): RoleGroupEntity!
-  updateMessage(updateMessageInput: UpdateMessageInput!): MessageEntity!
-  insertMessage(insertMessageInput: InsertMessageInput!): MessageEntity!
-  deleteMessages(seqNos: [Int!]!): Boolean!
-  updateMessageGroup(updateMessageGroupInput: UpdateMessageGroupInput!): MessageGroupEntity
-  insertMessageGroup(insertMessageGroupInput: InsertMessageGroupInput!): MessageGroupEntity!
-  insertFrontComponent(insertFrontComponentInput: InsertFrontComponentInput!): FrontComponentEntity!
-  updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentInput!): FrontComponentEntity!
-  insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentInput!): AllFrontComponentEntity!
-  updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentInput!): AllFrontComponentEntity!
+  insertRole(insertRoleInput: InsertRoleEntityInput!): RoleEntityOutput!
+  updateRole(updateRoleInput: UpdateRoleEntityInput!): RoleEntityOutput!
+  insertRoleGroup(insertRoleGroupInput: InsertRoleGroupEntityInput!): RoleGroupEntityOutput!
+  updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupEntityInput!): RoleGroupEntityOutput!
+  removeRoleGroup(seqNo: Int!): RoleGroupEntityOutput!
+  updateMessageEntity(updateMessageEntityInput: UpdateMessageEntityInput!): MessageEntityOutput!
+  insertMessageEntity(insertMessageEntityInput: InsertMessageEntityInput!): MessageEntityOutput!
+  deleteMessageEntities(seqNos: [Int!]!): Boolean!
+  deleteMessageEntity(seqNo: Int!): Boolean!
+  updateMessageGroupEntity(updateMessageGroupEntityInput: UpdateMessageGroupEntityInput!): MessageGroupEntityOutput
+  insertMessageGroupEntity(insertMessageGroupEntityInput: InsertMessageGroupEntityInput!): MessageGroupEntityOutput!
+  insertFrontComponent(insertFrontComponentInput: InsertFrontComponentEntityInput!): FrontComponentEntityOutput!
+  updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentEntityInput!): FrontComponentEntityOutput!
+  insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentEntityInput!): AllFrontComponentEntityOutput!
+  updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentEntityInput!): AllFrontComponentEntityOutput!
 }
 
-input InsertRoleInput {
+input InsertRoleEntityInput {
   name: String!
   identifier: String
   roleGroupSeqNo: Int
@@ -416,7 +446,7 @@ input InsertRoleInput {
   routeSeqNos: [Int!]
 }
 
-input UpdateRoleInput {
+input UpdateRoleEntityInput {
   seqNo: Int!
   name: String
   roleGroupSeqNo: Int
@@ -425,14 +455,14 @@ input UpdateRoleInput {
   routeSeqNos: [Int!]
 }
 
-input InsertRoleGroupInput {
+input InsertRoleGroupEntityInput {
   name: String!
   parentSeqNo: Int
   roleSeqNos: [Int!]
   childSeqNos: [Int!]
 }
 
-input UpdateRoleGroupInput {
+input UpdateRoleGroupEntityInput {
   seqNo: Int!
   name: String
   parentSeqNo: Int
@@ -440,7 +470,7 @@ input UpdateRoleGroupInput {
   childSeqNos: [Int!]
 }
 
-input UpdateMessageInput {
+input UpdateMessageEntityInput {
   seqNo: Float!
   code: String
   name: String
@@ -448,45 +478,45 @@ input UpdateMessageInput {
   groupCode: String
 }
 
-input InsertMessageInput {
+input InsertMessageEntityInput {
   code: String!
   name: String!
   text: String!
   groupCode: String
 }
 
-input UpdateMessageGroupInput {
+input UpdateMessageGroupEntityInput {
   code: String!
   name: String
   messageSeqNos: [Int!]
 }
 
-input InsertMessageGroupInput {
+input InsertMessageGroupEntityInput {
   code: String!
   name: String!
   messageSeqNos: [Int!]
 }
 
-input InsertFrontComponentInput {
+input InsertFrontComponentEntityInput {
   id: String!
   allFrontComponentIds: [String!]
   roleSeqNos: [Int!]
   routeSeqNos: [Int!]
 }
 
-input UpdateFrontComponentInput {
+input UpdateFrontComponentEntityInput {
   id: String
   allFrontComponentIds: [String!]
   roleSeqNos: [Int!]
   routeSeqNos: [Int!]
 }
 
-input InsertAllFrontComponentInput {
+input InsertAllFrontComponentEntityInput {
   id: String!
   frontComponentId: String
 }
 
-input UpdateAllFrontComponentInput {
+input UpdateAllFrontComponentEntityInput {
   id: String!
   frontComponentId: String
 }

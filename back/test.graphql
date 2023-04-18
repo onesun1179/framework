@@ -1,10 +1,19 @@
-query {
-    menuRoleMaps {
-        list {
+mutation {
+    updateMessageEntity(updateMessageEntityInput: )  {
 
-            parent {
-                seqNo
-            }
-        }
+
     }
+}
+
+{
+"key": 4,
+"__typename": "MessageEntityOutput",
+"seqNo": 4,
+"name": "NOT FOUNT VALUE",
+"text": "존재하지 않는 값 입니다",
+"code": "0002",
+"groupCode": "E",
+"createdAt": "2023-04-15T07:39:07.799Z",
+"updatedAt": "2023-04-15T07:39:07.799Z",
+"desc": null
 }

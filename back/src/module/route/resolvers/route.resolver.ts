@@ -9,89 +9,46 @@ import {
 import { Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { RouteEntity } from '@modules/route/entity/route.entity';
-import { RouteRepository } from '@modules/route/repository/route.repository';
-import { RoleRepository } from '@modules/role/repository/role.repository';
-import { RoutesOutput } from '@modules/route/dto/output/routes.output';
-import { PagingInput } from '@common/dto/input/paging.input';
-import { RoutesInput } from '@modules/route/dto/input/routes.input';
-import { RoleEntity } from '@modules/role/entity/role.entity';
-import { RoleRouteMapEntity } from '@modules/role/entity/role-route-map.entity';
+import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
+import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
+import { RouteOutput } from '@modules/route/dto/output/route.output';
 import { RouteTreeOutput } from '@modules/route/dto/output/route-tree.output';
 
-@Resolver(() => RouteEntity)
+@Resolver(() => RouteOutput)
 export class RouteResolver {
   logger = new Logger(RouteResolver.name);
 
   constructor(
-    private routeRepository: RouteRepository,
-    private roleRepository: RoleRepository,
+    private routeRepository: RouteEntityRepository,
+    private roleRepository: RoleEntityRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   /**************************************
    *              QUERY
    ***************************************/
-  @Query(() => RouteEntity)
-  async routeBySeqNo(
+  @Query(() => RouteOutput)
+  async route(
     @Args('seqNo', {
       type: () => Int,
     })
-    seqNo: RouteEntity['seqNo'],
-  ) {
-    return await this.routeRepository.findOneOrFail({
-      where: {
+    seqNo: number,
+  ): Promise<RouteOutput> {
+    return await this.routeRepository
+      .createQueryBuilder('route')
+      .where(`route.seqNo = :seqNo`, {
         seqNo,
-      },
-    });
-  }
-
-  @Query(() => RoutesOutput)
-  async routes(
-    @Args('paging', {
-      type: () => PagingInput,
-      nullable: true,
-    })
-    pagingInput: PagingInput,
-    @Args('request', {
-      type: () => RoutesInput,
-      nullable: true,
-    })
-    routesInput: RoutesInput,
-  ): Promise<RoutesOutput> {
-    return this.routeRepository.paging(pagingInput, routesInput);
+      })
+      .getOneOrFail()
+      .then((r) => r.toRouteOutput());
   }
 
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
-
-  @ResolveField(() => [RouteEntity], {
-    defaultValue: [],
-  })
-  async children(@Parent() { seqNo }: RouteEntity): Promise<RouteEntity[]> {
-    return await this.dataSource.manager.find(RouteEntity, {
-      where: {
-        parentSeqNo: seqNo,
-      },
-    });
-  }
-
-  @ResolveField(() => [RoleEntity])
-  async roles(@Parent() { seqNo }: RouteEntity): Promise<RoleEntity[]> {
-    return await this.roleRepository
-      .createQueryBuilder('r')
-      .innerJoinAndSelect(RoleRouteMapEntity, 'rrm')
-      .select('r')
-      .where('rrm.routeSeqNo = :seqNo', {
-        seqNo,
-      })
-      .getMany();
-  }
-
   @ResolveField(() => RouteTreeOutput)
-  async treeInfo(@Parent() { seqNo }: RouteEntity): Promise<RouteTreeOutput> {
-    return await this.dataSource
+  async treeInfo(@Parent() { seqNo }: RouteOutput): Promise<RouteTreeOutput> {
+    return await this.routeRepository
       .query(
         `
               WITH RECURSIVE FullPath (full_path, seq_no, parent_seq_no, depth)
@@ -120,32 +77,4 @@ export class RouteResolver {
       )
       .then((r) => r[0]);
   }
-
-  /**************************************
-   *           MUTATION
-   ***************************************/
-  // @Mutation(() => RouteEntity)
-  // async insertRoute(
-  //   @Args('req', {
-  //     type: () => InsertRouteInput,
-  //   })
-  //   req: InsertRouteInput,
-  // ): Promise<RouteEntity> {
-  //   return await this.dataSource.transaction(async (e) => {
-  //     return this.routeService.save(e, req);
-  //   });
-  // }
-
-  // @Mutation(() => RouteEntity)
-  // async updateRoute(
-  //   @Args('req', {
-  //     type: () => UpdateRouteRequest,
-  //   })
-  //   req: UpdateRouteRequest,
-  // ): Promise<RouteEntity> {
-  //   if (await this.routeService.hasSeqNo(e, req.seqNo)) {
-  //     return this.routeService.save(e, req);
-  //   }
-  //
-  // }
 }

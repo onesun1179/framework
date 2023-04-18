@@ -1,52 +1,76 @@
-import { FC, useMemo, useState } from "react";
-import { gql, useQuery } from "@apollo/client";
-import { ColumnType } from "antd/es/table";
-import { MenusRequest, Message, PagedMessages, PagingRequest } from "@gqlType";
-import { Table } from "antd";
-import EditableRow from "@src/component/EditableRow";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+	MessageEntitiesInput,
+	MessageEntitiesOutput,
+	MessageEntityOutput,
+	PagingInput,
+	UpdateMessageEntityInput,
+} from "@gqlType";
+import {
+	EditableActionButtonCell,
+	EditableCell,
+	EditableColumns,
+	EditableRow,
+	EditableTable,
+} from "@src/component/table/editable";
+import { cloneDeep } from "lodash";
+import { Button, Layout, message } from "antd";
+// import { Builder } from "builder-pattern";
 
+const UPDATE_MESSAGE_ENTITY = gql`
+	mutation ($updateMessageEntityInput: UpdateMessageEntityInput!) {
+		updateMessageEntity(updateMessageEntityInput: $updateMessageEntityInput) {
+			seqNo
+		}
+	}
+`;
 const QUERY = gql`
-	query ($paging: PagingRequest, $param: MessagesRequest) {
-		messages(paging: $paging, request: $param) {
+	query ($paging: PagingInput, $param: MessageEntitiesInput) {
+		messageEntities(pagingInput: $paging, messageEntitiesInput: $param) {
 			list {
-				groupCode
-				code
-				text
 				seqNo
+				name
+				text
+				code
+				groupCode
+				sysYn
 				createdAt
 				updatedAt
 				desc
 			}
 			total
 		}
+		messageGroupEntities {
+			list {
+				code
+				name
+			}
+		}
 	}
 `;
 
-const columns: Array<
-	ColumnType<Message> & {
-		editable?: boolean;
-	}
-> = [
-	{ title: "일련번호", dataIndex: "seqNo", key: "seqNo" },
-	{ title: "그룹코드", dataIndex: "groupCode", key: "groupCode" },
-	{ title: "코드", dataIndex: "code", key: "code" },
-	{ title: "메세지", dataIndex: "text", key: "text" },
-	{ title: "생성일자", dataIndex: "createdAt", key: "createdAt" },
-	{ title: "수정일자", dataIndex: "updatedAt", key: "updatedAt" },
-	{ title: "비고", dataIndex: "desc", key: "desc" },
-];
-
 const MessageManagement: FC = () => {
-	console.log(123);
 	const [pageSize, setPageSize] = useState(10);
-
-	const { data, loading } = useQuery<
+	const [messageApi, contextHolder] = message.useMessage();
+	const [dataSource, setDataSource] = useState<Array<MessageEntityOutput>>();
+	const setRecord = useCallback(
+		(record: MessageEntityOutput) => {
+			setDataSource((prev) => {
+				const _prev = cloneDeep(prev);
+				_prev![_prev!.findIndex((o) => o.seqNo === record.seqNo)] = record;
+				return _prev;
+			});
+		},
+		[dataSource]
+	);
+	const { data, loading, refetch } = useQuery<
 		{
-			messages: PagedMessages;
+			messageEntities: MessageEntitiesOutput;
 		},
 		{
-			paging?: PagingRequest;
-			param?: MenusRequest;
+			paging?: PagingInput;
+			param?: MessageEntitiesInput;
 		}
 	>(QUERY, {
 		variables: {
@@ -57,34 +81,195 @@ const MessageManagement: FC = () => {
 			param: {},
 		},
 	});
+	const [updateMessageEntityMutate, { data: mudateData }] = useMutation<
+		MessageEntityOutput,
+		{
+			updateMessageEntityInput: UpdateMessageEntityInput;
+		}
+	>(UPDATE_MESSAGE_ENTITY, {
+		async onCompleted() {
+			await refetch();
+		},
+	});
 
-	console.log(data);
-	const dataSource = useMemo(
+	const initialDataSource = useMemo<MessageEntityOutput[] | undefined>(
 		() =>
-			data?.messages.list.map((o) => ({
+			data?.messageEntities.list.map((o) => ({
 				key: o.seqNo,
-
 				...o,
 			})),
 		[data]
 	);
-	return (
-		<Table
-			pagination={{ pageSize }}
-			components={{
-				body: {
-					row: EditableRow,
-					// cell: EditableCell,
+
+	const getInitialRecord = useCallback(
+		(record: MessageEntityOutput) =>
+			initialDataSource!.find((o) => o.seqNo === record.seqNo)!,
+		[initialDataSource]
+	);
+
+	const updateRow = useCallback(
+		(record: MessageEntityOutput) => {
+			updateMessageEntityMutate({
+				variables: {
+					updateMessageEntityInput: {
+						code: record.code,
+						text: record.text,
+						name: record.name,
+						groupCode: record.groupCode,
+						seqNo: record.seqNo,
+					},
 				},
-			}}
-			size={"small"}
-			loading={loading}
-			columns={columns}
-			dataSource={dataSource}
-			scroll={{
-				y: 240,
-			}}
-		/>
+			}).then(() => {
+				messageApi.info("저장");
+			});
+		},
+		[messageApi]
+	);
+
+	const addRow = useCallback(() => {
+		setDataSource((prev) => [
+			...prev!,
+			{
+				groupCode
+				sysYn: false,
+			} 
+		]);
+	}, [setDataSource]);
+	const columns = useMemo<EditableColumns<MessageEntityOutput>>(
+		() => [
+			{
+				title: "ID",
+				dataIndex: "seqNo",
+				key: "seqNo",
+				width: 40,
+				align: "center",
+			},
+			{
+				title: "이름",
+				dataIndex: "name",
+				key: "name",
+				onCell: (record) => ({
+					record,
+					initialRecord: getInitialRecord(record),
+					edit: {
+						type: "string",
+						rules: [
+							{
+								required: true,
+							},
+						],
+					},
+
+					dataIndex: "name",
+					handleSave: setRecord,
+				}),
+			},
+			{
+				title: "그룹코드",
+				dataIndex: "groupCode",
+				key: "groupCode",
+				width: 70,
+			},
+			{
+				title: "코드",
+				dataIndex: "code",
+				key: "code",
+				width: 80,
+				onCell: (record) => ({
+					record,
+					initialRecord: getInitialRecord(record),
+					edit: {
+						type: "string",
+					},
+					dataIndex: "code",
+					handleSave: setRecord,
+				}),
+			},
+			{
+				title: "메세지",
+				dataIndex: "text",
+				key: "text",
+				onCell: (record) => ({
+					record,
+					initialRecord: getInitialRecord(record),
+					edit: {
+						type: "string",
+					},
+					dataIndex: "text",
+					handleSave: setRecord,
+				}),
+			},
+			// { title: "생성일자", dataIndex: "createdAt", key: "createdAt" },
+			{
+				title: "시스템 여부",
+				dataIndex: "sysYn",
+				key: "sysYn",
+				align: "center",
+				render: (value, record, index) => {
+					console.log(value);
+					return value ? "Y" : "N";
+				},
+			},
+			{
+				title: "비고",
+				dataIndex: "desc",
+				key: "desc",
+				width: 50,
+				onCell: (record) => ({
+					record,
+					initialRecord: getInitialRecord(record),
+					edit: {
+						type: "string",
+					},
+					dataIndex: "desc",
+					handleSave: setRecord,
+				}),
+			},
+			{
+				title: "액션",
+				dataIndex: "action",
+				key: "action",
+				width: 150,
+				cellType: "action",
+				render: (value, record, index) => (
+					<EditableActionButtonCell onUpdateClick={() => updateRow(record)} />
+				),
+			},
+		],
+		[dataSource, setRecord, getInitialRecord, updateRow]
+	);
+
+	useEffect(() => {
+		setDataSource(initialDataSource);
+	}, [initialDataSource]);
+
+	return (
+		<>
+			{contextHolder}
+			<Layout>
+				<Layout.Header>
+					<Button onClick={addRow}>행 추가</Button>
+				</Layout.Header>
+				<Layout.Content>
+					<EditableTable
+						pagination={{ pageSize }}
+						components={{
+							body: {
+								row: EditableRow,
+								cell: EditableCell,
+							},
+						}}
+						size={"small"}
+						loading={loading}
+						columns={columns}
+						dataSource={dataSource}
+						scroll={{
+							y: 240,
+						}}
+					/>
+				</Layout.Content>
+			</Layout>
+		</>
 	);
 };
 
