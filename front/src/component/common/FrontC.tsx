@@ -3,7 +3,7 @@ import { gql, useQuery } from "@apollo/client";
 import { All_FRONT_COMPONENT } from "@src/constants/component.constant";
 
 const ALL_FRONT_COMPONENT_BY_AUTH = gql`
-	query ($frontComponentId: String!) {
+	query ALL_FRONT_COMPONENT_BY_AUTH($frontComponentId: String!) {
 		data: allFrontComponentByAuth(frontComponentId: $frontComponentId) {
 			id
 		}

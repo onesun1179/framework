@@ -6,13 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import {
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
@@ -50,24 +44,17 @@ export class MessageEntity extends CommonEntity {
   @IsNotEmpty()
   text!: string;
 
-  @Column({
-    nullable: true,
-  })
-  @Field({
-    nullable: true,
-  })
-  @IsOptional()
+  @Column()
+  @Field()
   @IsNotEmpty()
-  groupCode?: string;
+  groupCode!: string;
 
-  @ManyToOne(() => MessageGroupEntity, (o) => o.messages, {
-    nullable: true,
-  })
+  @ManyToOne(() => MessageGroupEntity, (o) => o.messages)
   @JoinColumn({
     name: 'group_code',
   })
   @Type(() => MessageGroupEntity)
-  group?: MessageGroupEntity;
+  group!: MessageGroupEntity;
 
   @Column({
     type: 'boolean',

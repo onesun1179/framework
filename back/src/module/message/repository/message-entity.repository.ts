@@ -4,7 +4,6 @@ import { PagingInput } from '@common/dto/input/paging.input';
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { Nullable } from 'src/common/type';
 import { UtilSearch } from '@common/util/Util.search';
-import { UtilSort } from '@common/util/Util.sort';
 import { EntityRepository } from '@common/repository/entity.repository';
 import { MessageEntity } from '@modules/message/dto/output/entity/message.entity';
 import { MessageEntitiesInput } from '@modules/message/dto/input/message-entities.input';
@@ -12,6 +11,7 @@ import { MessageEntitiesOutput } from '@modules/message/dto/output/message-entit
 import { UtilPaging } from '@common/util/Util.paging';
 import { InsertMessageEntityInput } from '@modules/message/dto/input/insert-message-entity.input';
 import { UpdateMessageEntityInput } from '@modules/message/dto/input/update-message-entity.input';
+import { SortTypeInput } from '@common/dto/input/sort-type.input';
 
 @CustomRepository(MessageEntity)
 export class MessageEntityRepository extends EntityRepository<MessageEntity> {
@@ -20,9 +20,12 @@ export class MessageEntityRepository extends EntityRepository<MessageEntity> {
     messagesInput: Nullable<MessageEntitiesInput>,
   ): Promise<MessageEntitiesOutput> {
     const qb = this.createQueryBuilder('m');
-    let order: FindOptionsOrder<MessageEntity> = {};
+    const order: FindOptionsOrder<MessageEntity> = {};
     let where: FindOptionsWhere<MessageEntity> = {};
 
+    qb.setFindOptions({
+      order: {},
+    });
     if (messagesInput) {
       const { search, sort } = messagesInput;
 
@@ -37,7 +40,20 @@ export class MessageEntityRepository extends EntityRepository<MessageEntity> {
       }
 
       if (sort) {
-        order = UtilSort.getFindOptionsOrder(sort);
+        console.log(sort);
+        (Object.entries(sort) as Array<[string, Nullable<SortTypeInput>]>)
+          .filter(([, o]) => !!o)
+          .sort((a, b) => a[1]!.order - b[1]!.order)
+          .forEach(([k, v], i) => {
+            console.log(k, v);
+            if (i === 0) {
+              qb.orderBy(`m.${k}`, v?.sort);
+            } else {
+              qb.addOrderBy(`m.${k}`, v?.sort);
+            }
+          });
+
+        // order = UtilSort.getFindOptionsOrder(sort);
       }
     }
 

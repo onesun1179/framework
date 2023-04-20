@@ -109,7 +109,15 @@ const initYn = false;
       playground: false,
       autoSchemaFile: resolve(process.cwd(), 'src', 'schema.gql'),
       definitions: {
-        path: resolve(process.cwd(), 'src', '..', '..', 'front', 'graphql.ts'),
+        path: resolve(
+          process.cwd(),
+          'src',
+          '..',
+          '..',
+          'front',
+          'src',
+          'graphql-type.ts',
+        ),
       },
     }),
   ],

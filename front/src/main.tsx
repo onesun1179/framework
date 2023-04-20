@@ -27,7 +27,7 @@ const client = new ApolloClient({
 });
 
 const ROUTES_QUERY = gql`
-	query {
+	query ROUTES {
 		routes(request: { search: { parentSeqNo: { isNull: true } } }) {
 			list {
 				seqNo

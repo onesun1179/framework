@@ -25,6 +25,7 @@ import { MessageEntitiesInput } from '@modules/message/dto/input/message-entitie
 import { MessageGroupEntity } from '@modules/message/dto/output/entity/message-group.entity';
 import { UpdateMessageEntityInput } from '@modules/message/dto/input/update-message-entity.input';
 import { InsertMessageEntityInput } from '@modules/message/dto/input/insert-message-entity.input';
+import { ChkUniqMessageByCodeInput } from '@modules/message/dto/input/chk-uniq-message-by-code.input';
 
 @Resolver(() => MessageEntity)
 @UseGuards(GqlAuthGuard)
@@ -92,6 +93,17 @@ export class MessageEntityResolver {
       pagingInput,
       messageEntitiesInput,
     );
+  }
+  @Query(() => Boolean)
+  async chkUniqMessageByCode(
+    @Args('input', {
+      type: () => ChkUniqMessageByCodeInput,
+    })
+    input: ChkUniqMessageByCodeInput,
+  ): Promise<boolean> {
+    return !(await this.messageRepository.exist({
+      where: input,
+    }));
   }
 
   /**************************************

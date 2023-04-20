@@ -9,4 +9,7 @@ export class MessageEntitiesSortInput extends SortType([
   'name',
   'text',
   'groupCode',
+  'desc',
+  'createdAt',
+  'updatedAt',
 ]) {}

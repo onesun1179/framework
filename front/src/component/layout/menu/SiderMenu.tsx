@@ -20,8 +20,8 @@ function getItem(menuItem: MenuOutput): Required<MenuProps>["items"][number] {
 	};
 }
 
-const QUERY = gql`
-	query {
+const MENUS = gql`
+	query MENUS {
 		menus {
 			seqNo
 			name
@@ -98,7 +98,7 @@ const QUERY = gql`
 const SiderMenu: FC = () => {
 	const { loading, data } = useQuery<{
 		menus: Array<MenuOutput>;
-	}>(QUERY);
+	}>(MENUS);
 
 	const items = useMemo(() => {
 		if (data) {

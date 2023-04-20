@@ -24,7 +24,7 @@ type MessageEntityOutput {
   code: String!
   name: String!
   text: String!
-  groupCode: String
+  groupCode: String!
   sysYn: Boolean!
   group: MessageGroupEntityOutput!
 }
@@ -228,6 +228,7 @@ type Query {
   messageEntityBySeqNo(seqNo: Int!): MessageEntityOutput!
   messageEntityByCode(groupCode: String!, code: String!): MessageEntityOutput!
   messageEntities(pagingInput: PagingInput, messageEntitiesInput: MessageEntitiesInput): MessageEntitiesOutput!
+  chkUniqMessageByCode(input: ChkUniqMessageByCodeInput!): Boolean!
   messageGroupEntity(code: String!): MessageGroupEntityOutput!
   messageGroupEntities(paging: PagingInput, request: MessageGroupEntitiesInput): MessageGroupEntitiesOutput!
   frontComponentById(frontComponentId: String!): FrontComponentEntityOutput!
@@ -346,10 +347,15 @@ input NullableInNumberSearchInput {
 }
 
 input MenuEntitiesSortInput {
-  seqNo: Sort
+  seqNo: SortTypeInput
 }
 
-enum Sort {
+input SortTypeInput {
+  sort: SortEnum!
+  order: Int!
+}
+
+enum SortEnum {
   ASC
   DESC
 }
@@ -369,9 +375,9 @@ input MenuRoleMapEntitiesSearchInput {
 }
 
 input MenuRoleMapEntitiesSortInput {
-  seqNo: Sort
-  menuSeqNo: Sort
-  roleSeqNo: Sort
+  seqNo: SortTypeInput
+  menuSeqNo: SortTypeInput
+  roleSeqNo: SortTypeInput
   menu: MenuEntitiesSortInput
 }
 
@@ -387,11 +393,11 @@ input RouteEntitiesSearchInput {
 }
 
 input RouteEntitiesSortInput {
-  seqNo: Sort
-  code: Sort
-  name: Sort
-  text: Sort
-  groupCode: Sort
+  seqNo: SortEnum
+  code: SortEnum
+  name: SortEnum
+  text: SortEnum
+  groupCode: SortEnum
 }
 
 input MessageEntitiesInput {
@@ -412,11 +418,19 @@ input MessageGroupEntitiesInput {
 }
 
 input MessageEntitiesSortInput {
-  seqNo: Sort
-  code: Sort
-  name: Sort
-  text: Sort
-  groupCode: Sort
+  seqNo: SortTypeInput
+  code: SortTypeInput
+  name: SortTypeInput
+  text: SortTypeInput
+  groupCode: SortTypeInput
+  desc: SortTypeInput
+  createdAt: SortTypeInput
+  updatedAt: SortTypeInput
+}
+
+input ChkUniqMessageByCodeInput {
+  code: String!
+  groupCode: String!
 }
 
 type Mutation {
@@ -482,7 +496,7 @@ input InsertMessageEntityInput {
   code: String!
   name: String!
   text: String!
-  groupCode: String
+  groupCode: String!
 }
 
 input UpdateMessageGroupEntityInput {

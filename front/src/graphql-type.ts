@@ -8,7 +8,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum Sort {
+export enum SortEnum {
     ASC = "ASC",
     DESC = "DESC"
 }
@@ -123,7 +123,12 @@ export interface NullableInNumberSearchInput {
 }
 
 export interface MenuEntitiesSortInput {
-    seqNo?: Nullable<Sort>;
+    seqNo?: Nullable<SortTypeInput>;
+}
+
+export interface SortTypeInput {
+    sort: SortEnum;
+    order: number;
 }
 
 export interface MenuRoleMapEntitiesInput {
@@ -141,9 +146,9 @@ export interface MenuRoleMapEntitiesSearchInput {
 }
 
 export interface MenuRoleMapEntitiesSortInput {
-    seqNo?: Nullable<Sort>;
-    menuSeqNo?: Nullable<Sort>;
-    roleSeqNo?: Nullable<Sort>;
+    seqNo?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     menu?: Nullable<MenuEntitiesSortInput>;
 }
 
@@ -159,11 +164,11 @@ export interface RouteEntitiesSearchInput {
 }
 
 export interface RouteEntitiesSortInput {
-    seqNo?: Nullable<Sort>;
-    code?: Nullable<Sort>;
-    name?: Nullable<Sort>;
-    text?: Nullable<Sort>;
-    groupCode?: Nullable<Sort>;
+    seqNo?: Nullable<SortEnum>;
+    code?: Nullable<SortEnum>;
+    name?: Nullable<SortEnum>;
+    text?: Nullable<SortEnum>;
+    groupCode?: Nullable<SortEnum>;
 }
 
 export interface MessageEntitiesInput {
@@ -184,11 +189,19 @@ export interface MessageGroupEntitiesInput {
 }
 
 export interface MessageEntitiesSortInput {
-    seqNo?: Nullable<Sort>;
-    code?: Nullable<Sort>;
-    name?: Nullable<Sort>;
-    text?: Nullable<Sort>;
-    groupCode?: Nullable<Sort>;
+    seqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+}
+
+export interface ChkUniqMessageByCodeInput {
+    code: string;
+    groupCode: string;
 }
 
 export interface InsertRoleEntityInput {
@@ -236,7 +249,7 @@ export interface InsertMessageEntityInput {
     code: string;
     name: string;
     text: string;
-    groupCode?: Nullable<string>;
+    groupCode: string;
 }
 
 export interface UpdateMessageGroupEntityInput {
@@ -292,7 +305,7 @@ export interface MessageEntityOutput {
     code: string;
     name: string;
     text: string;
-    groupCode?: Nullable<string>;
+    groupCode: string;
     sysYn: boolean;
     group: MessageGroupEntityOutput;
 }
@@ -496,6 +509,7 @@ export interface IQuery {
     messageEntityBySeqNo(seqNo: number): MessageEntityOutput | Promise<MessageEntityOutput>;
     messageEntityByCode(groupCode: string, code: string): MessageEntityOutput | Promise<MessageEntityOutput>;
     messageEntities(pagingInput?: Nullable<PagingInput>, messageEntitiesInput?: Nullable<MessageEntitiesInput>): MessageEntitiesOutput | Promise<MessageEntitiesOutput>;
+    chkUniqMessageByCode(input: ChkUniqMessageByCodeInput): boolean | Promise<boolean>;
     messageGroupEntity(code: string): MessageGroupEntityOutput | Promise<MessageGroupEntityOutput>;
     messageGroupEntities(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupEntitiesInput>): MessageGroupEntitiesOutput | Promise<MessageGroupEntitiesOutput>;
     frontComponentById(frontComponentId: string): FrontComponentEntityOutput | Promise<FrontComponentEntityOutput>;

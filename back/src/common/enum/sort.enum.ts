@@ -6,5 +6,5 @@ export enum SortEnum {
 }
 
 registerEnumType(SortEnum, {
-  name: 'Sort',
+  name: 'SortEnum',
 });
