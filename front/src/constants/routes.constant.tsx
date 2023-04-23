@@ -1,10 +1,8 @@
 import { lazy } from "react";
 
 export const RouteComponentMap = {
-	Home: lazy(() => import("@src/routes/Home")),
-	ManageMenu: lazy(() => import("@src/routes/admin/MenuManagement")),
-	FrameworkMenu: lazy(() => import("@src/routes/framework/MenuManagement")),
-	FrameworkMessage: lazy(
-		() => import("@src/routes/framework/MessageManagement")
-	),
+	Home: lazy(() => import("@src/component/route/Hm")),
+	ManageMenu: lazy(() => import("@src/component/route/MnMgmt")),
+	FrameworkMenu: lazy(() => import("@src/component/route/FrmkMnMgmt")),
+	FrameworkMessage: lazy(() => import("@src/component/route/FrmkMsgMgmt")),
 };

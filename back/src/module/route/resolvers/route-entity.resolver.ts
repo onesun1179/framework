@@ -33,7 +33,7 @@ export class RouteEntityResolver {
    *              QUERY
    ***************************************/
   @Query(() => RouteEntity)
-  async routeBySeqNo(
+  async routeEntity(
     @Args('seqNo', {
       type: () => Int,
     })
@@ -47,10 +47,11 @@ export class RouteEntityResolver {
   }
 
   @Query(() => RouteEntitiesOutput)
-  async routes(
+  async routeEntities(
     @Args('paging', {
       type: () => PagingInput,
       nullable: true,
+      defaultValue: null,
     })
     pagingInput: PagingInput,
     @Args('request', {

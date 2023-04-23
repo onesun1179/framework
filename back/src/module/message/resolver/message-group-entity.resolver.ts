@@ -20,7 +20,8 @@ import { MessageEntity } from '@modules/message/dto/output/entity/message.entity
 import { UpdateMessageGroupEntityInput } from '@modules/message/dto/input/update-message-group-entity.input';
 import { InsertMessageGroupEntityInput } from '@modules/message/dto/input/insert-message-group-entity.input';
 import { GqlError } from '@common/error/GqlError';
-import { MsgCode } from '@modules/message/dto/msg-code';
+import { MessageConstant } from '@common/constants/message.constant';
+import { MessageEntityRepository } from '@modules/message/repository/message-entity.repository';
 
 @Resolver(() => MessageGroupEntity)
 export class MessageGroupEntityResolver {
@@ -30,12 +31,27 @@ export class MessageGroupEntityResolver {
     private readonly messageService: MessageService,
     private readonly messageGroupService: MessageGroupService,
     private readonly messageGroupRepository: MessageGroupEntityRepository,
+    private readonly messageEntityRepository: MessageEntityRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   /**************************************
    *              QUERY
    ***************************************/
+
+  @Query(() => Boolean)
+  async enableMessageGroupOfCode(
+    @Args('code', {
+      type: () => String,
+    })
+    code: MessageGroupEntity['code'],
+  ) {
+    return !(await this.messageGroupRepository.exist({
+      where: {
+        code,
+      },
+    }));
+  }
   @Query(() => MessageGroupEntity)
   messageGroupEntity(
     @Args('code', {
@@ -50,18 +66,21 @@ export class MessageGroupEntityResolver {
 
   @Query(() => MessageGroupEntitiesOutput)
   async messageGroupEntities(
-    @Args('paging', {
+    @Args('pagingInput', {
       type: () => PagingInput,
       nullable: true,
     })
-    paging: PagingInput,
-    @Args('request', {
+    pagingInput: PagingInput,
+    @Args('messageGroupEntitiesInput', {
       type: () => MessageGroupEntitiesInput,
       nullable: true,
     })
-    req: MessageGroupEntitiesInput,
+    messageGroupEntitiesInput: MessageGroupEntitiesInput,
   ): Promise<MessageGroupEntitiesOutput> {
-    return await this.messageGroupRepository.paging(paging, req);
+    return await this.messageGroupRepository.paging(
+      pagingInput,
+      messageGroupEntitiesInput,
+    );
   }
 
   /**************************************
@@ -69,14 +88,11 @@ export class MessageGroupEntityResolver {
    ***************************************/
 
   @ResolveField(() => [MessageEntity])
-  messageEntities(@Parent() { code }: MessageGroupEntity) {
-    return this.dataSource.transaction(async (e) => {
-      return await e
-        .createQueryBuilder(MessageEntity, 'm')
-        .where(`m.groupCode = :code`, {
-          code,
-        })
-        .getMany();
+  messageEntities(@Parent() { code: groupCode }: MessageGroupEntity) {
+    return this.messageEntityRepository.find({
+      where: {
+        groupCode,
+      },
     });
   }
 
@@ -91,7 +107,7 @@ export class MessageGroupEntityResolver {
       type: () => UpdateMessageGroupEntityInput,
     })
     updateMessageGroupEntityInput: UpdateMessageGroupEntityInput,
-  ): Promise<MessageGroupEntity | null> {
+  ): Promise<MessageGroupEntity> {
     if (
       await this.messageGroupRepository.hasRow(
         updateMessageGroupEntityInput.code,
@@ -101,7 +117,7 @@ export class MessageGroupEntityResolver {
         updateMessageGroupEntityInput,
       );
     }
-    return null;
+    throw new GqlError(MessageConstant.NOT_FOUND_VALUE([]));
   }
 
   @Mutation(() => MessageGroupEntity)
@@ -116,7 +132,7 @@ export class MessageGroupEntityResolver {
         insertMessageGroupEntityInput.code,
       )
     ) {
-      throw new GqlError(new MsgCode('E', '0009'));
+      throw new GqlError(MessageConstant.NOT_FOUND_VALUE([]));
     } else {
       return this.messageGroupRepository.saveCustom(
         insertMessageGroupEntityInput,

@@ -4,52 +4,63 @@ import {
   Between,
   Equal,
   FindOperator,
+  FindOptionsWhere,
   ILike,
   In,
   IsNull,
   LessThan,
-  LessThanOrEqual,
   Like,
   MoreThan,
-  MoreThanOrEqual,
   Not,
 } from 'typeorm';
 import { entries, isBoolean, isNil } from 'lodash';
 import { Regexp } from '@common/typeorm/find-operators/Regexp';
-import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { NonNullableStringSearchInput } from '@common/dto/input/search/non-nullable-string.search.input';
 import { NullableStringSearchInput } from '@common/dto/input/search/nullable-string.search.input';
 import { NullableNumberSearchInput } from '@common/dto/input/search/nullable-number.search.input';
 import { NonNullableNumberSearchInput } from '@common/dto/input/search/non-nullable-number.search.input';
 import { UtilCommon } from '@common/util/Util.common';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
 export class UtilSearch {
-  static getFindOptionsWhere<T extends ObjectLiteral>(
-    p: T,
-  ): FindOptionsWhere<any> {
-    return entries(p).reduce((r, [k, v]) => {
+  static setSearchByQB<Entity extends ObjectLiteral>(
+    qb: SelectQueryBuilder<Entity>,
+    search: ObjectLiteral,
+  ): void {
+    console.log({ search });
+    qb.where(this.getSearchWhere(search));
+  }
+
+  static getSearchWhere(search: ObjectLiteral): FindOptionsWhere<any> {
+    return entries(search).reduce((r, [k, v]) => {
       if (
         v instanceof NonNullableStringSearchInput ||
         v instanceof NullableStringSearchInput
       ) {
-        // @ts-ignore
-        r[k] = And(...UtilSearch.string(v));
+        r[k] = And(...this.getStringWhere(v));
       } else if (
         v instanceof NullableNumberSearchInput ||
         v instanceof NonNullableNumberSearchInput
       ) {
-        // @ts-ignore
-        r[k] = And(...UtilSearch.number(v));
+        r[k] = And(...this.getNumberWhere(v));
       }
       return r;
-    }, {});
+    }, {} as FindOptionsWhere<any>);
   }
 
-  static string(
+  static string<Entity extends ObjectLiteral>(
+    qb: SelectQueryBuilder<Entity>,
+    param: NonNullableStringSearchInput | NullableStringSearchInput,
+  ): void {
+    qb.where(this.getStringWhere(param));
+  }
+
+  static getStringWhere(
     param: NonNullableStringSearchInput | NullableStringSearchInput,
   ): Array<FindOperator<string>> {
     const { like, ilike, regex, equal, any, in: _in } = param;
+
     const where: Array<FindOperator<string>> = [];
     if (param instanceof NullableStringSearchInput && isBoolean(param.isNull))
       where.push(param.isNull ? IsNull() : Not(IsNull()));
@@ -81,13 +92,18 @@ export class UtilSearch {
     return where;
   }
 
-  static number(
+  static number<Entity extends ObjectLiteral>(
+    qb: SelectQueryBuilder<Entity>,
+    param: NullableNumberSearchInput | NonNullableNumberSearchInput,
+  ): void {
+    qb.where(this.getNumberWhere(param));
+  }
+
+  static getNumberWhere(
     param: NullableNumberSearchInput | NonNullableNumberSearchInput,
   ): Array<FindOperator<number>> {
     const {
       equal,
-      lessThanOrEqual,
-      moreThanOrEqual,
       moreThan,
       in: _in,
       lessThan,
@@ -102,15 +118,22 @@ export class UtilSearch {
       UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
         where.push(equal!.not ? Not(arg) : arg),
       );
-    if (!isNil(lessThanOrEqual)) where.push(LessThanOrEqual(lessThanOrEqual));
-    if (!isNil(moreThanOrEqual)) where.push(MoreThanOrEqual(moreThanOrEqual));
-    if (!isNil(moreThan)) where.push(MoreThan(moreThan));
+    if (!isNil(moreThan))
+      UtilCommon.applyFuncWithArg(MoreThan(moreThan.value), (arg) =>
+        where.push(equal!.not ? Not(arg) : arg),
+      );
+    if (!isNil(lessThan))
+      UtilCommon.applyFuncWithArg(LessThan(lessThan.value), (arg) =>
+        where.push(equal!.not ? Not(arg) : arg),
+      );
     if (!isNil(_in))
       UtilCommon.applyFuncWithArg(In(_in.value), (arg) => {
         where.push(_in.not ? Not(arg) : arg);
       });
-    if (!isNil(lessThan)) where.push(LessThan(lessThan));
-    if (!isNil(between)) where.push(Between(between.from, between.to));
+    if (!isNil(between))
+      UtilCommon.applyFuncWithArg(Between(between.from, between.to), (arg) => {
+        where.push(between.not ? Not(arg) : arg);
+      });
     if (!isNil(any))
       UtilCommon.applyFuncWithArg(Any<any>(any.value), (arg) => {
         where.push(any.not ? Not(arg) : arg);

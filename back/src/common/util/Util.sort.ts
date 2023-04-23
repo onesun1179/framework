@@ -1,6 +1,9 @@
 import { SortEnum } from '@common/enum/sort.enum';
-import { FindOptionsOrder } from 'typeorm';
+import { FindOptionsOrder, SelectQueryBuilder } from 'typeorm';
 import { Type } from '@nestjs/common';
+import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+import { Nullable } from '@common/type';
+import { SortTypeInput } from '@common/dto/input/sort-type.input';
 
 export class UtilSort {
   static getFindOptionsOrder<Entity extends Type = any>(
@@ -21,5 +24,19 @@ export class UtilSort {
         [k]: sort,
       };
     }, {} as FindOptionsOrder<Entity>);
+  }
+
+  static setSortByQB<Entity extends ObjectLiteral>(
+    qb: SelectQueryBuilder<Entity>,
+    sort: ObjectLiteral,
+  ) {
+    return (Object.entries(sort) as Array<[string, Nullable<SortTypeInput>]>)
+      .filter(([, o]) => !!o)
+      .sort((a, b) => a[1]!.order - b[1]!.order)
+      .forEach(([k, v], i) => {
+        i === 0
+          ? qb.orderBy(`${qb.alias}.${k}`, v?.sort)
+          : qb.addOrderBy(`${qb.alias}.${k}`, v?.sort);
+      });
   }
 }

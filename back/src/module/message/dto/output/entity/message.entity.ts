@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { IsInt, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { IsInt, IsNotEmpty, MaxLength } from 'class-validator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
@@ -27,11 +27,11 @@ export class MessageEntity extends CommonEntity {
   @Column({
     type: 'char',
     length: '4',
+    update: false,
   })
   @IsNotEmpty()
   @MaxLength(4)
-  @MinLength(4)
-  @Field({})
+  @Field()
   code!: string;
 
   @Column()
@@ -44,7 +44,9 @@ export class MessageEntity extends CommonEntity {
   @IsNotEmpty()
   text!: string;
 
-  @Column()
+  @Column({
+    update: false,
+  })
   @Field()
   @IsNotEmpty()
   groupCode!: string;
@@ -55,11 +57,4 @@ export class MessageEntity extends CommonEntity {
   })
   @Type(() => MessageGroupEntity)
   group!: MessageGroupEntity;
-
-  @Column({
-    type: 'boolean',
-    default: false,
-  })
-  @Field(() => Boolean)
-  sysYn!: boolean;
 }

@@ -6,49 +6,43 @@ import { IlikeStringSearchInput } from '@common/dto/input/search/string/ilike.st
 import { EqualStringSearchInput } from '@common/dto/input/search/string/equal.string.search.input';
 import { NullableAnyStringSearchInput } from '@common/dto/input/search/string/nullable-any.string.search.input';
 import { NullableInStringSearchInput } from '@common/dto/input/search/string/nullable-in.string.search.input';
+import { IsNullStringSearchInput } from '@common/dto/input/search/string/is-null.string.search.input';
 
 @InputType()
 @ArgsType()
 export class NullableStringSearchInput {
   @Field(() => RegexStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   regex!: Nullable<RegexStringSearchInput>;
 
   @Field(() => LikeStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   like!: Nullable<LikeStringSearchInput>;
 
   @Field(() => EqualStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   equal!: Nullable<EqualStringSearchInput>;
 
   @Field(() => IlikeStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   ilike!: Nullable<IlikeStringSearchInput>;
 
   @Field(() => NullableAnyStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   any!: Nullable<NullableAnyStringSearchInput>;
 
   @Field(() => NullableInStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
   in!: Nullable<NullableInStringSearchInput>;
 
-  @Field(() => Boolean, {
+  @Field(() => IsNullStringSearchInput, {
     nullable: true,
-    defaultValue: null,
   })
-  isNull!: Nullable<boolean>;
+  isNull!: Nullable<IsNullStringSearchInput>;
 }

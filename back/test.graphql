@@ -1,3 +1,9 @@
-query {
-    validateMessageByGroupCodeAndCode(groupCode: "test", code : "test")
+query  {
+    messageGroupEntities(messageGroupEntitiesInput: {
+        search: {code: {equal: {value: "P", not: true}}}
+    }) {
+        list {
+            code
+        }
+    }
 }

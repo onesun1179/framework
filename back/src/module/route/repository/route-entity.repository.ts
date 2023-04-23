@@ -1,5 +1,5 @@
 import { CustomRepository } from '@common/decorator/CustomRepository';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
 import { Nullable } from '@common/type';
 import { PagingInput } from '@common/dto/input/paging.input';
@@ -16,29 +16,16 @@ export class RouteEntityRepository extends Repository<RouteEntity> {
     routesInput: Nullable<RouteEntitiesInput>,
   ): Promise<MessageEntitiesOutput> {
     const qb = this.createQueryBuilder('r');
-    const findOption: FindManyOptions<RouteEntity> = {};
 
     if (routesInput) {
       const { search, sort } = routesInput;
-
-      if (search) {
-        findOption.where = {
-          ...findOption.where,
-          ...UtilSearch.getFindOptionsWhere(search),
-        };
-      }
-
-      if (sort) {
-        findOption.order = {
-          ...findOption.order,
-          ...UtilSort.getFindOptionsOrder(sort),
-        };
-      }
+      search && UtilSearch.setSearchByQB(qb, search);
+      sort && UtilSort.setSortByQB(qb, sort);
     }
 
     return await UtilPaging.getRes({
       pagingInput,
-      builder: qb.setFindOptions(findOption),
+      builder: qb,
       classRef: MessageEntitiesOutput,
     });
   }

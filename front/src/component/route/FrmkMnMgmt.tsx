@@ -48,7 +48,7 @@ const columns: ColumnsType<Menu> = [
 	},
 ];
 
-const MenuManagement: FC = () => {
+const FrmkMnMgmt: FC = () => {
 	const { data, loading } = useQuery<
 		{
 			menus: Menus;
@@ -86,4 +86,4 @@ const MenuManagement: FC = () => {
 	);
 };
 
-export default MenuManagement;
+export default FrmkMnMgmt;

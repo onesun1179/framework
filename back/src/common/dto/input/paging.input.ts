@@ -1,24 +1,19 @@
 import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Nullable } from 'src/common/type';
 
 @InputType()
 @ArgsType()
 export class PagingInput {
-  @Field(() => Int, {
-    nullable: true,
-  })
+  @Field(() => Int)
   @Min(0)
   @IsInt()
   @IsOptional()
-  skip?: Nullable<number>;
+  skip?: number;
 
-  @Field(() => Int, {
-    nullable: true,
-  })
+  @Field(() => Int)
   @Min(1)
   @Max(50)
   @IsInt()
   @IsOptional()
-  take?: Nullable<number>;
+  take?: number;
 }

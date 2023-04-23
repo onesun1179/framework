@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="init.sql" type="DatabaseScript" activateToolWindowBeforeRun="false" nameIsGenerated="true">
+    <script-file value="$PROJECT_DIR$/dump/test.sql" />
+    <script-mode>FILE</script-mode>
+    <data-source id="5527d72d-8238-4771-bb0a-e87b097f3637" />
+    <method v="2" />
+  </configuration>
+</component>

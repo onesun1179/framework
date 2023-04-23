@@ -18,7 +18,7 @@ export class MenuRoleMapEntityRepository extends Repository<MenuRoleMapEntity> {
     menuByAuthsInput: Nullable<MenuRoleMapEntitiesInput>,
   ): Promise<MenuRoleMapEntitiesOutput> {
     const qb = this.createQueryBuilder('menuRoleMap');
-    let order: FindOptionsOrder<MenuRoleMapEntity> = {};
+    const order: FindOptionsOrder<MenuRoleMapEntity> = {};
     let where: FindOptionsWhere<MenuRoleMapEntity> = {};
 
     if (menuByAuthsInput) {
@@ -26,22 +26,13 @@ export class MenuRoleMapEntityRepository extends Repository<MenuRoleMapEntity> {
 
       if (search) {
         if (search.menu) {
-          where.menu = UtilSearch.getFindOptionsWhere(search.menu);
+          where.menu = UtilSearch.getSearchWhere(search.menu);
         }
-        where = {
-          ...where,
-          ...UtilSearch.getFindOptionsWhere(search),
-        };
+        where = UtilSearch.getSearchWhere(search);
       }
 
       if (sort) {
-        if (sort.menu) {
-          order.menu = UtilSort.getFindOptionsOrder(sort.menu);
-        }
-        order = {
-          ...order,
-          ...UtilSort.getFindOptionsOrder(sort),
-        };
+        UtilSort.setSortByQB(qb, sort);
       }
     }
 

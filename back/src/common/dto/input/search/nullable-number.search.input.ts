@@ -1,10 +1,13 @@
-import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { Nullable } from 'src/common/type';
 import { BetweenNumberSearchInput } from '@common/dto/input/search/number/between.number.search.input';
 import { EqualNumberSearchInput } from '@common/dto/input/search/number/equal.number.search.input';
 import { NullableInNumberSearchInput } from '@common/dto/input/search/number/nullable-in.number.search.input';
 import { Type } from 'class-transformer';
 import { NullableAnyNumberSearchInput } from '@common/dto/input/search/number/nullable-any.number.search.input';
+import { LessThanNumberSearchInput } from '@common/dto/input/search/number/less-than.number.search.input';
+import { MoreThanNumberSearchInput } from '@common/dto/input/search/number/more-than.number.search.input';
+import { IsNullNumberSearchInput } from '@common/dto/input/search/number/is-null.number.search.input';
 
 @InputType()
 @ArgsType()
@@ -27,30 +30,20 @@ export class NullableNumberSearchInput {
   @Type(() => NullableInNumberSearchInput)
   in?: Nullable<NullableInNumberSearchInput>;
 
-  @Field(() => Boolean, {
+  @Field(() => IsNullNumberSearchInput, {
     nullable: true,
   })
-  isNull?: Nullable<boolean>;
+  isNull?: Nullable<IsNullNumberSearchInput>;
 
-  @Field(() => Int, {
+  @Field(() => LessThanNumberSearchInput, {
     nullable: true,
   })
-  lessThan?: Nullable<number>;
+  lessThan?: Nullable<LessThanNumberSearchInput>;
 
-  @Field(() => Int, {
+  @Field(() => MoreThanNumberSearchInput, {
     nullable: true,
   })
-  lessThanOrEqual?: Nullable<number>;
-
-  @Field(() => Int, {
-    nullable: true,
-  })
-  moreThan?: Nullable<number>;
-
-  @Field(() => Int, {
-    nullable: true,
-  })
-  moreThanOrEqual?: Nullable<number>;
+  moreThan?: Nullable<MoreThanNumberSearchInput>;
 
   @Field(() => BetweenNumberSearchInput, {
     nullable: true,

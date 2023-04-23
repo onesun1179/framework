@@ -1,0 +1,551 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type AllFrontComponentEntityOutput {
+    createdAt: DateTime!
+    desc: String
+    frontComponent: FrontComponentEntityOutput
+    frontComponentId: String
+    id: String!
+    updatedAt: DateTime!
+}
+
+type CodeMapEntityOutput {
+    childSeqNo: Int!
+    createdAt: DateTime!
+    desc: String
+    parentSeqNo: Int!
+    updatedAt: DateTime!
+}
+
+type FrontComponentEntityOutput {
+    allFrontComponent: AllFrontComponentEntityOutput
+    allFrontComponents: [AllFrontComponentEntityOutput!]!
+    createdAt: DateTime!
+    desc: String
+    id: String!
+    name: String!
+    roles: [RoleEntityOutput!]!
+    routes: [RouteEntityOutput!]!
+    updatedAt: DateTime!
+}
+
+type IconEntityOutput {
+    createdAt: DateTime!
+    desc: String
+    filePath: String!
+    menus: [MenuEntityOutput!]!
+    name: String!
+    seqNo: Int!
+    updatedAt: DateTime!
+}
+
+type IconOutput {
+    filePath: String!
+    name: String!
+    seqNo: Int!
+}
+
+type MenuEntitiesOutput {
+    list: [MenuEntityOutput!]!
+    total: Int!
+}
+
+type MenuEntityOutput {
+    createdAt: DateTime!
+    desc: String
+    iconEntity: IconEntityOutput
+    iconSeqNo: Int
+    name: String!
+    roleEntities: [RoleEntityOutput!]!
+    routeEntity: RouteEntityOutput
+    routeSeqNo: Int
+    seqNo: Int!
+    updatedAt: DateTime!
+}
+
+type MenuOutput {
+    children: [MenuOutput!]!
+    icon: IconOutput
+    iconSeqNo: Int
+    menuSeqNo: Int!
+    name: String!
+    parentSeqNo: Int
+    route: RouteOutput
+    routeSeqNo: Int
+    seqNo: Int!
+}
+
+type MenuRoleMapEntitiesOutput {
+    list: [MenuRoleMapEntity!]!
+    total: Int!
+}
+
+type MenuRoleMapEntity {
+    createdAt: DateTime!
+    desc: String
+    menuEntity: MenuEntityOutput!
+    menuSeqNo: Int!
+    orderNo: Int!
+    parent: MenuRoleMapEntity
+    parentSeqNo: Int
+    roleEntity: RoleEntityOutput!
+    roleSeqNo: Int!
+    seqNo: Int!
+    updatedAt: DateTime!
+}
+
+type MessageEntitiesOutput {
+    list: [MessageEntityOutput!]!
+    total: Int!
+}
+
+type MessageEntityOutput {
+    code: String!
+    createdAt: DateTime!
+    desc: String
+    group: MessageGroupEntityOutput!
+    groupCode: String!
+    name: String!
+    seqNo: Float!
+    text: String!
+    updatedAt: DateTime!
+}
+
+type MessageGroupEntitiesOutput {
+    list: [MessageGroupEntityOutput!]!
+    total: Int!
+}
+
+type MessageGroupEntityOutput {
+    code: String!
+    createdAt: DateTime!
+    desc: String
+    messageEntities: [MessageEntityOutput!]!
+    name: String!
+    updatedAt: DateTime!
+}
+
+type Mutation {
+    deleteMessageEntities(seqNos: [Int!]!): Boolean!
+    deleteMessageEntity(seqNo: Int!): Boolean!
+    insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentEntityInput!): AllFrontComponentEntityOutput!
+    insertFrontComponent(insertFrontComponentInput: InsertFrontComponentEntityInput!): FrontComponentEntityOutput!
+    insertMessageEntity(insertMessageEntityInput: InsertMessageEntityInput!): MessageEntityOutput!
+    insertMessageGroupEntity(insertMessageGroupEntityInput: InsertMessageGroupEntityInput!): MessageGroupEntityOutput!
+    insertRole(insertRoleInput: InsertRoleEntityInput!): RoleEntityOutput!
+    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupEntityInput!): RoleGroupEntityOutput!
+    removeRoleGroup(seqNo: Int!): RoleGroupEntityOutput!
+    updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentEntityInput!): AllFrontComponentEntityOutput!
+    updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentEntityInput!): FrontComponentEntityOutput!
+    updateMessageEntity(updateMessageEntityInput: UpdateMessageEntityInput!): MessageEntityOutput!
+    updateMessageGroupEntity(updateMessageGroupEntityInput: UpdateMessageGroupEntityInput!): MessageGroupEntityOutput
+    updateRole(updateRoleInput: UpdateRoleEntityInput!): RoleEntityOutput!
+    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupEntityInput!): RoleGroupEntityOutput!
+}
+
+type Query {
+    allFrontComponentByAuth(frontComponentId: String!): AllFrontComponentEntityOutput
+    allFrontComponentById(allFrontComponentId: String!): AllFrontComponentEntityOutput!
+    authCheck: Boolean!
+    chkUniqMessageByCode(input: ChkUniqMessageByCodeInput!): Boolean!
+    enableMessageGroupOfCode(code: String!): Boolean!
+    frontComponentById(frontComponentId: String!): FrontComponentEntityOutput!
+    icon(seqNo: Int!): IconOutput!
+    menu(seqNo: Int!): MenuOutput!
+    menuEntities(menusInput: MenuEntitiesInput, pagingInput: PagingInput): MenuEntitiesOutput!
+    menuEntity(seqNo: Int!): MenuEntityOutput!
+    menuRoleMapEntities(menuByAuthsInput: MenuRoleMapEntitiesInput, pagingInput: PagingInput): MenuRoleMapEntitiesOutput!
+    menuRoleMapEntity(seqNo: Int!): MenuRoleMapEntity!
+    menus: [MenuOutput!]!
+    messageEntities(messageEntitiesInput: MessageEntitiesInput, pagingInput: PagingInput): MessageEntitiesOutput!
+    messageEntityByCode(code: String!, groupCode: String!): MessageEntityOutput!
+    messageEntityBySeqNo(seqNo: Int!): MessageEntityOutput!
+    messageGroupEntities(messageGroupEntitiesInput: MessageGroupEntitiesInput, pagingInput: PagingInput): MessageGroupEntitiesOutput!
+    messageGroupEntity(code: String!): MessageGroupEntityOutput!
+    role(seqNo: Int!): RoleGroupEntityOutput
+    roleFrontComponentMap(frontComponentId: String!, roleSeqNo: Int!): RoleFrontComponentMapEntityOutput
+    route(seqNo: Int!): RouteOutput!
+    routeEntities(paging: PagingInput, request: RouteEntitiesInput): RouteEntitiesOutput!
+    routeEntity(seqNo: Int!): RouteEntityOutput!
+    user(id: String!): UserEntityOutput!
+}
+
+type RoleEntityOutput {
+    createdAt: DateTime!
+    desc: String
+    frontComponents: [FrontComponentEntityOutput!]!
+    identifier: String
+    menus: [MenuEntityOutput!]!
+    name: String!
+    roleGroup: RoleGroupEntityOutput
+    roleGroupSeqNo: Int
+    routes: [RouteEntityOutput!]!
+    seqNo: Int!
+    updatedAt: DateTime!
+    users: [UserEntityOutput!]!
+}
+
+type RoleFrontComponentMapEntityOutput {
+    allFrontComponent: AllFrontComponentEntityOutput!
+    allFrontComponentId: String!
+    createdAt: DateTime!
+    desc: String
+    frontComponent: FrontComponentEntityOutput!
+    frontComponentId: String!
+    role: RoleEntityOutput!
+    roleSeqNo: Int!
+    updatedAt: DateTime!
+}
+
+type RoleGroupEntityOutput {
+    children: [RoleGroupEntityOutput!]!
+    createdAt: DateTime!
+    desc: String
+    name: String!
+    parent: RoleGroupEntityOutput
+    parentSeqNo: Int
+    roles: [RoleEntityOutput!]!
+    seqNo: Int!
+    updatedAt: DateTime!
+}
+
+type RouteEntitiesOutput {
+    list: [RouteEntityOutput!]!
+    total: Int!
+}
+
+type RouteEntityOutput {
+    children: [RouteEntityOutput!]!
+    createdAt: DateTime!
+    desc: String
+    frontComponentId: String
+    parentSeqNo: Int
+    path: String!
+    roles: [RoleEntityOutput!]!
+    seqNo: Int!
+    treeInfo: RouteTreeOutput!
+    updatedAt: DateTime!
+}
+
+type RouteOutput {
+    frontComponentId: String
+    parentSeqNo: Int
+    path: String!
+    seqNo: Int!
+    treeInfo: RouteTreeOutput!
+}
+
+type RouteTreeOutput {
+    depth: Int!
+    fullPath: String!
+}
+
+type UserEntityOutput {
+    createdAt: DateTime!
+    desc: String
+    id: String!
+    role: RoleEntityOutput!
+    roleSeqNo: Int!
+    updatedAt: DateTime!
+}
+
+enum SortEnum {
+    ASC
+    DESC
+}
+
+"A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format."
+scalar DateTime
+
+input BetweenNumberSearchInput {
+    from: Int!
+    to: Int!
+}
+
+input ChkUniqMessageByCodeInput {
+    code: String!
+    groupCode: String!
+}
+
+input EqualNumberSearchInput {
+    not: Boolean = false
+    value: Int!
+}
+
+input EqualStringSearchInput {
+    not: Boolean = false
+    value: String!
+}
+
+input IlikeStringSearchInput {
+    not: Boolean = false
+    value: String!
+}
+
+input InsertAllFrontComponentEntityInput {
+    frontComponentId: String
+    id: String!
+}
+
+input InsertFrontComponentEntityInput {
+    allFrontComponentIds: [String!]
+    id: String!
+    roleSeqNos: [Int!]
+    routeSeqNos: [Int!]
+}
+
+input InsertMessageEntityInput {
+    code: String!
+    desc: String
+    groupCode: String!
+    name: String!
+    text: String!
+}
+
+input InsertMessageGroupEntityInput {
+    code: String!
+    desc: String
+    name: String!
+}
+
+input InsertRoleEntityInput {
+    identifier: String
+    menuSeqNos: [Int!]
+    name: String!
+    roleGroupSeqNo: Int
+    routeSeqNos: [Int!]
+    userIds: String
+}
+
+input InsertRoleGroupEntityInput {
+    childSeqNos: [Int!]
+    name: String!
+    parentSeqNo: Int
+    roleSeqNos: [Int!]
+}
+
+input LikeStringSearchInput {
+    not: Boolean = false
+    value: String!
+}
+
+input MenuEntitiesInput {
+    search: MenuEntitiesSearchInput
+    sort: MenuEntitiesSortInput
+}
+
+input MenuEntitiesSearchInput {
+    iconSeqNo: NullableNumberSearchInput
+    name: NonNullableStringSearchInput
+    routeSeqNo: NullableNumberSearchInput
+    seqNo: NonNullableNumberSearchInput
+}
+
+input MenuEntitiesSortInput {
+    seqNo: SortTypeInput
+}
+
+input MenuRoleMapEntitiesInput {
+    search: MenuRoleMapEntitiesSearchInput
+    sort: MenuRoleMapEntitiesSortInput
+}
+
+input MenuRoleMapEntitiesSearchInput {
+    menu: MenuEntitiesSearchInput
+    menuSeqNo: NonNullableNumberSearchInput
+    orderNo: NonNullableNumberSearchInput
+    parentSeqNo: NullableNumberSearchInput
+    roleSeqNo: NonNullableNumberSearchInput
+    seqNo: NonNullableNumberSearchInput
+}
+
+input MenuRoleMapEntitiesSortInput {
+    menu: MenuEntitiesSortInput
+    menuSeqNo: SortTypeInput
+    roleSeqNo: SortTypeInput
+    seqNo: SortTypeInput
+}
+
+input MessageEntitiesInput {
+    search: MessageEntitiesSearchInput
+    sort: MessageEntitiesSortInput
+}
+
+input MessageEntitiesSearchInput {
+    groupCode: NonNullableStringSearchInput
+    groupsInput: MessageGroupEntitiesInput
+    seqNo: NonNullableNumberSearchInput
+    text: NonNullableStringSearchInput
+}
+
+input MessageEntitiesSortInput {
+    code: SortTypeInput
+    createdAt: SortTypeInput
+    desc: SortTypeInput
+    groupCode: SortTypeInput
+    name: SortTypeInput
+    seqNo: SortTypeInput
+    text: SortTypeInput
+    updatedAt: SortTypeInput
+}
+
+input MessageGroupEntitiesInput {
+    search: MessageGroupEntitiesSearchInput
+    sort: MessageGroupEntitiesSortInput
+}
+
+input MessageGroupEntitiesSearchInput {
+    code: NonNullableStringSearchInput
+    name: NonNullableStringSearchInput
+}
+
+input MessageGroupEntitiesSortInput {
+    code: SortTypeInput
+    createdAt: SortTypeInput
+    desc: SortTypeInput
+    name: SortTypeInput
+    updatedAt: SortTypeInput
+}
+
+input NonNullableAnyNumberSearchInput {
+    not: Boolean = false
+    value: [Int!]!
+}
+
+input NonNullableAnyStringSearchInput {
+    not: Boolean = false
+    value: [String!]!
+}
+
+input NonNullableInNumberSearchInput {
+    not: Boolean = false
+    value: [Int!]!
+}
+
+input NonNullableInStringSearchInput {
+    not: Boolean = false
+    value: [String!]!
+}
+
+input NonNullableNumberSearchInput {
+    any: NonNullableAnyNumberSearchInput
+    between: BetweenNumberSearchInput
+    equal: EqualNumberSearchInput
+    in: NonNullableInNumberSearchInput
+    lessThan: Int
+    lessThanOrEqual: Int
+    moreThan: Int
+    moreThanOrEqual: Int
+}
+
+input NonNullableStringSearchInput {
+    any: NonNullableAnyStringSearchInput
+    equal: EqualStringSearchInput
+    ilike: IlikeStringSearchInput
+    in: NonNullableInStringSearchInput
+    like: LikeStringSearchInput
+    regex: RegexStringSearchInput
+}
+
+input NullableAnyNumberSearchInput {
+    not: Boolean = false
+    value: [Int]!
+}
+
+input NullableInNumberSearchInput {
+    not: Boolean = false
+    value: [Int]!
+}
+
+input NullableNumberSearchInput {
+    any: NullableAnyNumberSearchInput
+    between: BetweenNumberSearchInput
+    equal: EqualNumberSearchInput
+    in: NullableInNumberSearchInput
+    isNull: Boolean
+    lessThan: Int
+    lessThanOrEqual: Int
+    moreThan: Int
+    moreThanOrEqual: Int
+}
+
+input PagingInput {
+    skip: Int!
+    take: Int!
+}
+
+input RegexStringSearchInput {
+    not: Boolean = false
+    value: String!
+}
+
+input RouteEntitiesInput {
+    search: RouteEntitiesSearchInput
+    sort: RouteEntitiesSortInput
+}
+
+input RouteEntitiesSearchInput {
+    frontComponentId: NonNullableStringSearchInput
+    parentSeqNo: NullableNumberSearchInput
+    path: NonNullableStringSearchInput
+}
+
+input RouteEntitiesSortInput {
+    code: SortEnum
+    groupCode: SortEnum
+    name: SortEnum
+    seqNo: SortEnum
+    text: SortEnum
+}
+
+input SortTypeInput {
+    order: Int!
+    sort: SortEnum!
+}
+
+input UpdateAllFrontComponentEntityInput {
+    frontComponentId: String
+    id: String!
+}
+
+input UpdateFrontComponentEntityInput {
+    allFrontComponentIds: [String!]
+    id: String
+    roleSeqNos: [Int!]
+    routeSeqNos: [Int!]
+}
+
+input UpdateMessageEntityInput {
+    desc: String
+    name: String
+    seqNo: Float!
+    text: String
+}
+
+input UpdateMessageGroupEntityInput {
+    code: String!
+    desc: String
+    name: String!
+}
+
+input UpdateRoleEntityInput {
+    menuSeqNos: [Int!]
+    name: String
+    roleGroupSeqNo: Int
+    routeSeqNos: [Int!]
+    seqNo: Int!
+    userIds: String
+}
+
+input UpdateRoleGroupEntityInput {
+    childSeqNos: [Int!]
+    name: String
+    parentSeqNo: Int
+    roleSeqNos: [Int!]
+    seqNo: Int!
+}

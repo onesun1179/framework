@@ -8,4 +8,10 @@ export class BetweenNumberSearchInput {
 
   @Field(() => Int)
   to!: number;
+
+  @Field(() => Boolean, {
+    nullable: true,
+    defaultValue: false,
+  })
+  not!: boolean;
 }

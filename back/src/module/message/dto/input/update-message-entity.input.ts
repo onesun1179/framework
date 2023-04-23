@@ -11,5 +11,5 @@ import {
 @ArgsType()
 export class UpdateMessageEntityInput extends IntersectionType(
   PickType(MessageEntity, ['seqNo']),
-  PartialType(PickType(MessageEntity, ['text', 'code', 'groupCode', 'name'])),
+  PartialType(PickType(MessageEntity, ['text', 'name', 'desc'])),
 ) {}

@@ -2,10 +2,8 @@
   "name": "Untitled GraphQL Schema",
   "schemaPath": "./schema.graphql",
   "extensions": {
-
     "endpoints": {
       "Default GraphQL Endpoint": {
-
         "url": "http://localhost:8080/graphql",
         "headers": {
           "Cookie" : "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoSWQiOjIsInVzZXJJZCI6IjEwMjQ5NDEwMTAyNjY3OTMxODc2NCIsImlhdCI6MTY3NzY5MDE5OSwiZXhwIjoxNjc3Nzc2NTk5fQ.UHaK1W7onqFLVMqWgPC6fepoBj9kox4v86HBQtlna1w",

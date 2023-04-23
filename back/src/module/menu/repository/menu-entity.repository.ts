@@ -17,25 +17,13 @@ export class MenuEntityRepository extends Repository<MenuEntity> {
     menusInput: Nullable<MenuEntitiesInput>,
   ): Promise<MenuEntitiesOutput> {
     const qb = this.createQueryBuilder('menu');
-    let order: FindOptionsOrder<MenuEntity> = {};
-    let where: FindOptionsWhere<MenuEntity> = {};
+    const order: FindOptionsOrder<MenuEntity> = {};
+    const where: FindOptionsWhere<MenuEntity> = {};
 
     if (menusInput) {
       const { search, sort } = menusInput;
-
-      if (search) {
-        where = {
-          ...where,
-          ...UtilSearch.getFindOptionsWhere(search),
-        };
-      }
-
-      if (sort) {
-        order = {
-          ...order,
-          ...UtilSort.getFindOptionsOrder(sort),
-        };
-      }
+      search && UtilSearch.setSearchByQB(qb, search);
+      sort && UtilSort.setSortByQB(qb, sort);
     }
 
     return await UtilPaging.getRes({

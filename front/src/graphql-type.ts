@@ -14,8 +14,8 @@ export enum SortEnum {
 }
 
 export interface PagingInput {
-    skip?: Nullable<number>;
-    take?: Nullable<number>;
+    skip: number;
+    take: number;
 }
 
 export interface MenuEntitiesInput {
@@ -34,10 +34,8 @@ export interface NonNullableNumberSearchInput {
     equal?: Nullable<EqualNumberSearchInput>;
     any?: Nullable<NonNullableAnyNumberSearchInput>;
     in?: Nullable<NonNullableInNumberSearchInput>;
-    lessThan?: Nullable<number>;
-    lessThanOrEqual?: Nullable<number>;
-    moreThan?: Nullable<number>;
-    moreThanOrEqual?: Nullable<number>;
+    lessThan?: Nullable<LessThanNumberSearchInput>;
+    moreThan?: Nullable<MoreThanNumberSearchInput>;
     between?: Nullable<BetweenNumberSearchInput>;
 }
 
@@ -56,9 +54,20 @@ export interface NonNullableInNumberSearchInput {
     not?: Nullable<boolean>;
 }
 
+export interface LessThanNumberSearchInput {
+    value: number;
+    not?: Nullable<boolean>;
+}
+
+export interface MoreThanNumberSearchInput {
+    value: number;
+    not?: Nullable<boolean>;
+}
+
 export interface BetweenNumberSearchInput {
     from: number;
     to: number;
+    not?: Nullable<boolean>;
 }
 
 export interface NonNullableStringSearchInput {
@@ -104,11 +113,9 @@ export interface NullableNumberSearchInput {
     equal?: Nullable<EqualNumberSearchInput>;
     any?: Nullable<NullableAnyNumberSearchInput>;
     in?: Nullable<NullableInNumberSearchInput>;
-    isNull?: Nullable<boolean>;
-    lessThan?: Nullable<number>;
-    lessThanOrEqual?: Nullable<number>;
-    moreThan?: Nullable<number>;
-    moreThanOrEqual?: Nullable<number>;
+    isNull?: Nullable<IsNullNumberSearchInput>;
+    lessThan?: Nullable<LessThanNumberSearchInput>;
+    moreThan?: Nullable<MoreThanNumberSearchInput>;
     between?: Nullable<BetweenNumberSearchInput>;
 }
 
@@ -120,6 +127,10 @@ export interface NullableAnyNumberSearchInput {
 export interface NullableInNumberSearchInput {
     value: Nullable<number>[];
     not?: Nullable<boolean>;
+}
+
+export interface IsNullNumberSearchInput {
+    value: boolean;
 }
 
 export interface MenuEntitiesSortInput {
@@ -178,14 +189,9 @@ export interface MessageEntitiesInput {
 
 export interface MessageEntitiesSearchInput {
     seqNo?: Nullable<NonNullableNumberSearchInput>;
-    groupsInput?: Nullable<MessageGroupEntitiesInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
     text?: Nullable<NonNullableStringSearchInput>;
-}
-
-export interface MessageGroupEntitiesInput {
-    code?: Nullable<string>;
-    codes?: Nullable<string[]>;
-    name?: Nullable<string>;
+    groupCode?: Nullable<NonNullableStringSearchInput>;
 }
 
 export interface MessageEntitiesSortInput {
@@ -202,6 +208,24 @@ export interface MessageEntitiesSortInput {
 export interface ChkUniqMessageByCodeInput {
     code: string;
     groupCode: string;
+}
+
+export interface MessageGroupEntitiesInput {
+    search?: Nullable<MessageGroupEntitiesSearchInput>;
+    sort?: Nullable<MessageGroupEntitiesSortInput>;
+}
+
+export interface MessageGroupEntitiesSearchInput {
+    code?: Nullable<NonNullableStringSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+}
+
+export interface MessageGroupEntitiesSortInput {
+    code?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
 }
 
 export interface InsertRoleEntityInput {
@@ -239,13 +263,13 @@ export interface UpdateRoleGroupEntityInput {
 
 export interface UpdateMessageEntityInput {
     seqNo: number;
-    code?: Nullable<string>;
+    desc?: Nullable<string>;
     name?: Nullable<string>;
     text?: Nullable<string>;
-    groupCode?: Nullable<string>;
 }
 
 export interface InsertMessageEntityInput {
+    desc?: Nullable<string>;
     code: string;
     name: string;
     text: string;
@@ -253,15 +277,15 @@ export interface InsertMessageEntityInput {
 }
 
 export interface UpdateMessageGroupEntityInput {
+    desc?: Nullable<string>;
     code: string;
-    name?: Nullable<string>;
-    messageSeqNos?: Nullable<number[]>;
+    name: string;
 }
 
 export interface InsertMessageGroupEntityInput {
+    desc?: Nullable<string>;
     code: string;
     name: string;
-    messageSeqNos?: Nullable<number[]>;
 }
 
 export interface InsertFrontComponentEntityInput {
@@ -306,12 +330,16 @@ export interface MessageEntityOutput {
     name: string;
     text: string;
     groupCode: string;
-    sysYn: boolean;
     group: MessageGroupEntityOutput;
 }
 
 export interface MessageEntitiesOutput {
     list: MessageEntityOutput[];
+    total: number;
+}
+
+export interface MessageGroupEntitiesOutput {
+    list: MessageGroupEntityOutput[];
     total: number;
 }
 
@@ -381,6 +409,7 @@ export interface FrontComponentEntityOutput {
     updatedAt: DateTime;
     desc?: Nullable<string>;
     id: string;
+    name: string;
     allFrontComponent?: Nullable<AllFrontComponentEntityOutput>;
     allFrontComponents: AllFrontComponentEntityOutput[];
     roles: RoleEntityOutput[];
@@ -487,11 +516,6 @@ export interface MenuRoleMapEntitiesOutput {
     total: number;
 }
 
-export interface MessageGroupEntitiesOutput {
-    list: MessageGroupEntityOutput[];
-    total: number;
-}
-
 export interface IQuery {
     authCheck(): boolean | Promise<boolean>;
     user(id: string): UserEntityOutput | Promise<UserEntityOutput>;
@@ -504,14 +528,15 @@ export interface IQuery {
     menu(seqNo: number): MenuOutput | Promise<MenuOutput>;
     menus(): MenuOutput[] | Promise<MenuOutput[]>;
     route(seqNo: number): RouteOutput | Promise<RouteOutput>;
-    routeBySeqNo(seqNo: number): RouteEntityOutput | Promise<RouteEntityOutput>;
-    routes(paging?: Nullable<PagingInput>, request?: Nullable<RouteEntitiesInput>): RouteEntitiesOutput | Promise<RouteEntitiesOutput>;
+    routeEntity(seqNo: number): RouteEntityOutput | Promise<RouteEntityOutput>;
+    routeEntities(paging?: Nullable<PagingInput>, request?: Nullable<RouteEntitiesInput>): RouteEntitiesOutput | Promise<RouteEntitiesOutput>;
     messageEntityBySeqNo(seqNo: number): MessageEntityOutput | Promise<MessageEntityOutput>;
     messageEntityByCode(groupCode: string, code: string): MessageEntityOutput | Promise<MessageEntityOutput>;
     messageEntities(pagingInput?: Nullable<PagingInput>, messageEntitiesInput?: Nullable<MessageEntitiesInput>): MessageEntitiesOutput | Promise<MessageEntitiesOutput>;
     chkUniqMessageByCode(input: ChkUniqMessageByCodeInput): boolean | Promise<boolean>;
+    enableMessageGroupOfCode(code: string): boolean | Promise<boolean>;
     messageGroupEntity(code: string): MessageGroupEntityOutput | Promise<MessageGroupEntityOutput>;
-    messageGroupEntities(paging?: Nullable<PagingInput>, request?: Nullable<MessageGroupEntitiesInput>): MessageGroupEntitiesOutput | Promise<MessageGroupEntitiesOutput>;
+    messageGroupEntities(pagingInput?: Nullable<PagingInput>, messageGroupEntitiesInput?: Nullable<MessageGroupEntitiesInput>): MessageGroupEntitiesOutput | Promise<MessageGroupEntitiesOutput>;
     frontComponentById(frontComponentId: string): FrontComponentEntityOutput | Promise<FrontComponentEntityOutput>;
     allFrontComponentById(allFrontComponentId: string): AllFrontComponentEntityOutput | Promise<AllFrontComponentEntityOutput>;
     allFrontComponentByAuth(frontComponentId: string): Nullable<AllFrontComponentEntityOutput> | Promise<Nullable<AllFrontComponentEntityOutput>>;

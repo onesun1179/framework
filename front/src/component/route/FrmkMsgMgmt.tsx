@@ -1,14 +1,16 @@
-import React, { FC, useCallback, useMemo, useState } from "react";
+/**
+ * 프레임워크 메뉴 관리
+ */
+import React, { FC, useMemo, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
 	InsertMessageEntityInput,
 	MessageEntitiesInput,
 	MessageEntitiesOutput,
+	MessageEntitiesSearchInput,
 	MessageEntitiesSortInput,
 	MessageEntityOutput,
 	PagingInput,
-	SortEnum,
-	SortTypeInput,
 	UpdateMessageEntityInput,
 } from "@gqlType";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
@@ -18,11 +20,13 @@ import {
 	MessageEntityFormActionType,
 } from "@src/component/form/MessageEntityForm";
 import { MessageEntityDescriptions } from "@src/component/descriptions/MessageEntityDescriptions";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, ColumnType } from "antd/es/table";
 import { useQueryObj } from "@src/hooks";
-import { SortQueryKeyMapType, SortQueryObjType, UtilTable } from "@src/Util";
-import { invert, mapValues, pick } from "lodash";
-import { Nullable } from "@src/types";
+import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
+import { UtilRefetch } from "@src/Util/Util.refetch";
+import { usePaging } from "@src/hooks/usePaging";
+import { useMentionsState } from "@src/hooks/useMentionsState";
+import { useQrySort } from "@src/hooks/useQrySort";
 
 const UPDATE_MESSAGE_ENTITY = gql`
 	mutation UPDATE_MESSAGE_ENTITY($input: UpdateMessageEntityInput!) {
@@ -39,8 +43,8 @@ const INSERT_MESSAGE_ENTITY = gql`
 		}
 	}
 `;
-const MESSAGE_ENTITIES_QUERY = gql`
-	query MESSAGE_ENTITIES_QUERY(
+export const MESSAGE_ENTITIES_TABLE_QUERY = gql`
+	query MESSAGE_ENTITIES_TABLE_QUERY(
 		$paging: PagingInput
 		$param: MessageEntitiesInput
 	) {
@@ -51,7 +55,6 @@ const MESSAGE_ENTITIES_QUERY = gql`
 				text
 				code
 				groupCode
-				sysYn
 				createdAt
 				updatedAt
 				desc
@@ -61,18 +64,10 @@ const MESSAGE_ENTITIES_QUERY = gql`
 	}
 `;
 
-type MessageManagementQueryObj = SortQueryKeyMapType<
-	| "sort_nm"
-	| "sort_cd"
-	| "sort_gpcd"
-	| "sort_msg"
-	| "sort_no"
-	| "sort_desc"
-	| "sort_cat"
-	| "sort_uat",
-	keyof MessageEntitiesSortInput
+type SrtQryKey = SortQueryKeyType<
+	"nm" | "cd" | "gpcd" | "msg" | "no" | "desc" | "cat" | "uat"
 >;
-const messageManagementQueryObj: MessageManagementQueryObj = {
+const srtQryMap: Record<SrtQryKey, keyof MessageEntitiesSortInput> = {
 	sort_gpcd: "groupCode",
 	sort_cd: "code",
 	sort_msg: "text",
@@ -82,24 +77,44 @@ const messageManagementQueryObj: MessageManagementQueryObj = {
 	sort_cat: "createdAt",
 	sort_uat: "updatedAt",
 };
+type SrchQryKey = SearchQueryKeyType<"nm" | "no" | "gpcd" | "msg">;
+const srchQryMap: Record<SrchQryKey, keyof MessageEntitiesSearchInput> = {
+	srch_no: "seqNo",
+	srch_msg: "text",
+	srch_nm: "name",
+	srch_gpcd: "groupCode",
+};
+type QryObj = typeof srtQryMap & typeof srchQryMap;
+const qryObj: QryObj = {
+	...srtQryMap,
+	...srchQryMap,
+};
 
-const MessageManagement: FC = () => {
+const FrmkMsgMgmt: FC = () => {
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
-		useQueryObj<Partial<SortQueryObjType>>();
-	const [record, setRecord] = useState<MessageEntityOutput>();
+		useQueryObj<Partial<QryObj>>();
 
-	const [pageSize, setPageSize] = useState(10);
+	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
+		useMentionsState<MessageEntityOutput>();
+	const { getColumnSort } = useQrySort(srtQryMap);
+	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
+		usePaging(10);
 	const [form] = Form.useForm<MessageEntityOutput>();
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<MessageEntityFormActionType>();
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
-		() => UtilTable.toSortInputType(queryObj, messageManagementQueryObj),
+		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
 
-	const { data, loading, refetch, previousData } = useQuery<
+	const searchInputType = useMemo(
+		() => UtilTable.toSortInputType(queryObj, qryObj),
+		[queryObj]
+	);
+
+	const { data, loading, previousData } = useQuery<
 		{
 			messageEntities: MessageEntitiesOutput;
 		},
@@ -107,12 +122,9 @@ const MessageManagement: FC = () => {
 			paging?: PagingInput;
 			param?: MessageEntitiesInput;
 		}
-	>(MESSAGE_ENTITIES_QUERY, {
+	>(MESSAGE_ENTITIES_TABLE_QUERY, {
 		variables: {
-			paging: {
-				skip: 0,
-				take: pageSize,
-			},
+			paging: pagingInput,
 			param: {
 				sort: sortInputType,
 			},
@@ -125,7 +137,7 @@ const MessageManagement: FC = () => {
 		}
 	>(UPDATE_MESSAGE_ENTITY, {
 		async onCompleted() {
-			await refetch();
+			await UtilRefetch.message();
 		},
 	});
 
@@ -136,107 +148,67 @@ const MessageManagement: FC = () => {
 		}
 	>(INSERT_MESSAGE_ENTITY, {
 		async onCompleted() {
-			await refetch();
+			await UtilRefetch.message();
 		},
 	});
-	const changeSort = useCallback(
-		(queryKey: keyof MessageEntitiesSortInput) => {
-			const sortKey = invert(messageManagementQueryObj)[queryKey] as Nullable<
-				keyof MessageManagementQueryObj
-			>;
-
-			if (sortKey) {
-				const t = mapValues(
-					pick(queryObj, Object.keys(messageManagementQueryObj)),
-					UtilTable.toSortTypeInput.bind(UtilTable)
-				);
-				Object.keys(t).forEach(searchParams.delete.bind(searchParams));
-				const a = (
-					Object.entries(t) as Array<
-						[keyof MessageManagementQueryObj, Nullable<SortTypeInput>]
-					>
-				)
-					.filter((o) => !!o[1] && o[0] !== sortKey)
-					.sort((a, b) => {
-						return a[1]!.order - b[1]!.order;
-					})
-					.map((o, i) => {
-						o[1]!.order = i + 1;
-						return o;
-					});
-
-				const maxOrder = Math.max(...[...a.map((o) => o[1]!.order), 0]);
-
-				switch (t[sortKey]?.sort) {
-					case "ASC":
-						a.push([
-							sortKey,
-							{
-								sort: SortEnum.DESC,
-								order: maxOrder + 1,
-							},
-						]);
-						break;
-					case "DESC":
-						break;
-					default:
-						a.push([
-							sortKey,
-							{
-								sort: SortEnum.ASC,
-								order: maxOrder + 1,
-							},
-						]);
-						break;
-				}
-
-				a.forEach(([k, v]) => {
-					const query = UtilTable.toSortQueryValue(v);
-					console.log(k, query);
-					query && searchParams.set(k, query);
-				});
-				setSearchParams(searchParams);
-			}
-		},
-		[searchParams, queryObj]
-	);
 
 	const columns: ColumnsType<MessageEntityOutput> = useMemo(
 		() =>
-			UtilTable.makeColumns<MessageEntityOutput, typeof sortInputType>(
+			(
 				[
 					{
 						key: "seqNo",
+						dataIndex: "seqNo",
+						title: "ID",
 						width: 20,
 						align: "center",
 					},
 					{
 						key: "name",
+						dataIndex: "name",
+						title: "이름",
 					},
 					{
 						key: "groupCode",
+						dataIndex: "groupCode",
+						title: "그룹 코드",
 						width: 110,
 						align: "center",
 					},
 					{
 						key: "code",
+						dataIndex: "code",
+						title: "코드",
 						width: 80,
 						align: "center",
 					},
 					{
 						key: "text",
+						dataIndex: "text",
+						title: "메세지",
 					},
 					{
 						key: "desc",
+						dataIndex: "desc",
+						title: "비고",
 						width: 80,
 					},
 					{
 						key: "createdAt",
+						dataIndex: "createdAt",
+						title: "생성일자",
 						width: 220,
 					},
-					{ key: "updatedAt", width: 220 },
+					{
+						key: "updatedAt",
+						dataIndex: "updatedAt",
+						title: "수정일자",
+						width: 220,
+					},
 					{
 						key: "action",
+						dataIndex: "action",
+						title: "액션",
 						width: 100,
 						render(value, record, index) {
 							return (
@@ -266,40 +238,20 @@ const MessageManagement: FC = () => {
 							);
 						},
 					},
-				],
-				{
-					seqNo: "ID",
-					code: "코드",
-					text: "메세지",
-					groupCode: "그룹코드",
-					name: "이름",
-					desc: "비고",
-					createdAt: "생성일자",
-					updatedAt: "수정일자",
-					action: "액션",
-				},
-				{
-					sort: {
-						map: sortInputType,
-						change: changeSort,
-					},
-				}
-			),
-		[
-			queryObj,
-			record,
-			setActionType,
-			setFormDrawerOpenYn,
-			form,
-			changeSort,
-			sortInputType,
-		]
+				] as Array<ColumnType<MessageEntityOutput>>
+			).map((o) => {
+				return {
+					...o,
+					...getColumnSort(o),
+				};
+			}),
+		[queryObj, record, setActionType, setFormDrawerOpenYn, form, getColumnSort]
 	);
 
 	return (
 		<>
 			{contextHolder}
-			<Drawer onClose={() => setRecord(undefined)} open={!!record}>
+			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
 				<MessageEntityDescriptions record={record} />
 			</Drawer>
 
@@ -323,27 +275,28 @@ const MessageManagement: FC = () => {
 													name: record.name,
 													text: record.text,
 													code: record.code,
+													desc: record.desc,
 												},
 											},
 										});
-										await refetch();
+
+										await UtilRefetch.message();
 										break;
 									case "update":
 										await updateMessageEntityMutate({
 											variables: {
 												input: {
 													seqNo: record.seqNo,
-													groupCode: record.groupCode,
 													name: record.name,
 													text: record.text,
-													code: record.code,
+													desc: record.desc,
 												},
 											},
 										});
-										await refetch();
+										await UtilRefetch.message();
 										break;
 								}
-
+								setFormDrawerOpenYn(false);
 								await messageApi.success("성공");
 							}}
 						>
@@ -371,7 +324,7 @@ const MessageManagement: FC = () => {
 							icon={<ReloadOutlined />}
 							type={"primary"}
 							onClick={() => {
-								refetch();
+								UtilRefetch.message();
 							}}
 						/>
 					</Space>
@@ -379,7 +332,20 @@ const MessageManagement: FC = () => {
 				<Layout.Content>
 					<Table
 						bordered
-						pagination={{ pageSize }}
+						pagination={{
+							showSizeChanger: true,
+							pageSizeOptions: [10, 20, 50],
+							onShowSizeChange: (_, take) => setTake(take),
+							pageSize: pagingInput.take,
+							current,
+							total: data?.messageEntities.total,
+							onChange(page, take) {
+								setPagingInput({
+									take,
+									skip: makeSkip(page),
+								});
+							},
+						}}
 						loading={loading}
 						columns={columns}
 						rowKey={"seqNo"}
@@ -387,7 +353,10 @@ const MessageManagement: FC = () => {
 							data?.messageEntities.list || previousData?.messageEntities.list
 						}
 						onRow={(value) => ({
-							onClick: () => setRecord(value),
+							onClick: () => {
+								setRecord(value);
+								setMentionsShowYn(true);
+							},
 						})}
 					/>
 				</Layout.Content>
@@ -396,4 +365,4 @@ const MessageManagement: FC = () => {
 	);
 };
 
-export default MessageManagement;
+export default FrmkMsgMgmt;

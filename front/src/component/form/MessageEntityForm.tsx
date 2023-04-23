@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { ChkUniqMessageByCodeInput, MessageEntityOutput } from "@gqlType";
 import { Form, FormProps, Input } from "antd";
 import { MessageGroupEntitiesSelect } from "@src/component/select";
@@ -19,6 +19,7 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 }) => {
 	const client = useApolloClient();
 	const [form] = Form.useForm<MessageEntityOutput>(props.form);
+	const updateYn = useMemo(() => actionType === "update", [actionType]);
 	const checkUnique = async (col: "code" | "groupCode", value: string) => {
 		const _t = col === "code" ? "groupCode" : "code";
 		const _v = form.getFieldValue(_t) as string;
@@ -49,7 +50,7 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 
 	return (
 		<Form<MessageEntityOutput> layout={"vertical"} {...props}>
-			{actionType === "update" && (
+			{updateYn && (
 				<Form.Item label={`ID`} name={"seqNo"}>
 					<Input disabled />
 				</Form.Item>
@@ -75,12 +76,12 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 					},
 					{
 						async validator(rule, groupCode) {
-							await checkUnique("groupCode", groupCode);
+							if (!updateYn) await checkUnique("groupCode", groupCode);
 						},
 					},
 				]}
 			>
-				<MessageGroupEntitiesSelect />
+				<MessageGroupEntitiesSelect disabled={updateYn} />
 			</Form.Item>
 			<Form.Item
 				label={`코드`}
@@ -95,12 +96,12 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 					},
 					{
 						async validator(rule, code) {
-							await checkUnique("code", code);
+							if (!updateYn) await checkUnique("code", code);
 						},
 					},
 				]}
 			>
-				<Input maxLength={4} minLength={4} />
+				<Input maxLength={4} minLength={4} disabled={updateYn} />
 			</Form.Item>
 			<Form.Item
 				label={`메세지`}
@@ -116,7 +117,7 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 			<Form.Item label={`비고`} name={"desc"}>
 				<Input />
 			</Form.Item>
-			{actionType === "update" && (
+			{updateYn && (
 				<>
 					<Form.Item label={`생성일자`} name={"createdAt"}>
 						<Input disabled />

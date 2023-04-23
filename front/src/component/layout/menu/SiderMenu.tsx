@@ -107,14 +107,7 @@ const SiderMenu: FC = () => {
 		return [];
 	}, [data]);
 
-	return (
-		<Menu
-			theme="dark"
-			defaultSelectedKeys={["1"]}
-			mode="inline"
-			items={items}
-		/>
-	);
+	return <Menu theme={"dark"} mode="inline" items={items} />;
 };
 
 export default SiderMenu;

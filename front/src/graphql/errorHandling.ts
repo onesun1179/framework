@@ -10,7 +10,6 @@ export const onErrorLink = onError(
 			if (
 				graphQLErrors.every((o) => {
 					console.log("graphqlErrors", o);
-					console.log(document.cookie);
 					switch (o.extensions.code) {
 						case "UNAUTHENTICATED":
 							location.href = import.meta.env.VITE_LOGIN_URL;

@@ -8,4 +8,5 @@ export class InsertMessageEntityInput extends PickType(MessageEntity, [
   'code',
   'groupCode',
   'name',
+  'desc',
 ]) {}

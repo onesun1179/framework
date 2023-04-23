@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationPipe } from '@nestjs/common/pipes';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -18,11 +17,17 @@ async function bootstrap() {
   //   .setVersion('1.0')
   //   .addTag('cats')
   //   .build();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //     exceptionFactory: (validationErrors) => {
+  //       validationErrors.forEach((o) => {
+  //         console.log(o);
+  //       });
+  //       return new BadRequestException(validationErrors);
+  //     },
+  //   }),
+  // );
 
   app.useStaticAssets(join(__dirname, '..', 'resource'));
   // app.useGlobalFilters(new GqlErrorFilter());

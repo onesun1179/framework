@@ -1,4 +1,4 @@
-import { Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 import { Nullable } from '@common/type';
@@ -16,6 +16,10 @@ export class FrontComponentEntity extends CommonEntity {
   @PrimaryColumn()
   @Field()
   id!: string;
+
+  @Column()
+  @Field()
+  name!: string;
 
   @OneToMany(() => AllFrontComponentEntity, (o) => o.frontComponent, {
     nullable: true,

@@ -1,34 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "antd/dist/reset.css";
-import {
-	ApolloClient,
-	ApolloLink,
-	ApolloProvider,
-	gql,
-	HttpLink,
-	InMemoryCache,
-} from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NonIndexRouteObject } from "react-router/dist/lib/context";
-import { onErrorLink } from "./graphql/errorHandling";
 import FrontCRoute from "@src/component/common/FrontCRoute";
-import { RouteEntity, RoutesOutput } from "@gqlType";
-
-const client = new ApolloClient({
-	cache: new InMemoryCache(),
-	connectToDevTools: true,
-	link: ApolloLink.from([
-		onErrorLink,
-		new HttpLink({
-			uri: `${location.origin}/graphql`,
-		}),
-	]),
-});
+import { RouteEntitiesOutput, RouteEntityOutput } from "@gqlType";
+import { AntdConfigProvider } from "@src/component/config/AntdConfigProvider";
+import { apolloClient } from "@src/graphql/apolloClient";
 
 const ROUTES_QUERY = gql`
 	query ROUTES {
-		routes(request: { search: { parentSeqNo: { isNull: true } } }) {
+		routeEntities(
+			request: { search: { parentSeqNo: { isNull: { value: true } } } }
+		) {
 			list {
 				seqNo
 				parentSeqNo
@@ -92,12 +77,12 @@ const ROUTES_QUERY = gql`
 	}
 `;
 
-type RouteType = RouteEntity & {
+type RouteType = RouteEntityOutput & {
 	children: Array<RouteType>;
 };
 
-const { data } = await client.query<{
-	routes: RoutesOutput;
+const { data } = await apolloClient.query<{
+	routeEntities: RouteEntitiesOutput;
 }>({
 	query: ROUTES_QUERY,
 });
@@ -115,12 +100,14 @@ function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 	};
 }
 
-const router = createBrowserRouter(
-	data.routes.list.map((o) => makeRouteObject(o))
-);
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-	<ApolloProvider client={client}>
-		<RouterProvider router={router} />
+	<ApolloProvider client={apolloClient}>
+		<AntdConfigProvider>
+			<RouterProvider
+				router={createBrowserRouter(
+					data.routeEntities.list.map(makeRouteObject)
+				)}
+			/>
+		</AntdConfigProvider>
 	</ApolloProvider>
 );

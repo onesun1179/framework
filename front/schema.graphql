@@ -25,12 +25,16 @@ type MessageEntityOutput {
   name: String!
   text: String!
   groupCode: String!
-  sysYn: Boolean!
   group: MessageGroupEntityOutput!
 }
 
 type MessageEntitiesOutput {
   list: [MessageEntityOutput!]!
+  total: Int!
+}
+
+type MessageGroupEntitiesOutput {
+  list: [MessageGroupEntityOutput!]!
   total: Int!
 }
 
@@ -100,6 +104,7 @@ type FrontComponentEntityOutput {
   updatedAt: DateTime!
   desc: String
   id: String!
+  name: String!
   allFrontComponent: AllFrontComponentEntityOutput
   allFrontComponents: [AllFrontComponentEntityOutput!]!
   roles: [RoleEntityOutput!]!
@@ -206,11 +211,6 @@ type MenuRoleMapEntitiesOutput {
   total: Int!
 }
 
-type MessageGroupEntitiesOutput {
-  list: [MessageGroupEntityOutput!]!
-  total: Int!
-}
-
 type Query {
   authCheck: Boolean!
   user(id: String!): UserEntityOutput!
@@ -223,14 +223,15 @@ type Query {
   menu(seqNo: Int!): MenuOutput!
   menus: [MenuOutput!]!
   route(seqNo: Int!): RouteOutput!
-  routeBySeqNo(seqNo: Int!): RouteEntityOutput!
-  routes(paging: PagingInput, request: RouteEntitiesInput): RouteEntitiesOutput!
+  routeEntity(seqNo: Int!): RouteEntityOutput!
+  routeEntities(paging: PagingInput = null, request: RouteEntitiesInput): RouteEntitiesOutput!
   messageEntityBySeqNo(seqNo: Int!): MessageEntityOutput!
   messageEntityByCode(groupCode: String!, code: String!): MessageEntityOutput!
   messageEntities(pagingInput: PagingInput, messageEntitiesInput: MessageEntitiesInput): MessageEntitiesOutput!
   chkUniqMessageByCode(input: ChkUniqMessageByCodeInput!): Boolean!
+  enableMessageGroupOfCode(code: String!): Boolean!
   messageGroupEntity(code: String!): MessageGroupEntityOutput!
-  messageGroupEntities(paging: PagingInput, request: MessageGroupEntitiesInput): MessageGroupEntitiesOutput!
+  messageGroupEntities(pagingInput: PagingInput, messageGroupEntitiesInput: MessageGroupEntitiesInput): MessageGroupEntitiesOutput!
   frontComponentById(frontComponentId: String!): FrontComponentEntityOutput!
   allFrontComponentById(allFrontComponentId: String!): AllFrontComponentEntityOutput!
   allFrontComponentByAuth(frontComponentId: String!): AllFrontComponentEntityOutput
@@ -238,8 +239,8 @@ type Query {
 }
 
 input PagingInput {
-  skip: Int
-  take: Int
+  skip: Int!
+  take: Int!
 }
 
 input MenuEntitiesInput {
@@ -258,10 +259,8 @@ input NonNullableNumberSearchInput {
   equal: EqualNumberSearchInput
   any: NonNullableAnyNumberSearchInput
   in: NonNullableInNumberSearchInput
-  lessThan: Int
-  lessThanOrEqual: Int
-  moreThan: Int
-  moreThanOrEqual: Int
+  lessThan: LessThanNumberSearchInput
+  moreThan: MoreThanNumberSearchInput
   between: BetweenNumberSearchInput
 }
 
@@ -280,18 +279,29 @@ input NonNullableInNumberSearchInput {
   not: Boolean = false
 }
 
+input LessThanNumberSearchInput {
+  value: Int!
+  not: Boolean = false
+}
+
+input MoreThanNumberSearchInput {
+  value: Int!
+  not: Boolean = false
+}
+
 input BetweenNumberSearchInput {
   from: Int!
   to: Int!
+  not: Boolean = false
 }
 
 input NonNullableStringSearchInput {
-  regex: RegexStringSearchInput = null
-  like: LikeStringSearchInput = null
-  equal: EqualStringSearchInput = null
-  ilike: IlikeStringSearchInput = null
-  any: NonNullableAnyStringSearchInput = null
-  in: NonNullableInStringSearchInput = null
+  regex: RegexStringSearchInput
+  like: LikeStringSearchInput
+  equal: EqualStringSearchInput
+  ilike: IlikeStringSearchInput
+  any: NonNullableAnyStringSearchInput
+  in: NonNullableInStringSearchInput
 }
 
 input RegexStringSearchInput {
@@ -328,11 +338,9 @@ input NullableNumberSearchInput {
   equal: EqualNumberSearchInput
   any: NullableAnyNumberSearchInput
   in: NullableInNumberSearchInput
-  isNull: Boolean
-  lessThan: Int
-  lessThanOrEqual: Int
-  moreThan: Int
-  moreThanOrEqual: Int
+  isNull: IsNullNumberSearchInput
+  lessThan: LessThanNumberSearchInput
+  moreThan: MoreThanNumberSearchInput
   between: BetweenNumberSearchInput
 }
 
@@ -344,6 +352,10 @@ input NullableAnyNumberSearchInput {
 input NullableInNumberSearchInput {
   value: [Int]!
   not: Boolean = false
+}
+
+input IsNullNumberSearchInput {
+  value: Boolean!
 }
 
 input MenuEntitiesSortInput {
@@ -407,14 +419,9 @@ input MessageEntitiesInput {
 
 input MessageEntitiesSearchInput {
   seqNo: NonNullableNumberSearchInput
-  groupsInput: MessageGroupEntitiesInput
+  name: NonNullableStringSearchInput
   text: NonNullableStringSearchInput
-}
-
-input MessageGroupEntitiesInput {
-  code: String
-  codes: [String!]
-  name: String
+  groupCode: NonNullableStringSearchInput
 }
 
 input MessageEntitiesSortInput {
@@ -431,6 +438,24 @@ input MessageEntitiesSortInput {
 input ChkUniqMessageByCodeInput {
   code: String!
   groupCode: String!
+}
+
+input MessageGroupEntitiesInput {
+  search: MessageGroupEntitiesSearchInput
+  sort: MessageGroupEntitiesSortInput
+}
+
+input MessageGroupEntitiesSearchInput {
+  code: NonNullableStringSearchInput
+  name: NonNullableStringSearchInput
+}
+
+input MessageGroupEntitiesSortInput {
+  code: SortTypeInput
+  name: SortTypeInput
+  desc: SortTypeInput
+  createdAt: SortTypeInput
+  updatedAt: SortTypeInput
 }
 
 type Mutation {
@@ -486,13 +511,13 @@ input UpdateRoleGroupEntityInput {
 
 input UpdateMessageEntityInput {
   seqNo: Float!
-  code: String
+  desc: String
   name: String
   text: String
-  groupCode: String
 }
 
 input InsertMessageEntityInput {
+  desc: String
   code: String!
   name: String!
   text: String!
@@ -500,15 +525,15 @@ input InsertMessageEntityInput {
 }
 
 input UpdateMessageGroupEntityInput {
+  desc: String
   code: String!
-  name: String
-  messageSeqNos: [Int!]
+  name: String!
 }
 
 input InsertMessageGroupEntityInput {
+  desc: String
   code: String!
   name: String!
-  messageSeqNos: [Int!]
 }
 
 input InsertFrontComponentEntityInput {
