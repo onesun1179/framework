@@ -18,6 +18,9 @@ import { RoleGroupEntityRepository } from '@modules/role/repository/role-group-e
 import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
 import { InsertRoleGroupEntityInput } from '@modules/role/dto/input/insert-role-group-entity.input';
 import { UpdateRoleGroupEntityInput } from '@modules/role/dto/input/update-role-group-entity.input';
+import { PagingInput } from '@common/dto/input/paging.input';
+import { RoleGroupEntitiesOutput } from '@modules/role/dto/output/role-group-entities.output';
+import { RoleGroupEntitiesInput } from '@modules/role/dto/input/role-group-entities.input';
 
 @Resolver(() => RoleGroupEntity)
 export class RoleGroupEntityResolver {
@@ -32,13 +35,24 @@ export class RoleGroupEntityResolver {
   /**************************************
    *              QUERY
    ***************************************/
-  @Query(() => RoleGroupEntity, {
-    nullable: true,
-  })
-  async role(
-    @Args('seqNo', { type: () => Int }) seqNo: RoleGroupEntity['seqNo'],
-  ) {
-    return await RoleGroupEntity.findOneBy({ seqNo });
+
+  @Query(() => RoleGroupEntitiesOutput)
+  async roleGroupEntities(
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput: PagingInput,
+    @Args('roleGroupEntitiesInput', {
+      type: () => RoleGroupEntitiesInput,
+      nullable: true,
+    })
+    roleGroupEntitiesInput: RoleGroupEntitiesInput,
+  ): Promise<RoleGroupEntitiesOutput> {
+    return await this.roleGroupRepository.paging(
+      pagingInput,
+      roleGroupEntitiesInput,
+    );
   }
 
   /**************************************

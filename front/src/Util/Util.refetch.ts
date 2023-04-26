@@ -1,22 +1,19 @@
+import { mapValues } from "lodash";
 import { apolloClient } from "@src/graphql/apolloClient";
-import { MESSAGE_ENTITIES_CONFIG_QUERY } from "@src/component/config/AntdConfigProvider";
-import { MESSAGE_ENTITIES_TABLE_QUERY } from "@src/component/route/FrmkMsgMgmt";
-import { ENABLE_MESSAGE_GROUP_OF_CODE_QUERY } from "@src/component/form/MessageGroupEntityForm";
-import { MESSAGE_GROUP_ENTITIES_TABLE_QUERY } from "@src/component/route/FrmkMsgGrpMgmt";
 
-export const UtilRefetch = {
-	async messageGroup() {
-		await apolloClient.refetchQueries({
-			include: [
-				MESSAGE_GROUP_ENTITIES_TABLE_QUERY,
-				ENABLE_MESSAGE_GROUP_OF_CODE_QUERY,
-			],
-		});
-	},
-	async message() {
-		await this.messageGroup();
-		await apolloClient.refetchQueries({
-			include: [MESSAGE_ENTITIES_CONFIG_QUERY, MESSAGE_ENTITIES_TABLE_QUERY],
-		});
-	},
+import { FRMK_MSG_GRK_MGMT_DATA } from "@src/component/route/FrmkMsgGrpMgmt/quires";
+import { FRMK_FRNT_CMPNT_MGMT_DATA } from "@src/component/route/FrmkFrntCmpntMgmt/quires";
+import { FRMK_MSG_MGMT_DATA } from "@src/component/route/FrmkMsgMgmt/quires";
+
+export const refetchQueryMap = {
+	messageGroup: [FRMK_MSG_GRK_MGMT_DATA],
+	message: [FRMK_MSG_MGMT_DATA],
+	allFrontComponent: [FRMK_FRNT_CMPNT_MGMT_DATA],
+	frontComponent: [FRMK_FRNT_CMPNT_MGMT_DATA],
 };
+export const UtilRefetch = mapValues(refetchQueryMap, (o) => {
+	return async () =>
+		await apolloClient.refetchQueries({
+			include: o,
+		});
+});

@@ -8,4 +8,13 @@ export const All_FRONT_COMPONENT: {
 	FrmkMnMgmt: lazy(() => import("@src/component/route/FrmkMnMgmt")),
 	FrmkMsgMgmt: lazy(() => import("@src/component/route/FrmkMsgMgmt")),
 	FrmkMsgGrpMgmt: lazy(() => import("@src/component/route/FrmkMsgGrpMgmt")),
+	FrmkAllFrntCmpntMgmt: lazy(
+		() => import("@src/component/route/FrmkAllFrntCmpntMgmt")
+	),
+	FrmkFrntCmpntMgmt: lazy(
+		() => import("@src/component/route/FrmkFrntCmpntMgmt")
+	),
+	RoleByFrntCmpntMgmt: lazy(
+		() => import("@src/component/route/RoleByFrntCmpntMgmt")
+	),
 };

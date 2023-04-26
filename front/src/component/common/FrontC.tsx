@@ -2,9 +2,9 @@ import React, { FC, PropsWithChildren, useEffect, useMemo } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { All_FRONT_COMPONENT } from "@src/constants/component.constant";
 
-const ALL_FRONT_COMPONENT_BY_AUTH = gql`
-	query ALL_FRONT_COMPONENT_BY_AUTH($frontComponentId: String!) {
-		data: allFrontComponentByAuth(frontComponentId: $frontComponentId) {
+const ALL_FRONT_COMPONENT_BY_FC_ID = gql`
+	query ALL_FRONT_COMPONENT_BY_FC_ID($frontComponentId: String!) {
+		data: allFrontComponentByFcId(frontComponentId: $frontComponentId) {
 			id
 		}
 	}
@@ -15,7 +15,7 @@ const FrontC: FC<
 		frontComponentId?: string;
 	}>
 > = ({ frontComponentId, children }) => {
-	const { data } = useQuery(ALL_FRONT_COMPONENT_BY_AUTH, {
+	const { data } = useQuery(ALL_FRONT_COMPONENT_BY_FC_ID, {
 		skip: !frontComponentId,
 		variables: {
 			frontComponentId,

@@ -1,9 +1,14 @@
-query  {
-    messageGroupEntities(messageGroupEntitiesInput: {
-        search: {code: {equal: {value: "P", not: true}}}
-    }) {
+
+query ($roleSeqNo : Int! = 2){
+    frontComponentEntities {
         list {
-            code
+            id
+            name
+            allFrontComponentByRole(roleSeqNo: $roleSeqNo) {
+                id
+
+            }
+
         }
     }
 }

@@ -5,3 +5,4 @@ export type QueryObj<K extends string = string> = Record<K, string>;
 export type PartialRecord<K extends keyof any, T> = {
 	[P in K]?: T;
 };
+export type EntityFormActionType = "update" | "insert";

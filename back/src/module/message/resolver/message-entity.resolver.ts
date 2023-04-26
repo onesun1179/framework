@@ -43,19 +43,6 @@ export class MessageEntityResolver {
   /**************************************
    *              QUERY
    ***************************************/
-  // @Query(() => MsgOutput)
-  // async msg(
-  //   @Args('input', {
-  //     type: () => MsgInput,
-  //   })
-  //   input: MsgInput,
-  // ): Promise<MsgOutput> {
-  //   return await this.messageRepository.findOneByOrFail({
-  //     code: input.code,
-  //     groupCode: input.groupCode,
-  //   });
-  // }
-
   @Query(() => MessageEntity)
   async messageEntityBySeqNo(
     @Args('seqNo', {

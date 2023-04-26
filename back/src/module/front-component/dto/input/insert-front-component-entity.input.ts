@@ -6,7 +6,7 @@ import { FrontComponentEntity } from '@modules/front-component/dto/output/entity
 @ArgsType()
 export class InsertFrontComponentEntityInput extends PickType(
   FrontComponentEntity,
-  ['id'],
+  ['id', 'name', 'desc'],
 ) {
   @Field(() => [String], {
     nullable: true,

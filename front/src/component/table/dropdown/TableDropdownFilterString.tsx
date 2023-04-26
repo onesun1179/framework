@@ -36,6 +36,8 @@ export function TableDropdownFilterString({
 		});
 	};
 
+	console.log(selectedKeys);
+
 	return (
 		<WrapDiv onKeyDown={(e) => e.stopPropagation()}>
 			<SearchInput

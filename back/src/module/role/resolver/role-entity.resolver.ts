@@ -10,7 +10,6 @@ import {
 } from '@nestjs/graphql';
 import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
 import { RoleEntityRepository } from '../repository/role-entity.repository';
-import { RoleEntitiesResolver } from './role-entities.resolver';
 import { UserEntityRepository } from '@modules/user/repository/user-entity.repository';
 import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
 import { RoleGroupEntityRepository } from '@modules/role/repository/role-group-entity.repository';
@@ -25,10 +24,13 @@ import { InsertRoleEntityInput } from '@modules/role/dto/input/insert-role-entit
 import { UpdateRoleEntityInput } from '@modules/role/dto/input/update-role-entity.input';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
+import { PagingInput } from '@common/dto/input/paging.input';
+import { RoleEntitiesOutput } from '@modules/role/dto/output/role-entities.output';
+import { RoleEntitiesInput } from '@modules/role/dto/input/role-entities.input';
 
 @Resolver(() => RoleEntity)
 export class RoleEntityResolver {
-  private readonly logger = new Logger(RoleEntitiesResolver.name);
+  private readonly logger = new Logger(RoleEntityResolver.name);
 
   constructor(
     private roleRepository: RoleEntityRepository,
@@ -44,8 +46,26 @@ export class RoleEntityResolver {
   @Query(() => RoleEntity, {
     nullable: true,
   })
-  async role(@Args('seqNo', { type: () => Int }) seqNo: RoleEntity['seqNo']) {
+  async roleEntity(
+    @Args('seqNo', { type: () => Int }) seqNo: RoleEntity['seqNo'],
+  ) {
     return await RoleEntity.findOneBy({ seqNo });
+  }
+
+  @Query(() => RoleEntitiesOutput)
+  async roleEntities(
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput: PagingInput,
+    @Args('roleEntitiesInput', {
+      type: () => RoleEntitiesInput,
+      nullable: true,
+    })
+    roleEntitiesInput: RoleEntitiesInput,
+  ): Promise<RoleEntitiesOutput> {
+    return await this.roleRepository.paging(pagingInput, roleEntitiesInput);
   }
 
   /**************************************

@@ -32,6 +32,7 @@ export class RoleEntity extends CommonEntity {
   @Column({
     nullable: true,
     update: false,
+    unique: true,
   })
   @Field(() => String, {
     nullable: true,
@@ -39,20 +40,16 @@ export class RoleEntity extends CommonEntity {
   identifier?: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
   })
-  @Field(() => Int, {
-    nullable: true,
-  })
-  roleGroupSeqNo?: Nullable<number>;
+  @Field(() => Int)
+  roleGroupSeqNo!: number;
 
-  @ManyToOne(() => RoleGroupEntity, (o) => o.roles, {
-    nullable: true,
-  })
+  @ManyToOne(() => RoleGroupEntity, (o) => o.roles)
   @JoinColumn({
     name: 'role_group_seq_no',
   })
-  roleGroup?: Nullable<RoleGroupEntity>;
+  roleGroup!: RoleGroupEntity;
 
   @OneToMany(() => UserEntity, (o) => o.role, {
     nullable: true,

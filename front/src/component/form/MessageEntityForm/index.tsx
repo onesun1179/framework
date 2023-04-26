@@ -1,19 +1,15 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, memo, useMemo } from "react";
 import { ChkUniqMessageByCodeInput, MessageEntityOutput } from "@gqlType";
 import { Form, FormProps, Input } from "antd";
 import { MessageGroupEntitiesSelect } from "@src/component/select";
-import { gql, useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
+import { CHECK_UNIQUE } from "@src/component/form/MessageEntityForm/quires";
+import { EntityFormActionType } from "@src/types";
 
-const CHECK_UNIQUE_QUERY = gql`
-	query CHECK_UNIQUE_QUERY($input: ChkUniqMessageByCodeInput!) {
-		chkUniqMessageByCode(input: $input)
-	}
-`;
-export type MessageEntityFormActionType = "update" | "insert";
 export interface MessageEntityFormProps extends FormProps {
-	actionType?: MessageEntityFormActionType;
+	actionType?: EntityFormActionType;
 }
-export const MessageEntityForm: FC<MessageEntityFormProps> = ({
+const MessageEntityForm: FC<MessageEntityFormProps> = ({
 	actionType,
 	...props
 }) => {
@@ -33,7 +29,7 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 					input: ChkUniqMessageByCodeInput;
 				}
 			>({
-				query: CHECK_UNIQUE_QUERY,
+				query: CHECK_UNIQUE,
 				variables: {
 					input: {
 						[_t]: _v,
@@ -130,3 +126,5 @@ export const MessageEntityForm: FC<MessageEntityFormProps> = ({
 		</Form>
 	);
 };
+
+export default memo(MessageEntityForm);

@@ -14,7 +14,6 @@ import { RoleRouteMapEntity } from '@modules/role/dto/output/entity/role-route-m
 import { RoleService } from '@modules/role/role.service';
 import { RoleController } from '@modules/role/role.controller';
 import { RoleEntityResolver } from '@modules/role/resolver/role-entity.resolver';
-import { RoleEntitiesResolver } from '@modules/role/resolver/role-entities.resolver';
 import { RoleGroupEntityResolver } from '@modules/role/resolver/role-group-entity.resolver';
 import { RoleFrontComponentMapEntityResolver } from '@modules/role/resolver/role-front-component-map-entity.resolver';
 
@@ -41,7 +40,6 @@ import { RoleFrontComponentMapEntityResolver } from '@modules/role/resolver/role
   providers: [
     RoleService,
     RoleEntityResolver,
-    RoleEntitiesResolver,
     RoleGroupEntityResolver,
     RoleFrontComponentMapEntityResolver,
   ],

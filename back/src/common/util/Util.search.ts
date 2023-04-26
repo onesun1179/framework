@@ -13,7 +13,7 @@ import {
   MoreThan,
   Not,
 } from 'typeorm';
-import { entries, isBoolean, isNil } from 'lodash';
+import { entries, isNil } from 'lodash';
 import { Regexp } from '@common/typeorm/find-operators/Regexp';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
 import { NonNullableStringSearchInput } from '@common/dto/input/search/non-nullable-string.search.input';
@@ -62,8 +62,12 @@ export class UtilSearch {
     const { like, ilike, regex, equal, any, in: _in } = param;
 
     const where: Array<FindOperator<string>> = [];
-    if (param instanceof NullableStringSearchInput && isBoolean(param.isNull))
-      where.push(param.isNull ? IsNull() : Not(IsNull()));
+    if (
+      param instanceof NullableStringSearchInput &&
+      !isNil(param.isNull) &&
+      param.isNull.value
+    )
+      where.push(IsNull());
     if (!isNil(equal))
       UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
         where.push(equal!.not ? Not(arg) : arg),
@@ -112,8 +116,13 @@ export class UtilSearch {
       any,
     } = param;
     const where: Array<FindOperator<number>> = [];
-    if (param instanceof NullableNumberSearchInput && isBoolean(param.isNull))
-      where.push(param.isNull ? IsNull() : Not(IsNull()));
+    if (
+      param instanceof NullableNumberSearchInput &&
+      !isNil(param.isNull) &&
+      param.isNull.value
+    )
+      where.push(IsNull());
+
     if (!isNil(equal))
       UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
         where.push(equal!.not ? Not(arg) : arg),

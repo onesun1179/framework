@@ -35,7 +35,9 @@ export class RoleGroupEntity extends CommonEntity {
   })
   children?: Nullable<RoleGroupEntity[]>;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @Field(() => Int, {
     nullable: true,
   })

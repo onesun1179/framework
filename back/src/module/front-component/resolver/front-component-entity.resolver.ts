@@ -1,5 +1,6 @@
 import {
   Args,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -23,6 +24,9 @@ import { RoleEntity } from '@modules/role/dto/output/entity/role.entity';
 import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
 import { InsertFrontComponentEntityInput } from '@modules/front-component/dto/input/insert-front-component-entity.input';
 import { UpdateFrontComponentEntityInput } from '@modules/front-component/dto/input/update-front-component-entity.input';
+import { PagingInput } from '@common/dto/input/paging.input';
+import { FrontComponentEntitiesOutput } from '@modules/front-component/dto/output/front-component-entities.output';
+import { FrontComponentEntitiesInput } from '@modules/front-component/dto/input/front-component-entities.input';
 
 @Resolver(() => FrontComponentEntity)
 @UseGuards(GqlAuthGuard)
@@ -39,6 +43,26 @@ export class FrontComponentEntityResolver {
   /**************************************
    *              QUERY
    ***************************************/
+
+  @Query(() => FrontComponentEntitiesOutput)
+  async frontComponentEntities(
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput: PagingInput,
+    @Args('frontComponentEntitiesInput', {
+      type: () => FrontComponentEntitiesInput,
+      nullable: true,
+    })
+    frontComponentEntitiesInput: FrontComponentEntitiesInput,
+  ): Promise<FrontComponentEntitiesOutput> {
+    return await this.frontComponentRepository.paging(
+      pagingInput,
+      frontComponentEntitiesInput,
+    );
+  }
+
   @Query(() => FrontComponentEntity)
   async frontComponentById(
     @Args('frontComponentId', {
@@ -61,6 +85,30 @@ export class FrontComponentEntityResolver {
   })
   async allFrontComponent(
     @CurrentUser() { roleSeqNo }: AfterAT,
+    @Parent() { id: frontComponentId }: FrontComponentEntity,
+  ): Promise<AllFrontComponentEntity | null> {
+    return this.allFrontComponentRepository
+      .createQueryBuilder(`afc`)
+      .innerJoin(
+        `afc.roleFrontComponentMaps`,
+        `rfcm`,
+        `rfcm.roleSeqNo = :roleSeqNo AND rfcm.frontComponentId = :frontComponentId`,
+        {
+          roleSeqNo,
+          frontComponentId,
+        },
+      )
+      .getOne();
+  }
+
+  @ResolveField(() => AllFrontComponentEntity, {
+    nullable: true,
+  })
+  async allFrontComponentByRole(
+    @Args('roleSeqNo', {
+      type: () => Int,
+    })
+    roleSeqNo: number,
     @Parent() { id: frontComponentId }: FrontComponentEntity,
   ): Promise<AllFrontComponentEntity | null> {
     return this.allFrontComponentRepository

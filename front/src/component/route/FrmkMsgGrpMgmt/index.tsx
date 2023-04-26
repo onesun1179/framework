@@ -1,128 +1,77 @@
-/**
- * 프레임워크 메뉴 관리
- */
-import React, { FC, useMemo, useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import React, { FC, memo, useMemo, useState } from "react";
 import {
-	InsertMessageEntityInput,
-	MessageEntitiesInput,
-	MessageEntitiesOutput,
-	MessageEntitiesSearchInput,
-	MessageEntitiesSortInput,
-	MessageEntityOutput,
-	PagingInput,
-	UpdateMessageEntityInput,
+	refetchQueryMap,
+	SearchQueryKeyType,
+	SortQueryKeyType,
+	UtilRefetch,
+	UtilTable,
+} from "@src/Util";
+import {
+	MessageGroupEntitiesSearchInput,
+	MessageGroupEntitiesSortInput,
+	MessageGroupEntityOutput,
 } from "@gqlType";
-import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import {
-	MessageEntityForm,
-	MessageEntityFormActionType,
-} from "@src/component/form/MessageEntityForm";
-import { MessageEntityDescriptions } from "@src/component/descriptions/MessageEntityDescriptions";
-import { ColumnsType, ColumnType } from "antd/es/table";
 import { useQueryObj } from "@src/hooks";
-import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { UtilRefetch } from "@src/Util/Util.refetch";
 import { usePaging } from "@src/hooks/usePaging";
+import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
+import { ColumnType } from "antd/es/table";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { MessageGroupEntityDescriptions } from "@src/component/descriptions/MessageGroupEntityDescriptions";
+import { MessageGroupEntityForm } from "@src/component/form/MessageGroupEntityForm";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
+import { EntityFormActionType } from "@src/types";
+import { useFrmkMsgGrkMgmtData } from "@src/component/route/FrmkMsgGrpMgmt/quires";
+import {
+	useInsertMessageGroupEntity,
+	useUpdateMessageGroupEntity,
+} from "@src/component/route/FrmkMsgGrpMgmt/mutations";
 
-const UPDATE_MESSAGE_ENTITY = gql`
-	mutation UPDATE_MESSAGE_ENTITY($input: UpdateMessageEntityInput!) {
-		updateMessageEntity(updateMessageEntityInput: $input) {
-			seqNo
-		}
-	}
-`;
+/**
+ * 프레임워크 메뉴 그룹 관리
+ */
 
-const INSERT_MESSAGE_ENTITY = gql`
-	mutation INSERT_MESSAGE_ENTITY($input: InsertMessageEntityInput!) {
-		insertMessageEntity(insertMessageEntityInput: $input) {
-			seqNo
-		}
-	}
-`;
-export const MESSAGE_ENTITIES_TABLE_QUERY = gql`
-	query MESSAGE_ENTITIES_TABLE_QUERY(
-		$paging: PagingInput
-		$param: MessageEntitiesInput
-	) {
-		messageEntities(pagingInput: $paging, messageEntitiesInput: $param) {
-			list {
-				seqNo
-				name
-				text
-				code
-				groupCode
-				createdAt
-				updatedAt
-				desc
-			}
-			total
-		}
-	}
-`;
-
-type SrtQryKey = SortQueryKeyType<
-	"nm" | "cd" | "gpcd" | "msg" | "no" | "desc" | "cat" | "uat"
->;
-const srtQryMap: Record<SrtQryKey, keyof MessageEntitiesSortInput> = {
-	sort_gpcd: "groupCode",
+type SrtQryKey = SortQueryKeyType<"nm" | "cd" | "desc" | "cat" | "uat">;
+const srtQryMap: Record<SrtQryKey, keyof MessageGroupEntitiesSortInput> = {
 	sort_cd: "code",
-	sort_msg: "text",
 	sort_nm: "name",
-	sort_no: "seqNo",
 	sort_desc: "desc",
 	sort_cat: "createdAt",
 	sort_uat: "updatedAt",
 };
-type SrchQryKey = SearchQueryKeyType<"nm" | "no" | "gpcd" | "msg">;
-const srchQryMap: Record<SrchQryKey, keyof MessageEntitiesSearchInput> = {
-	srch_no: "seqNo",
-	srch_msg: "text",
+type SrchQryKey = SearchQueryKeyType<"nm" | "cd">;
+const srchQryMap: Record<SrchQryKey, keyof MessageGroupEntitiesSearchInput> = {
 	srch_nm: "name",
-	srch_gpcd: "groupCode",
+	srch_cd: "code",
 };
+
 type QryObj = typeof srtQryMap & typeof srchQryMap;
 const qryObj: QryObj = {
 	...srtQryMap,
 	...srchQryMap,
 };
 
-const FrmkMsgMgmt: FC = () => {
+const FrmkMsgGrpMgmt: FC = () => {
+	const [form] = Form.useForm<MessageGroupEntityOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
+	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<MessageEntityOutput>();
-	const { getColumnSort } = useQrySort(srtQryMap);
+		useMentionsState<MessageGroupEntityOutput>();
+
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
-		usePaging(10);
-	const [form] = Form.useForm<MessageEntityOutput>();
+		usePaging();
+
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
-	const [actionType, setActionType] = useState<MessageEntityFormActionType>();
+	const [actionType, setActionType] = useState<EntityFormActionType>();
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-
-	const searchInputType = useMemo(
-		() => UtilTable.toSortInputType(queryObj, qryObj),
-		[queryObj]
-	);
-
-	const { data, loading, previousData } = useQuery<
-		{
-			messageEntities: MessageEntitiesOutput;
-		},
-		{
-			paging?: PagingInput;
-			param?: MessageEntitiesInput;
-		}
-	>(MESSAGE_ENTITIES_TABLE_QUERY, {
+	const { data, loading, previousData } = useFrmkMsgGrkMgmtData({
 		variables: {
 			paging: pagingInput,
 			param: {
@@ -130,62 +79,28 @@ const FrmkMsgMgmt: FC = () => {
 			},
 		},
 	});
-	const [updateMessageEntityMutate] = useMutation<
-		MessageEntityOutput,
-		{
-			input: UpdateMessageEntityInput;
-		}
-	>(UPDATE_MESSAGE_ENTITY, {
-		async onCompleted() {
-			await UtilRefetch.message();
-		},
+
+	const [updateMessageGroupEntityMutate] = useUpdateMessageGroupEntity({
+		refetchQueries: refetchQueryMap.messageGroup,
 	});
 
-	const [insertMessageEntityMutate] = useMutation<
-		MessageEntityOutput,
-		{
-			input: InsertMessageEntityInput;
-		}
-	>(INSERT_MESSAGE_ENTITY, {
-		async onCompleted() {
-			await UtilRefetch.message();
-		},
+	const [insertMessageGroupEntityMutate] = useInsertMessageGroupEntity({
+		refetchQueries: refetchQueryMap.messageGroup,
 	});
 
-	const columns: ColumnsType<MessageEntityOutput> = useMemo(
+	const columns = useMemo(
 		() =>
 			(
 				[
-					{
-						key: "seqNo",
-						dataIndex: "seqNo",
-						title: "ID",
-						width: 20,
-						align: "center",
-					},
 					{
 						key: "name",
 						dataIndex: "name",
 						title: "이름",
 					},
 					{
-						key: "groupCode",
-						dataIndex: "groupCode",
-						title: "그룹 코드",
-						width: 110,
-						align: "center",
-					},
-					{
 						key: "code",
 						dataIndex: "code",
 						title: "코드",
-						width: 80,
-						align: "center",
-					},
-					{
-						key: "text",
-						dataIndex: "text",
-						title: "메세지",
 					},
 					{
 						key: "desc",
@@ -238,21 +153,21 @@ const FrmkMsgMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageEntityOutput>>
+				] as Array<ColumnType<MessageGroupEntityOutput>>
 			).map((o) => {
 				return {
 					...o,
 					...getColumnSort(o),
 				};
 			}),
-		[queryObj, record, setActionType, setFormDrawerOpenYn, form, getColumnSort]
+		[setActionType, setFormDrawerOpenYn, form, srtQryMap, getColumnSort]
 	);
 
 	return (
 		<>
 			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MessageEntityDescriptions record={record} />
+				<MessageGroupEntityDescriptions record={record} />
 			</Drawer>
 
 			<Drawer
@@ -268,32 +183,28 @@ const FrmkMsgMgmt: FC = () => {
 								const record = form.getFieldsValue();
 								switch (actionType) {
 									case "insert":
-										await insertMessageEntityMutate({
+										await insertMessageGroupEntityMutate({
 											variables: {
 												input: {
-													groupCode: record.groupCode,
 													name: record.name,
-													text: record.text,
 													code: record.code,
 													desc: record.desc,
 												},
 											},
 										});
 
-										await UtilRefetch.message();
 										break;
 									case "update":
-										await updateMessageEntityMutate({
+										console.log(record);
+										await updateMessageGroupEntityMutate({
 											variables: {
 												input: {
-													seqNo: record.seqNo,
 													name: record.name,
-													text: record.text,
+													code: record.code,
 													desc: record.desc,
 												},
 											},
 										});
-										await UtilRefetch.message();
 										break;
 								}
 								setFormDrawerOpenYn(false);
@@ -305,7 +216,7 @@ const FrmkMsgMgmt: FC = () => {
 					</Space>
 				}
 			>
-				<MessageEntityForm form={form} actionType={actionType} />
+				<MessageGroupEntityForm form={form} actionType={actionType} />
 			</Drawer>
 
 			<Layout>
@@ -338,7 +249,7 @@ const FrmkMsgMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.messageEntities.total,
+							total: data?.messageGroupEntities.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -348,9 +259,10 @@ const FrmkMsgMgmt: FC = () => {
 						}}
 						loading={loading}
 						columns={columns}
-						rowKey={"seqNo"}
+						rowKey={"code"}
 						dataSource={
-							data?.messageEntities.list || previousData?.messageEntities.list
+							data?.messageGroupEntities.list ||
+							previousData?.messageGroupEntities.list
 						}
 						onRow={(value) => ({
 							onClick: () => {
@@ -365,4 +277,4 @@ const FrmkMsgMgmt: FC = () => {
 	);
 };
 
-export default FrmkMsgMgmt;
+export default memo(FrmkMsgGrpMgmt);
