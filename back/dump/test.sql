@@ -1,9 +1,10 @@
 SET foreign_key_checks = 0;
-TRUNCATE framework.code;
 TRUNCATE framework.code_map;
+TRUNCATE framework.code;
 TRUNCATE framework.role_route_map;
 TRUNCATE framework.icon_icon_group_map;
 TRUNCATE framework.role_front_component_map;
+TRUNCATE framework.menu_role_map;
 TRUNCATE framework.menu;
 TRUNCATE framework.route;
 TRUNCATE framework.route;
@@ -12,13 +13,29 @@ TRUNCATE framework.all_front_component;
 TRUNCATE framework.icon;
 TRUNCATE framework.icon_group;
 TRUNCATE framework.icon_group_tree;
-TRUNCATE framework.menu_role_map;
 TRUNCATE framework.message_group;
 TRUNCATE framework.message;
 TRUNCATE framework.role;
 TRUNCATE framework.role_group;
 TRUNCATE framework.user;
+SET foreign_key_checks = 1;
 
+
+# role group
+INSERT INTO framework.role_group (seq_no, name, parent_seq_no)
+VALUES (1, '개발자', NULL);
+
+INSERT INTO framework.role_group (seq_no, name, parent_seq_no)
+VALUES (2, '최초 개발자', 1);
+
+INSERT INTO framework.role_group (seq_no, name, parent_seq_no)
+VALUES (3, '테스트 그룹', 1);
+
+# role
+INSERT INTO framework.role (seq_no, name, identifier, role_group_seq_no)
+VALUES (1, '최초 가입자', 'guest', 1)
+     , (3, '개발자2', NULL, 2)
+     , (2, '개발자', NULL, 1);
 
 # message_group
 INSERT INTO framework.message_group (code, name)
@@ -27,56 +44,102 @@ VALUES ('E', '에러 메세지')
      , ('FVM', 'Form validate message');
 
 # message
-INSERT INTO framework.message (group_code, code, name, text, sys_yn)
-VALUES ('P', '0000', '일반', '{{0}}', 1)
-     , ('E', '0000', '실패', '실패', 1)
-     , ('E', '0001', 'SQL FAIL', 'SQL_FAIL({{0}})', 1)
-     , ('E', '0002', 'NOT FOUNT VALUE', '존재하지 않는 값 입니다.', 1)
-     , ('FVM', '0001', 'required', '${label}은(는) 필수 값입니다.', 1)
-     , ('FVM', '0002', 'string.len', '${label}은(는) 길이 ${len} 만큼 필요.', 1)
-     , ('FVM', '0003', 'string.min', '${label}은(는) 길이 ${min}이상 만큼 필요.', 1)
-     , ('FVM', '0004', 'string.max', '${label}은(는) 길이 ${max}이하 만큼 필요.', 1)
-     , ('FVM', '0005', 'number.len', '${label}은(는) ${len}와 같아야 합니다.', 1)
-     , ('FVM', '0006', 'number.min', '${label}의 최솟값은 ${min}.', 1)
-     , ('FVM', '0007', 'number.max', '${label}의 최댓값은 ${max}.', 1)
-     , ('FVM', '0008', 'number.range', '${label}의 범위는 ${min} - ${max}', 1);
-;
+INSERT INTO framework.message (seq_no, group_code, code, name, text)
+VALUES (1, 'P', '0000', '일반', '{{0}}')
+     , (2, 'E', '0000', '실패', '실패')
+     , (3, 'E', '0001', 'SQL FAIL', 'SQL_FAIL({{0}})')
+     , (4, 'E', '0002', 'NOT FOUNT VALUE', '존재하지 않는 값 입니다.')
+     , (5, 'FVM', '0001', 'required', '${label}은(는) 필수 값입니다.')
+     , (6, 'FVM', '0002', 'string.len', '${label}은(는) 길이 ${len} 만큼 필요.')
+     , (8, 'FVM', '0003', 'string.min', '${label}은(는) 길이 ${min}이상 만큼 필요.')
+     , (9, 'FVM', '0004', 'string.max', '${label}은(는) 길이 ${max}이하 만큼 필요.')
+     , (10, 'FVM', '0005', 'number.len', '${label}은(는) ${len}와 같아야 합니다.')
+     , (11, 'FVM', '0006', 'number.min', '${label}의 최솟값은 ${min}.')
+     , (12, 'FVM', '0007', 'number.max', '${label}의 최댓값은 ${max}.')
+     , (13, 'FVM', '0008', 'number.range', '${label}의 범위는 ${min} - ${max}');
 
 # front_component
-INSERT INTO framework.front_component (id)
-VALUES ('frameworkMenuManagement')
-     , ('frameworkMessageManagement')
-     , ('home')
-     , ('menuManage');
+INSERT INTO framework.front_component (id, name)
+VALUES ('frmkMnMgmt', '프레임워크 메뉴 관리')
+     , ('frmkMsgMgmt', '프레임워크 메세지 관리')
+     , ('frmkMsgGrpMgmt', '프레임워크 메세지 그룹 관리')
+     , ('frmkAllFrntCmpntMgmt', '프레임워크 모든 화면 컴포넌트 관리')
+     , ('frmkFrntCmpntMgmt', '프레임워크 화면 컴포넌트 관리')
+     , ('hm', '홈')
+     , ('roleByFrntCmpntMgmt', '권한별 화면 컴포넌트 관리')
+     , ('roleByMnMgmt', '권한별 메뉴 관리');
 
 # route
 INSERT INTO framework.route (seq_no, path, front_component_id, parent_seq_no)
-VALUES (1, '/', 'home', NULL)
-     , (2, 'manage', NULL, 1)
-     , (3, 'menu', 'menuManage', 2)
-     , (4, 'framework', NULL, 1)
-     , (5, 'menu', 'frameworkMenuManagement', 4)
-     , (6, 'message', 'frameworkMessageManagement', 4);
+VALUES (1, '/', 'hm', NULL);
+INSERT INTO framework.route (seq_no, path, front_component_id, parent_seq_no)
+VALUES (2, 'manage', NULL, 1)
+     , (3, 'framework', NULL, 1);
+INSERT INTO framework.route (seq_no, path, front_component_id, parent_seq_no)
+VALUES (11, 'role', NULL, 2);
+INSERT INTO framework.route (seq_no, path, front_component_id, parent_seq_no)
+VALUES (4, 'menu', 'roleByMnMgmt', 11)
+     , (5, 'frontComponent', 'roleByFrntCmpntMgmt', 11);
+INSERT INTO framework.route (seq_no, path, front_component_id, parent_seq_no)
+VALUES (6, 'menu', 'frmkMnMgmt', 3)
+     , (7, 'message', 'frmkMsgMgmt', 3)
+     , (8, 'messageGroup', 'frmkMsgGrpMgmt', 3)
+     , (9, 'allFrontComponent', 'frmkAllFrntCmpntMgmt', 3)
+     , (10, 'frontComponent', 'frmkFrntCmpntMgmt', 3);
 
-# role
-INSERT INTO framework.role (seq_no, name, identifier, role_group_seq_no)
-VALUES (1, '최초 가입자', 'guest', NULL)
-     , (2, '개발자', NULL, NULL);
+# menu
+INSERT INTO framework.menu (seq_no, name, icon_seq_no, route_seq_no)
+VALUES (1, '관리', NULL, 2)
+     , (2, '프레임워크', NULL, 3)
+     , (3, '메뉴', NULL, 4)
+     , (4, '화면 컴포넌트', NULL, 5)
+     , (5, '메뉴 관리', NULL, 6)
+     , (6, '메세지 관리', NULL, 7)
+     , (7, '메세지 그룹 관리', NULL, 8)
+     , (8, '모든 화면 컴포넌트 관리', NULL, 9)
+     , (9, '화면 컴포넌트 관리', NULL, 10)
+     , (10, '권한', NULL, 11);
+
+# menu_role_map
+INSERT INTO framework.menu_role_map (seq_no, menu_seq_no, role_seq_no, parent_seq_no, order_no)
+VALUES (1, 1, 2, NULL, 1)
+     , (2, 2, 2, NULL, 2)
+     , (10, 10, 2, 1, 5)
+     , (3, 3, 2, 10, 1)
+     , (4, 4, 2, 10, 2)
+     , (5, 5, 2, 2, 1)
+     , (6, 6, 2, 2, 2)
+     , (7, 7, 2, 2, 3)
+     , (8, 8, 2, 2, 4)
+     , (9, 9, 2, 2, 5)
+;
 
 # all_front_component
 INSERT INTO framework.all_front_component (id, front_component_id)
-VALUES ('FrameworkMenuManagement', 'frameworkMenuManagement')
-     , ('FrameworkMessageManagement', 'frameworkMessageManagement')
-     , ('Home', 'home')
-     , ('MenuManagement', 'menuManage');
+VALUES ('Hm', 'hm')
+     , ('FrmkMnMgmt', 'frmkMnMgmt')
+     , ('FrmkMsgMgmt', 'frmkMsgMgmt')
+     , ('FrmkMsgGrpMgmt', 'frmkMsgGrpMgmt')
+     , ('FrmkAllFrntCmpntMgmt', 'frmkAllFrntCmpntMgmt')
+     , ('FrmkFrntCmpntMgmt', 'frmkFrntCmpntMgmt')
+     , ('RoleByMnMgmt', 'roleByMnMgmt')
+     , ('RoleByMnMgmt2', 'roleByMnMgmt')
+     , ('RoleByMnMgmt3', 'roleByMnMgmt')
+     , ('RoleByFrntCmpntMgmt', 'roleByFrntCmpntMgmt')
+;
 
 # role_front_component_map
 INSERT
-  INTO framework.role_front_component_map (role_seq_no, front_component_id, all_front_component_id)
-VALUES (2, 'frameworkMenuManagement', 'FrameworkMenuManagement')
-     , (2, 'frameworkMessageManagement', 'FrameworkMessageManagement')
-     , (2, 'home', 'Home')
-     , (2, 'menuManage', 'MenuManagement');
+  INTO framework.role_front_component_map (role_seq_no, all_front_component_id, front_component_id)
+VALUES (2, 'Hm', 'hm')
+     , (2, 'FrmkMnMgmt', 'frmkMnMgmt')
+     , (2, 'FrmkMsgMgmt', 'frmkMsgMgmt')
+     , (2, 'FrmkMsgGrpMgmt', 'frmkMsgGrpMgmt')
+     , (2, 'FrmkAllFrntCmpntMgmt', 'frmkAllFrntCmpntMgmt')
+     , (2, 'FrmkFrntCmpntMgmt', 'frmkFrntCmpntMgmt')
+     , (2, 'RoleByMnMgmt', 'roleByMnMgmt')
+     , (2, 'RoleByFrntCmpntMgmt', 'roleByFrntCmpntMgmt');
+
 
 # user
 INSERT
@@ -91,29 +154,7 @@ VALUES (1, 'filled')
      , (2, 'outlined')
      , (3, 'twotone');
 
-# menu
-INSERT INTO framework.menu (seq_no, name, icon_seq_no, route_seq_no)
-VALUES (1, '관리', NULL, 2)
-     , (2, '권한별 메뉴 관리', NULL, 3)
-     , (3, '프레임워크', NULL, 4)
-     , (4, '메뉴 관리', NULL, 5)
-     , (5, '메세지 관리', NULL, 6);
-
-# menu_role_map
-INSERT INTO framework.menu_role_map (seq_no, menu_seq_no, role_seq_no, parent_seq_no, order_no)
-VALUES (1, 1, 2, NULL, 1)
-     , (2, 3, 2, NULL, 2)
-     , (3, 1, 1, NULL, 1)
-     , (4, 3, 1, NULL, 2)
-     , (5, 2, 2, 1, 1)
-     , (6, 4, 2, 2, 1)
-     , (7, 5, 2, 2, 2)
-     , (8, 2, 1, 3, 1)
-     , (9, 4, 1, 4, 1)
-     , (10, 5, 1, 4, 2);
-
-
-#icon
+# icon
 INSERT INTO framework.icon (created_at, updated_at, `desc`, seq_no, name, file_path)
 VALUES ('2023-04-21 17:18:21.785762', '2023-04-21 17:18:21.785762', NULL, 1, 'account-book', '/icon/filled/account-book.svg')
      , ('2023-04-21 17:18:21.785762', '2023-04-21 17:18:21.785762', NULL, 2, 'alert', '/icon/filled/alert.svg')

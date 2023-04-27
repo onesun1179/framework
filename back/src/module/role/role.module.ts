@@ -16,6 +16,8 @@ import { RoleController } from '@modules/role/role.controller';
 import { RoleEntityResolver } from '@modules/role/resolver/role-entity.resolver';
 import { RoleGroupEntityResolver } from '@modules/role/resolver/role-group-entity.resolver';
 import { RoleFrontComponentMapEntityResolver } from '@modules/role/resolver/role-front-component-map-entity.resolver';
+import { FrontComponentEntityRepository } from '@modules/front-component/repository/front-component-entity.repository';
+import { AllFrontComponentEntityRepository } from '@modules/front-component/repository/all-front-component-entity.repository';
 
 @Global()
 @Module({
@@ -27,6 +29,8 @@ import { RoleFrontComponentMapEntityResolver } from '@modules/role/resolver/role
       RoleGroupEntityRepository,
       RoleRouteMapEntityRepository,
       RoleFrontComponentMapEntityRepository,
+      FrontComponentEntityRepository,
+      AllFrontComponentEntityRepository,
     ]),
     TypeOrmModule.forFeature([
       RoleEntity,

@@ -18,16 +18,16 @@ export interface PagingInput {
     take: number;
 }
 
-export interface RoleEntitiesInput {
-    search?: Nullable<RoleEntitiesSearchInput>;
-    sort?: Nullable<RoleEntitiesSortInput>;
+export interface MenuEntitiesInput {
+    search?: Nullable<MenuEntitiesSearchInput>;
+    sort?: Nullable<MenuEntitiesSortInput>;
 }
 
-export interface RoleEntitiesSearchInput {
+export interface MenuEntitiesSearchInput {
     seqNo?: Nullable<NonNullableNumberSearchInput>;
     name?: Nullable<NonNullableStringSearchInput>;
-    identifier?: Nullable<NullableStringSearchInput>;
-    roleGroupSeqNo?: Nullable<NullableNumberSearchInput>;
+    iconSeqNo?: Nullable<NullableNumberSearchInput>;
+    routeSeqNo?: Nullable<NullableNumberSearchInput>;
 }
 
 export interface NonNullableNumberSearchInput {
@@ -109,30 +109,6 @@ export interface NonNullableInStringSearchInput {
     not?: Nullable<boolean>;
 }
 
-export interface NullableStringSearchInput {
-    regex?: Nullable<RegexStringSearchInput>;
-    like?: Nullable<LikeStringSearchInput>;
-    equal?: Nullable<EqualStringSearchInput>;
-    ilike?: Nullable<IlikeStringSearchInput>;
-    any?: Nullable<NullableAnyStringSearchInput>;
-    in?: Nullable<NullableInStringSearchInput>;
-    isNull?: Nullable<IsNullStringSearchInput>;
-}
-
-export interface NullableAnyStringSearchInput {
-    value: Nullable<string>[];
-    not?: Nullable<boolean>;
-}
-
-export interface NullableInStringSearchInput {
-    value: Nullable<string>[];
-    not?: Nullable<boolean>;
-}
-
-export interface IsNullStringSearchInput {
-    value: boolean;
-}
-
 export interface NullableNumberSearchInput {
     equal?: Nullable<EqualNumberSearchInput>;
     any?: Nullable<NullableAnyNumberSearchInput>;
@@ -157,55 +133,13 @@ export interface IsNullNumberSearchInput {
     value: boolean;
 }
 
-export interface RoleEntitiesSortInput {
+export interface MenuEntitiesSortInput {
     seqNo?: Nullable<SortTypeInput>;
-    name?: Nullable<SortTypeInput>;
-    identifier?: Nullable<SortTypeInput>;
-    roleGroupSeqNo?: Nullable<SortTypeInput>;
-    desc?: Nullable<SortTypeInput>;
-    createdAt?: Nullable<SortTypeInput>;
-    updatedAt?: Nullable<SortTypeInput>;
 }
 
 export interface SortTypeInput {
     sort: SortEnum;
     order: number;
-}
-
-export interface RoleGroupEntitiesInput {
-    search?: Nullable<RoleGroupEntitiesSearchInput>;
-    sort?: Nullable<RoleGroupEntitiesSortInput>;
-}
-
-export interface RoleGroupEntitiesSearchInput {
-    seqNo?: Nullable<NonNullableNumberSearchInput>;
-    name?: Nullable<NonNullableStringSearchInput>;
-    parentSeqNo?: Nullable<NullableNumberSearchInput>;
-}
-
-export interface RoleGroupEntitiesSortInput {
-    seqNo?: Nullable<SortTypeInput>;
-    name?: Nullable<SortTypeInput>;
-    parentSeqNo?: Nullable<SortTypeInput>;
-    desc?: Nullable<SortTypeInput>;
-    createdAt?: Nullable<SortTypeInput>;
-    updatedAt?: Nullable<SortTypeInput>;
-}
-
-export interface MenuEntitiesInput {
-    search?: Nullable<MenuEntitiesSearchInput>;
-    sort?: Nullable<MenuEntitiesSortInput>;
-}
-
-export interface MenuEntitiesSearchInput {
-    seqNo?: Nullable<NonNullableNumberSearchInput>;
-    name?: Nullable<NonNullableStringSearchInput>;
-    iconSeqNo?: Nullable<NullableNumberSearchInput>;
-    routeSeqNo?: Nullable<NullableNumberSearchInput>;
-}
-
-export interface MenuEntitiesSortInput {
-    seqNo?: Nullable<SortTypeInput>;
 }
 
 export interface MenuRoleMapEntitiesInput {
@@ -326,6 +260,30 @@ export interface AllFrontComponentEntitiesSearchInput {
     frontComponentId?: Nullable<NullableStringSearchInput>;
 }
 
+export interface NullableStringSearchInput {
+    regex?: Nullable<RegexStringSearchInput>;
+    like?: Nullable<LikeStringSearchInput>;
+    equal?: Nullable<EqualStringSearchInput>;
+    ilike?: Nullable<IlikeStringSearchInput>;
+    any?: Nullable<NullableAnyStringSearchInput>;
+    in?: Nullable<NullableInStringSearchInput>;
+    isNull?: Nullable<IsNullStringSearchInput>;
+}
+
+export interface NullableAnyStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface NullableInStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface IsNullStringSearchInput {
+    value: boolean;
+}
+
 export interface AllFrontComponentEntitiesSortInput {
     id?: Nullable<SortTypeInput>;
     frontComponentId?: Nullable<SortTypeInput>;
@@ -334,37 +292,46 @@ export interface AllFrontComponentEntitiesSortInput {
     updatedAt?: Nullable<SortTypeInput>;
 }
 
-export interface InsertRoleEntityInput {
-    name: string;
-    identifier?: Nullable<string>;
-    roleGroupSeqNo: number;
-    userIds?: Nullable<string>;
-    menuSeqNos?: Nullable<number[]>;
-    routeSeqNos?: Nullable<number[]>;
+export interface RoleEntitiesInput {
+    search?: Nullable<RoleEntitiesSearchInput>;
+    sort?: Nullable<RoleEntitiesSortInput>;
 }
 
-export interface UpdateRoleEntityInput {
-    seqNo: number;
-    name?: Nullable<string>;
-    roleGroupSeqNo?: Nullable<number>;
-    userIds?: Nullable<string>;
-    menuSeqNos?: Nullable<number[]>;
-    routeSeqNos?: Nullable<number[]>;
+export interface RoleEntitiesSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    identifier?: Nullable<NullableStringSearchInput>;
+    roleGroupSeqNo?: Nullable<NullableNumberSearchInput>;
 }
 
-export interface InsertRoleGroupEntityInput {
-    name: string;
-    parentSeqNo?: Nullable<number>;
-    roleSeqNos?: Nullable<number[]>;
-    childSeqNos?: Nullable<number[]>;
+export interface RoleEntitiesSortInput {
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    roleGroupSeqNo?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
 }
 
-export interface UpdateRoleGroupEntityInput {
-    seqNo: number;
-    name?: Nullable<string>;
-    parentSeqNo?: Nullable<number>;
-    roleSeqNos?: Nullable<number[]>;
-    childSeqNos?: Nullable<number[]>;
+export interface RoleGroupEntitiesInput {
+    search?: Nullable<RoleGroupEntitiesSearchInput>;
+    sort?: Nullable<RoleGroupEntitiesSortInput>;
+}
+
+export interface RoleGroupEntitiesSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    parentSeqNo?: Nullable<NullableNumberSearchInput>;
+}
+
+export interface RoleGroupEntitiesSortInput {
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
 }
 
 export interface UpdateMessageEntityInput {
@@ -422,6 +389,39 @@ export interface UpdateAllFrontComponentEntityInput {
     desc?: Nullable<string>;
     id: string;
     frontComponentId?: Nullable<string>;
+}
+
+export interface InsertRoleEntityInput {
+    name: string;
+    identifier?: Nullable<string>;
+    roleGroupSeqNo: number;
+    userIds?: Nullable<string>;
+    menuSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
+export interface UpdateRoleEntityInput {
+    seqNo: number;
+    name?: Nullable<string>;
+    roleGroupSeqNo?: Nullable<number>;
+    userIds?: Nullable<string>;
+    menuSeqNos?: Nullable<number[]>;
+    routeSeqNos?: Nullable<number[]>;
+}
+
+export interface InsertRoleGroupEntityInput {
+    name: string;
+    parentSeqNo?: Nullable<number>;
+    roleSeqNos?: Nullable<number[]>;
+    childSeqNos?: Nullable<number[]>;
+}
+
+export interface UpdateRoleGroupEntityInput {
+    seqNo: number;
+    name?: Nullable<string>;
+    parentSeqNo?: Nullable<number>;
+    roleSeqNos?: Nullable<number[]>;
+    childSeqNos?: Nullable<number[]>;
 }
 
 export interface MessageGroupEntityOutput {
@@ -611,6 +611,16 @@ export interface RoleGroupEntitiesOutput {
     total: number;
 }
 
+export interface AllFrontComponentEntitiesOutput {
+    list: AllFrontComponentEntityOutput[];
+    total: number;
+}
+
+export interface FrontComponentEntitiesOutput {
+    list: FrontComponentEntityOutput[];
+    total: number;
+}
+
 export interface CodeMapEntityOutput {
     createdAt: DateTime;
     updatedAt: DateTime;
@@ -639,23 +649,9 @@ export interface MenuRoleMapEntitiesOutput {
     total: number;
 }
 
-export interface AllFrontComponentEntitiesOutput {
-    list: AllFrontComponentEntityOutput[];
-    total: number;
-}
-
-export interface FrontComponentEntitiesOutput {
-    list: FrontComponentEntityOutput[];
-    total: number;
-}
-
 export interface IQuery {
     authCheck(): boolean | Promise<boolean>;
     user(id: string): UserEntityOutput | Promise<UserEntityOutput>;
-    roleEntity(seqNo: number): Nullable<RoleEntityOutput> | Promise<Nullable<RoleEntityOutput>>;
-    roleEntities(pagingInput?: Nullable<PagingInput>, roleEntitiesInput?: Nullable<RoleEntitiesInput>): RoleEntitiesOutput | Promise<RoleEntitiesOutput>;
-    roleGroupEntities(pagingInput?: Nullable<PagingInput>, roleGroupEntitiesInput?: Nullable<RoleGroupEntitiesInput>): RoleGroupEntitiesOutput | Promise<RoleGroupEntitiesOutput>;
-    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMapEntityOutput> | Promise<Nullable<RoleFrontComponentMapEntityOutput>>;
     menuEntity(seqNo: number): MenuEntityOutput | Promise<MenuEntityOutput>;
     menuEntities(pagingInput?: Nullable<PagingInput>, menusInput?: Nullable<MenuEntitiesInput>): MenuEntitiesOutput | Promise<MenuEntitiesOutput>;
     menuRoleMapEntity(seqNo: number): MenuRoleMapEntity | Promise<MenuRoleMapEntity>;
@@ -679,15 +675,14 @@ export interface IQuery {
     allFrntCmpntByIdAndRole(frntCmpntId: string, roleSeqNo: number): Nullable<AllFrontComponentEntityOutput> | Promise<Nullable<AllFrontComponentEntityOutput>>;
     allFrontComponentEntities(pagingInput?: Nullable<PagingInput>, allFrontComponentEntitiesInput?: Nullable<AllFrontComponentEntitiesInput>): AllFrontComponentEntitiesOutput | Promise<AllFrontComponentEntitiesOutput>;
     allFrontComponentByFcId(frontComponentId: string): Nullable<AllFrontComponentEntityOutput> | Promise<Nullable<AllFrontComponentEntityOutput>>;
+    roleEntity(seqNo: number): Nullable<RoleEntityOutput> | Promise<Nullable<RoleEntityOutput>>;
+    roleEntities(pagingInput?: Nullable<PagingInput>, roleEntitiesInput?: Nullable<RoleEntitiesInput>): RoleEntitiesOutput | Promise<RoleEntitiesOutput>;
+    roleGroupEntities(pagingInput?: Nullable<PagingInput>, roleGroupEntitiesInput?: Nullable<RoleGroupEntitiesInput>): RoleGroupEntitiesOutput | Promise<RoleGroupEntitiesOutput>;
+    roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMapEntityOutput> | Promise<Nullable<RoleFrontComponentMapEntityOutput>>;
     icon(seqNo: number): IconOutput | Promise<IconOutput>;
 }
 
 export interface IMutation {
-    insertRole(insertRoleInput: InsertRoleEntityInput): RoleEntityOutput | Promise<RoleEntityOutput>;
-    updateRole(updateRoleInput: UpdateRoleEntityInput): RoleEntityOutput | Promise<RoleEntityOutput>;
-    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupEntityInput): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
-    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupEntityInput): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
-    removeRoleGroup(seqNo: number): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
     updateMessageEntity(updateMessageEntityInput: UpdateMessageEntityInput): MessageEntityOutput | Promise<MessageEntityOutput>;
     insertMessageEntity(insertMessageEntityInput: InsertMessageEntityInput): MessageEntityOutput | Promise<MessageEntityOutput>;
     deleteMessageEntities(seqNos: number[]): boolean | Promise<boolean>;
@@ -698,6 +693,12 @@ export interface IMutation {
     updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentEntityInput): FrontComponentEntityOutput | Promise<FrontComponentEntityOutput>;
     insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentEntityInput): AllFrontComponentEntityOutput | Promise<AllFrontComponentEntityOutput>;
     updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentEntityInput): AllFrontComponentEntityOutput | Promise<AllFrontComponentEntityOutput>;
+    insertRole(insertRoleInput: InsertRoleEntityInput): RoleEntityOutput | Promise<RoleEntityOutput>;
+    updateRole(updateRoleInput: UpdateRoleEntityInput): RoleEntityOutput | Promise<RoleEntityOutput>;
+    insertRoleGroup(insertRoleGroupInput: InsertRoleGroupEntityInput): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
+    updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupEntityInput): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
+    removeRoleGroup(seqNo: number): RoleGroupEntityOutput | Promise<RoleGroupEntityOutput>;
+    updateAllFrontComponentByRoleFrontComponentMapEntity(roleSeqNo: number, frontComponentId: string, allFrontComponentId: string): RoleFrontComponentMapEntityOutput | Promise<RoleFrontComponentMapEntityOutput>;
 }
 
 export type DateTime = any;

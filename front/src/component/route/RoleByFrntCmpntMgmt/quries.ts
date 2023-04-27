@@ -1,79 +1,31 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import {
-	AllFrontComponentEntitiesOutput,
-	FrontComponentEntitiesOutput,
-	RoleGroupEntitiesOutput,
-} from "@gqlType";
+import { FrontComponentEntitiesOutput } from "@gqlType";
 import { makeUseQuery } from "@src/lib/makeUseQuery";
 
 export const ROLE_BY_FRNT_CMPNT_MGMT_QUERY = gql`
-	query ROLE_BY_FRNT_CMPNT_MGMT_QUERY {
-		roleGroupEntities(
-			roleGroupEntitiesInput: {
-				search: { parentSeqNo: { isNull: { value: true } } }
-			}
-		) {
-			list {
-				seqNo
-				name
-				roles {
-					seqNo
-					name
-				}
-				children {
-					seqNo
-					name
-					roles {
-						seqNo
-						name
-					}
-					children {
-						seqNo
-						name
-						roles {
-							seqNo
-							name
-						}
-						children {
-							seqNo
-							name
-							roles {
-								seqNo
-								name
-							}
-						}
-						children {
-							seqNo
-							name
-							roles {
-								seqNo
-								name
-							}
-						}
-					}
-				}
-			}
-			total
-		}
+	query ROLE_BY_FRNT_CMPNT_MGMT_QUERY($roleSeqNo: Int!) {
 		frontComponentEntities {
 			list {
 				id
 				name
-			}
-			total
-		}
-		allFrontComponentEntities {
-			list {
-				id
+				allFrontComponentByRole(roleSeqNo: $roleSeqNo) {
+					id
+				}
+				allFrontComponents {
+					id
+				}
 			}
 			total
 		}
 	}
-` as TypedDocumentNode<{
-	roleGroupEntities: RoleGroupEntitiesOutput;
-	frontComponentEntities: FrontComponentEntitiesOutput;
-	allFrontComponentEntities: AllFrontComponentEntitiesOutput;
-}>;
+` as TypedDocumentNode<
+	{
+		frontComponentEntities: FrontComponentEntitiesOutput;
+	},
+	{
+		roleSeqNo: number;
+	}
+>;
 
 export const useRoleByFrntCmpntMgmtQuery = makeUseQuery(
 	ROLE_BY_FRNT_CMPNT_MGMT_QUERY

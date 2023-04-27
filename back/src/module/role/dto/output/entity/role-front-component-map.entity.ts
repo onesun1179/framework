@@ -32,7 +32,7 @@ export class RoleFrontComponentMapEntity extends CommonEntity {
   @Type(() => RoleEntity)
   role!: RoleEntity;
 
-  @ManyToOne(() => FrontComponentEntity, (r) => r.roleFrontComponentMaps)
+  @ManyToOne(() => FrontComponentEntity, (o) => o.roleFrontComponentMaps)
   @JoinColumn({
     name: 'front_component_id',
   })

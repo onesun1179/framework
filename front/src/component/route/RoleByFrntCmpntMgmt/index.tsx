@@ -1,145 +1,96 @@
 /**
  * 권한별 컴포넌트
  */
-import { FC, memo, useMemo, useState } from "react";
-import { Col, Layout, Row, Table, Tree, Typography } from "antd";
-
-import { DataNode } from "antd/es/tree";
-import {
-	AllFrontComponentEntityOutput,
-	FrontComponentEntityOutput,
-	RoleGroupEntityOutput,
-} from "@gqlType";
-import styled from "styled-components";
+import React, { FC, memo, useMemo, useState } from "react";
+import { Col, ConfigProvider, Row, Select, Table } from "antd";
+import { FrontComponentEntityOutput } from "@gqlType";
 import { ColumnsType } from "antd/es/table";
 import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/RoleByFrntCmpntMgmt/quries";
+import RoleDirectoryTree from "@src/component/role/RoleDirectoryTree";
+import { isNil } from "lodash";
+import styled from "styled-components";
+import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/RoleByFrntCmpntMgmt/mutations";
+import { refetchQueryMap } from "@src/Util";
 
-type DataNodeType = DataNode & {
-	seqNo: number;
-	type: "group" | "role";
-};
-
-const StyledHeader = styled(Layout.Header)`
-	background-color: white;
+const FullWidthSelect = styled(Select)`
+	width: 100%;
 `;
-
-const frntCmpntColumns: ColumnsType<FrontComponentEntityOutput> = [
-	{
-		key: "id",
-		dataIndex: "id",
-		title: "ID",
-	},
-	{
-		key: "name",
-		dataIndex: "name",
-		title: "이름",
-	},
-];
-
-const allFrntCmpntColumns: ColumnsType<AllFrontComponentEntityOutput> = [
-	{
-		key: "id",
-		dataIndex: "id",
-		title: "ID",
-	},
-];
-function makeRoleTreeData(
-	data: Array<RoleGroupEntityOutput>
-): Array<DataNodeType> {
-	return data.map((o) => {
-		return {
-			title: o.name,
-			key: `grp-${o.seqNo}`,
-			isLeaf: false,
-			selectable: false,
-			seqNo: o.seqNo,
-			type: "group",
-			children: [
-				...makeRoleTreeData(o.children),
-				...o.roles.map((oo) => {
-					return {
-						title: oo.name,
-						key: `role-${oo.seqNo}`,
-						isLeaf: true,
-						selectable: true,
-						seqNo: oo.seqNo,
-						type: "role",
-					};
-				}),
-			],
-		};
-	});
-}
 const RoleByFrntCmpntMgmt: FC = () => {
 	const [roleSeqNo, setRoleSeqNo] = useState<number>();
-	const { data, loading, previousData } = useRoleByFrntCmpntMgmtQuery();
+	const { data, loading, previousData } = useRoleByFrntCmpntMgmtQuery({
+		skip: isNil(roleSeqNo),
+		variables: {
+			roleSeqNo: roleSeqNo!,
+		},
+	});
+	const _data = useMemo(() => data || previousData, [data]);
+	const [mutate] =
+		useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation({
+			refetchQueries: refetchQueryMap.allFrontComponent,
+		});
 
-	const roleTreeData = useMemo<Array<DataNodeType>>(
-		() => (data ? makeRoleTreeData(data?.roleGroupEntities.list) : []),
-		[data]
+	const columns = useMemo<ColumnsType<FrontComponentEntityOutput>>(
+		() => [
+			{
+				key: "id",
+				dataIndex: "id",
+				title: "ID",
+				width: 200,
+			},
+			{
+				key: "name",
+				dataIndex: "name",
+				title: "이름",
+				width: 300,
+			},
+			{
+				key: `all_${roleSeqNo}`,
+				title: "화면 컴포넌트",
+				render: (_, record) => (
+					<FullWidthSelect
+						defaultValue={record.allFrontComponentByRole?.id}
+						onSelect={(o) => {
+							mutate({
+								variables: {
+									roleSeqNo: roleSeqNo!,
+									frontComponentId: record.id,
+									allFrontComponentId: o as string,
+								},
+							});
+							console.log(o, record);
+						}}
+						options={record.allFrontComponents.map((o) => ({
+							value: o.id,
+							label: o.id,
+						}))}
+					/>
+				),
+			},
+		],
+		[_data]
 	);
-
-	console.log(data);
 
 	return (
 		<Row gutter={[16, 16]} wrap>
 			<Col span={8}>
-				<Layout>
-					<StyledHeader>
-						<Typography.Title level={3}>권한</Typography.Title>
-					</StyledHeader>
-					<Layout.Content>
-						<Tree.DirectoryTree<DataNodeType>
-							defaultExpandAll
-							treeData={roleTreeData}
-							onSelect={(e, a) => {
-								setRoleSeqNo(a.node.seqNo);
-								console.log(e, a);
-								// setRoleSeqNo(a.)
-							}}
-						/>
-					</Layout.Content>
-				</Layout>
+				<RoleDirectoryTree
+					defaultExpandAll
+					onSelect={(_, { node: { seqNo } }) => {
+						setRoleSeqNo(seqNo);
+					}}
+				/>
 			</Col>
 			<Col span={16}>
-				<Layout>
-					<StyledHeader>
-						<Typography.Title level={3}>권한</Typography.Title>
-					</StyledHeader>
-					<Layout.Content>
-						<Table
-							columns={frntCmpntColumns}
-							dataSource={
-								data?.frontComponentEntities.list ||
-								previousData?.frontComponentEntities.list
-							}
-							loading={loading}
-							rowKey={"id"}
-						/>
-					</Layout.Content>
-				</Layout>
+				<ConfigProvider>
+					<Table
+						bordered
+						columns={columns}
+						dataSource={roleSeqNo ? _data?.frontComponentEntities.list : []}
+						loading={loading}
+						rowKey={"id"}
+					/>
+				</ConfigProvider>
 			</Col>
-			{/*<Col span={8}>*/}
-			{/*	<Layout>*/}
-			{/*		<StyledHeader>*/}
-			{/*			<Typography.Title level={3}>권한</Typography.Title>*/}
-			{/*		</StyledHeader>*/}
-			{/*		<Layout.Content>*/}
-			{/*			<Table*/}
-			{/*				rowSelection={{*/}
-			{/*					type: "radio",*/}
-			{/*				}}*/}
-			{/*				columns={allFrntCmpntColumns}*/}
-			{/*				dataSource={*/}
-			{/*					data?.allFrontComponentEntities.list ||*/}
-			{/*					previousData?.allFrontComponentEntities.list*/}
-			{/*				}*/}
-			{/*				loading={loading}*/}
-			{/*				rowKey={"id"}*/}
-			{/*			/>*/}
-			{/*		</Layout.Content>*/}
-			{/*	</Layout>*/}
-			{/*</Col>*/}
 		</Row>
 	);
 };
