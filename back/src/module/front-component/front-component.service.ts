@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, In } from 'typeorm';
 import { difference, isNil } from 'lodash';
 import { RouteService } from '@modules/route/route.service';
-import { InsertAllFrontComponentEntityInput } from '@modules/front-component/dto/input/insert-all-front-component-entity.input';
-import { UpdateAllFrontComponentEntityInput } from '@modules/front-component/dto/input/update-all-front-component-entity.input';
-import { AllFrontComponentEntity } from '@modules/front-component/dto/output/entity/all-front-component.entity';
-import { InsertFrontComponentEntityInput } from '@modules/front-component/dto/input/insert-front-component-entity.input';
-import { UpdateFrontComponentEntityInput } from '@modules/front-component/dto/input/update-front-component-entity.input';
-import { FrontComponentEntity } from '@modules/front-component/dto/output/entity/front-component.entity';
-import { RoleFrontComponentMapEntity } from '@modules/role/dto/output/entity/role-front-component-map.entity';
-import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
+import { InsertAllFrontComponentInput } from '@modules/front-component/dto/input/insert-all-front-component.input';
+import { UpdateAllFrontComponentInput } from '@modules/front-component/dto/input/update-all-front-component.input';
+import { AllFrontComponentOutput } from '@modules/front-component/dto/output/entity/all-front-component.output';
+import { InsertFrontComponentInput } from '@modules/front-component/dto/input/insert-front-component.input';
+import { UpdateFrontComponentInput } from '@modules/front-component/dto/input/update-front-component.input';
+import { FrontComponentOutput } from '@modules/front-component/dto/output/entity/front-component.output';
+import { RoleFrontComponentMapOutput } from '@modules/role/dto/output/entity/role-front-component-map.output';
+import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 
 @Injectable()
 export class FrontComponentService {
@@ -19,11 +19,11 @@ export class FrontComponentService {
   ) {}
 
   async saveAllFrontComponent(
-    p: InsertAllFrontComponentEntityInput | UpdateAllFrontComponentEntityInput,
-  ): Promise<AllFrontComponentEntity> {
+    p: InsertAllFrontComponentInput | UpdateAllFrontComponentInput,
+  ): Promise<AllFrontComponentOutput> {
     return this.dataSource.manager.transaction(async (entityManager) => {
       return await entityManager.save(
-        AllFrontComponentEntity.create({
+        AllFrontComponentOutput.create({
           id: p.id,
           frontComponentId: p.frontComponentId,
         }),
@@ -32,8 +32,8 @@ export class FrontComponentService {
   }
 
   async saveFrontComponent(
-    p: InsertFrontComponentEntityInput | UpdateFrontComponentEntityInput,
-  ): Promise<FrontComponentEntity> {
+    p: InsertFrontComponentInput | UpdateFrontComponentInput,
+  ): Promise<FrontComponentOutput> {
     return this.dataSource.manager.transaction(async (entityManager) => {
       if (p.routeSeqNos) {
         await this.routeService.updateFrontComponentByRoute(
@@ -51,7 +51,7 @@ export class FrontComponentService {
       }
 
       const frontComponent = await entityManager.save(
-        FrontComponentEntity.create({
+        FrontComponentOutput.create({
           id: p.id,
         }),
       );
@@ -82,7 +82,7 @@ export class FrontComponentService {
     roleSeqNos: Array<number>,
   ) {
     const foundRoleSeqNos = await entityManager
-      .find(RoleFrontComponentMapEntity, {
+      .find(RoleFrontComponentMapOutput, {
         select: ['roleSeqNo'],
         where: {
           frontComponentId,
@@ -95,7 +95,7 @@ export class FrontComponentService {
     const willSaveRoleSeqNos = difference(roleSeqNos, willDeleteRoleSeqNos);
 
     if (willDeleteRoleSeqNos.length > 0) {
-      await entityManager.delete(RoleFrontComponentMapEntity, {
+      await entityManager.delete(RoleFrontComponentMapOutput, {
         roleSeqNo: In(willDeleteRoleSeqNos),
       });
     }
@@ -103,7 +103,7 @@ export class FrontComponentService {
     if (willSaveRoleSeqNos.length > 0) {
       await entityManager.save(
         willSaveRoleSeqNos.map((o) =>
-          RoleFrontComponentMapEntity.create({
+          RoleFrontComponentMapOutput.create({
             roleSeqNo: o,
             frontComponentId,
           }),
@@ -118,7 +118,7 @@ export class FrontComponentService {
     routeSeqNos: Array<number>,
   ) {
     const foundRouteSeqNos = await entityManager
-      .find(RouteEntity, {
+      .find(RouteOutput, {
         select: ['seqNo'],
         where: {
           frontComponentId,
@@ -132,7 +132,7 @@ export class FrontComponentService {
 
     if (willDeleteRouteSeqNos.length > 0) {
       await entityManager.update(
-        RouteEntity,
+        RouteOutput,
         {
           seqNo: In(willDeleteRouteSeqNos),
         },
@@ -144,7 +144,7 @@ export class FrontComponentService {
 
     if (willSaveRouteSeqNos.length > 0) {
       await entityManager.update(
-        RouteEntity,
+        RouteOutput,
         {
           seqNo: In(willSaveRouteSeqNos),
         },
@@ -157,11 +157,11 @@ export class FrontComponentService {
 
   async updateFrontComponentByAllFrontComponent(
     entityManager: EntityManager,
-    allFrontComponentIds: Array<AllFrontComponentEntity['id']>,
-    frontComponentId: FrontComponentEntity['id'],
+    allFrontComponentIds: Array<AllFrontComponentOutput['id']>,
+    frontComponentId: FrontComponentOutput['id'],
   ) {
     const ids = await entityManager
-      .find(AllFrontComponentEntity, {
+      .find(AllFrontComponentOutput, {
         select: ['id'],
         where: {
           frontComponentId,
@@ -174,7 +174,7 @@ export class FrontComponentService {
 
     if (willDeleteIds.length > 0) {
       await entityManager.update(
-        AllFrontComponentEntity,
+        AllFrontComponentOutput,
         {
           seqNo: In(willDeleteIds),
         },
@@ -186,7 +186,7 @@ export class FrontComponentService {
 
     if (willUpdateIds.length > 0) {
       await entityManager.update(
-        AllFrontComponentEntity,
+        AllFrontComponentOutput,
         {
           seqNo: In(willUpdateIds),
         },

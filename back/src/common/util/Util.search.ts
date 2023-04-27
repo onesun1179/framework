@@ -28,11 +28,11 @@ export class UtilSearch {
     qb: SelectQueryBuilder<Entity>,
     search: ObjectLiteral,
   ): void {
-    console.log({ search });
     qb.where(this.getSearchWhere(search));
   }
 
   static getSearchWhere(search: ObjectLiteral): FindOptionsWhere<any> {
+    console.log(search);
     return entries(search).reduce((r, [k, v]) => {
       if (
         v instanceof NonNullableStringSearchInput ||

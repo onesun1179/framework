@@ -2,11 +2,6 @@
  * 프레임워크 메뉴 관리
  */
 import React, { FC, memo, useMemo, useState } from "react";
-import {
-	MessageEntitiesSearchInput,
-	MessageEntitiesSortInput,
-	MessageEntityOutput,
-} from "@gqlType";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
@@ -24,17 +19,22 @@ import { usePaging } from "@src/hooks/usePaging";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useFrmkMsgMgmtData } from "@src/component/route/FrmkMsgMgmt/quires";
-import {
-	useInsertMessageEntity,
-	useUpdateMessageEntity,
-} from "@src/component/route/FrmkMsgMgmt/mutations";
 import { EntityFormActionType } from "@src/types";
 import MessageEntityForm from "@src/component/form/MessageEntityForm";
+import {
+	MessageOutput,
+	MessagesSearchInput,
+	MessagesSortInput,
+} from "@gqlType";
+import {
+	useInsertMessage,
+	useUpdateMessage,
+} from "@src/component/route/FrmkMsgMgmt/mutations";
 
 type SrtQryKey = SortQueryKeyType<
 	"nm" | "cd" | "gpcd" | "msg" | "no" | "desc" | "cat" | "uat"
 >;
-const srtQryMap: Record<SrtQryKey, keyof MessageEntitiesSortInput> = {
+const srtQryMap: Record<SrtQryKey, keyof MessagesSortInput> = {
 	sort_gpcd: "groupCode",
 	sort_cd: "code",
 	sort_msg: "text",
@@ -45,7 +45,7 @@ const srtQryMap: Record<SrtQryKey, keyof MessageEntitiesSortInput> = {
 	sort_uat: "updatedAt",
 };
 type SrchQryKey = SearchQueryKeyType<"nm" | "no" | "gpcd" | "msg">;
-const srchQryMap: Record<SrchQryKey, keyof MessageEntitiesSearchInput> = {
+const srchQryMap: Record<SrchQryKey, keyof MessagesSearchInput> = {
 	srch_no: "seqNo",
 	srch_msg: "text",
 	srch_nm: "name",
@@ -62,11 +62,11 @@ const FrmkMsgMgmt: FC = () => {
 		useQueryObj<Partial<QryObj>>();
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<MessageEntityOutput>();
+		useMentionsState<MessageOutput>();
 	const { getColumnSort } = useQrySort(srtQryMap);
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
 		usePaging(10);
-	const [form] = Form.useForm<MessageEntityOutput>();
+	const [form] = Form.useForm<MessageOutput>();
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
 	const [messageApi, contextHolder] = message.useMessage();
@@ -89,15 +89,15 @@ const FrmkMsgMgmt: FC = () => {
 			},
 		},
 	});
-	const [updateMessageEntityMutate] = useUpdateMessageEntity({
+	const [updateMessageMutate] = useUpdateMessage({
 		refetchQueries: refetchQueryMap.message,
 	});
 
-	const [insertMessageEntityMutate] = useInsertMessageEntity({
+	const [insertMessageMutate] = useInsertMessage({
 		refetchQueries: refetchQueryMap.message,
 	});
 
-	const columns: ColumnsType<MessageEntityOutput> = useMemo(
+	const columns: ColumnsType<MessageOutput> = useMemo(
 		() =>
 			(
 				[
@@ -183,7 +183,7 @@ const FrmkMsgMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageEntityOutput>>
+				] as Array<ColumnType<MessageOutput>>
 			).map((o) => {
 				return {
 					...o,
@@ -213,7 +213,7 @@ const FrmkMsgMgmt: FC = () => {
 								const record = form.getFieldsValue();
 								switch (actionType) {
 									case "insert":
-										await insertMessageEntityMutate({
+										await insertMessageMutate({
 											variables: {
 												input: {
 													groupCode: record.groupCode,
@@ -228,7 +228,7 @@ const FrmkMsgMgmt: FC = () => {
 										await UtilRefetch.message();
 										break;
 									case "update":
-										await updateMessageEntityMutate({
+										await updateMessageMutate({
 											variables: {
 												input: {
 													seqNo: record.seqNo,
@@ -283,7 +283,7 @@ const FrmkMsgMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.messageEntities.total,
+							total: data?.messages.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -294,9 +294,7 @@ const FrmkMsgMgmt: FC = () => {
 						loading={loading}
 						columns={columns}
 						rowKey={"seqNo"}
-						dataSource={
-							data?.messageEntities.list || previousData?.messageEntities.list
-						}
+						dataSource={data?.messages.list || previousData?.messages.list}
 						onRow={(value) => ({
 							onClick: () => {
 								setRecord(value);

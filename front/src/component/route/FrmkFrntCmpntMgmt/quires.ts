@@ -1,20 +1,17 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
+import { makeUseQuery } from "@src/lib/makeUseQuery";
 import {
-	FrontComponentEntitiesInput,
-	FrontComponentEntitiesOutput,
+	FrontComponentsInput,
+	FrontComponentsOutput,
 	PagingInput,
 } from "@gqlType";
-import { makeUseQuery } from "@src/lib/makeUseQuery";
 
-export const FRMK_FRNT_CMPNT_MGMT_DATA = gql`
-	query FRMK_FRNT_CMPNT_MGMT_DATA(
+export const FRMK_FRNT_CMPNT_MGMT_QUERY = gql`
+	query FRMK_FRNT_CMPNT_MGMT(
 		$paging: PagingInput
-		$param: FrontComponentEntitiesInput
+		$param: FrontComponentsInput
 	) {
-		frontComponentEntities(
-			pagingInput: $paging
-			frontComponentEntitiesInput: $param
-		) {
+		frontComponents(pagingInput: $paging, frontComponentsInput: $param) {
 			list {
 				id
 				name
@@ -27,12 +24,14 @@ export const FRMK_FRNT_CMPNT_MGMT_DATA = gql`
 	}
 ` as TypedDocumentNode<
 	{
-		frontComponentEntities: FrontComponentEntitiesOutput;
+		frontComponents: FrontComponentsOutput;
 	},
 	{
 		paging: PagingInput;
-		param: FrontComponentEntitiesInput;
+		param: FrontComponentsInput;
 	}
 >;
 
-export const useFrmkFrntCmpntMgmtData = makeUseQuery(FRMK_FRNT_CMPNT_MGMT_DATA);
+export const useFrmkFrntCmpntMgmtQuery = makeUseQuery(
+	FRMK_FRNT_CMPNT_MGMT_QUERY
+);

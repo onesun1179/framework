@@ -1,13 +1,13 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { MessageEntityRepository } from '@modules/message/repository/message-entity.repository';
-import { MessageEntity } from '@modules/message/dto/output/entity/message.entity';
+import { MessageRepository } from '@modules/message/repository/message.repository';
+import { MessageOutput } from '@modules/message/dto/output/entity/message.output';
 import { MsgCode } from '@modules/message/dto/msg-code';
-import { MessageGroupEntityRepository } from '@modules/message/repository/message-group-entity.repository';
-import { MessageGroupEntitiesSearchInput } from '@modules/message/dto/input/message-group-entities-search.input';
+import { MessageGroupRepository } from '@modules/message/repository/message-group.repository';
+import { MessageGroupsSearchInput } from '@modules/message/dto/input/message-groups-search.input';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
-import { MessageGroupEntity } from '@modules/message/dto/output/entity/message-group.entity';
+import { MessageGroupOutput } from '@modules/message/dto/output/entity/message-group.output';
 import { UtilSearch } from '@common/util/Util.search';
 
 @Injectable()
@@ -15,24 +15,24 @@ export class MessageService {
   private readonly logger = new Logger(MessageService.name);
 
   constructor(
-    private messageRepository: MessageEntityRepository,
-    private messageGroupEntityRepository: MessageGroupEntityRepository,
+    private messageRepository: MessageRepository,
+    private messageGroupEntityRepository: MessageGroupRepository,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 
   static whereByMessageGroupsInput({
     name,
     code,
-  }: MessageGroupEntitiesSearchInput): FindOptionsWhere<MessageGroupEntity> {
+  }: MessageGroupsSearchInput): FindOptionsWhere<MessageGroupOutput> {
     return UtilSearch.getSearchWhere({
       name,
       code,
     });
   }
 
-  async getMessageBySeqNo(seqNo: number): Promise<MessageEntity | null> {
+  async getMessageBySeqNo(seqNo: number): Promise<MessageOutput | null> {
     return (
-      (await this.cache.get<MessageEntity>(`message|${seqNo}`)) ??
+      (await this.cache.get<MessageOutput>(`message|${seqNo}`)) ??
       (await (async () => {
         const msg = await this.messageRepository.findOne({
           where: {
@@ -48,7 +48,7 @@ export class MessageService {
   async getMessageByCode(
     groupCode: string,
     code: string,
-  ): Promise<MessageEntity | null> {
+  ): Promise<MessageOutput | null> {
     return await this.messageRepository.findOne({
       where: {
         groupCode,

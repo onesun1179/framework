@@ -1,41 +1,45 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import {
-	FrontComponentEntityOutput,
-	InsertFrontComponentEntityInput,
-	UpdateFrontComponentEntityInput,
-} from "@gqlType";
 import { makeUseMutation } from "@src/lib/makeUseMutation";
+import {
+	FrontComponentOutput,
+	InsertFrontComponentInput,
+	UpdateFrontComponentInput,
+} from "@gqlType";
 
-export const UPDATE_FRONT_COMPONENT = gql`
-	mutation UPDATE_FRONT_COMPONENT($input: UpdateFrontComponentEntityInput!) {
-		updateFrontComponent(updateFrontComponentInput: $input) {
+export const UPDATE_FRONT_COMPONENT_MUTATION = gql`
+	mutation UPDATE_FRONT_COMPONENT($input: UpdateFrontComponentInput!) {
+		frontComponent: updateFrontComponent(updateFrontComponentInput: $input) {
 			id
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		updateFrontComponent: FrontComponentEntityOutput;
+		frontComponent: FrontComponentOutput;
 	},
 	{
-		input: UpdateFrontComponentEntityInput;
+		input: UpdateFrontComponentInput;
 	}
 >;
 
-export const useUpdateFrontComponent = makeUseMutation(UPDATE_FRONT_COMPONENT);
+export const useUpdateFrontComponentMutation = makeUseMutation(
+	UPDATE_FRONT_COMPONENT_MUTATION
+);
 
-export const INSERT_FRONT_COMPONENT = gql`
-	mutation INSERT_FRONT_COMPONENT($input: InsertFrontComponentEntityInput!) {
-		insertFrontComponent(insertFrontComponentInput: $input) {
+export const INSERT_FRONT_COMPONENT_MUTATION = gql`
+	mutation INSERT_FRONT_COMPONENT($input: InsertFrontComponentInput!) {
+		frontComponent: insertFrontComponent(insertFrontComponentInput: $input) {
 			id
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		insertFrontComponent: FrontComponentEntityOutput;
+		frontComponent: FrontComponentOutput;
 	},
 	{
-		input: InsertFrontComponentEntityInput;
+		input: InsertFrontComponentInput;
 	}
 >;
 
-export const useInsertFrontComponent = makeUseMutation(INSERT_FRONT_COMPONENT);
+export const useInsertFrontComponentMutation = makeUseMutation(
+	INSERT_FRONT_COMPONENT_MUTATION
+);

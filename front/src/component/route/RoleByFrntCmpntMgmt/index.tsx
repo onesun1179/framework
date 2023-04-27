@@ -3,7 +3,6 @@
  */
 import React, { FC, memo, useMemo, useState } from "react";
 import { Col, ConfigProvider, Row, Select, Table } from "antd";
-import { FrontComponentEntityOutput } from "@gqlType";
 import { ColumnsType } from "antd/es/table";
 import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/RoleByFrntCmpntMgmt/quries";
 import RoleDirectoryTree from "@src/component/role/RoleDirectoryTree";
@@ -11,6 +10,7 @@ import { isNil } from "lodash";
 import styled from "styled-components";
 import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/RoleByFrntCmpntMgmt/mutations";
 import { refetchQueryMap } from "@src/Util";
+import { FrontComponentOutput } from "@gqlType";
 
 const FullWidthSelect = styled(Select)`
 	width: 100%;
@@ -29,7 +29,7 @@ const RoleByFrntCmpntMgmt: FC = () => {
 			refetchQueries: refetchQueryMap.allFrontComponent,
 		});
 
-	const columns = useMemo<ColumnsType<FrontComponentEntityOutput>>(
+	const columns = useMemo<ColumnsType<FrontComponentOutput>>(
 		() => [
 			{
 				key: "id",
@@ -85,7 +85,7 @@ const RoleByFrntCmpntMgmt: FC = () => {
 					<Table
 						bordered
 						columns={columns}
-						dataSource={roleSeqNo ? _data?.frontComponentEntities.list : []}
+						dataSource={roleSeqNo ? _data?.frontComponents.list : []}
 						loading={loading}
 						rowKey={"id"}
 					/>

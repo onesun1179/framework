@@ -5,11 +5,6 @@ import {
 	SortQueryKeyType,
 	UtilTable,
 } from "@src/Util";
-import {
-	FrontComponentEntitiesSearchInput,
-	FrontComponentEntitiesSortInput,
-	FrontComponentEntityOutput,
-} from "@gqlType";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
@@ -18,17 +13,22 @@ import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useFrmkFrntCmpntMgmtData } from "@src/component/route/FrmkFrntCmpntMgmt/quires";
-import { useUpdateFrontComponent } from "@src/component/route/FrmkFrntCmpntMgmt/mutations";
 import { FrontComponentEntityDescriptions } from "@src/component/descriptions/FrontComponentEntityDescriptions";
 import FrontComponentEntityForm from "@src/component/form/FrontComponentEntityForm";
+import {
+	FrontComponentOutput,
+	FrontComponentsSearchInput,
+	FrontComponentsSortInput,
+} from "@gqlType";
+import { useFrmkFrntCmpntMgmtQuery } from "@src/component/route/FrmkFrntCmpntMgmt/quires";
+import { useUpdateFrontComponentMutation } from "@src/component/route/FrmkFrntCmpntMgmt/mutations";
 
 /**
  * 프레임워크 컴포넌트 관리
  */
 
 type SrtQryKey = SortQueryKeyType<"id" | "nm" | "desc" | "cat" | "uat">;
-const srtQryMap: Record<SrtQryKey, keyof FrontComponentEntitiesSortInput> = {
+const srtQryMap: Record<SrtQryKey, keyof FrontComponentsSortInput> = {
 	sort_id: "id",
 	sort_nm: "name",
 	sort_desc: "desc",
@@ -36,11 +36,10 @@ const srtQryMap: Record<SrtQryKey, keyof FrontComponentEntitiesSortInput> = {
 	sort_uat: "updatedAt",
 };
 type SrchQryKey = SearchQueryKeyType<"id" | "nm">;
-const srchQryMap: Record<SrchQryKey, keyof FrontComponentEntitiesSearchInput> =
-	{
-		srch_id: "id",
-		srch_nm: "name",
-	};
+const srchQryMap: Record<SrchQryKey, keyof FrontComponentsSearchInput> = {
+	srch_id: "id",
+	srch_nm: "name",
+};
 
 type QryObj = typeof srtQryMap & typeof srchQryMap;
 const qryObj: QryObj = {
@@ -49,13 +48,13 @@ const qryObj: QryObj = {
 };
 
 const FrmkFrntCmpntMgmt: FC = () => {
-	const [form] = Form.useForm<FrontComponentEntityOutput>();
+	const [form] = Form.useForm<FrontComponentOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
 	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<FrontComponentEntityOutput>();
+		useMentionsState<FrontComponentOutput>();
 
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
 		usePaging();
@@ -68,11 +67,11 @@ const FrmkFrntCmpntMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useFrmkFrntCmpntMgmtData();
-	const [updateFrontComponent] = useUpdateFrontComponent({
+	const { data, loading, previousData } = useFrmkFrntCmpntMgmtQuery();
+	const [updateFrontComponent] = useUpdateFrontComponentMutation({
 		refetchQueries: refetchQueryMap.frontComponent,
 	});
-	const [insertFrontComponent] = useUpdateFrontComponent({
+	const [insertFrontComponent] = useUpdateFrontComponentMutation({
 		refetchQueries: refetchQueryMap.frontComponent,
 	});
 
@@ -141,7 +140,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<FrontComponentEntityOutput>>
+				] as Array<ColumnType<FrontComponentOutput>>
 			).map((o) => {
 				return {
 					...o,
@@ -229,7 +228,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.frontComponentEntities.total,
+							total: data?.frontComponents.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -241,8 +240,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						columns={columns}
 						rowKey={"id"}
 						dataSource={
-							data?.frontComponentEntities.list ||
-							previousData?.frontComponentEntities.list
+							data?.frontComponents.list || previousData?.frontComponents.list
 						}
 						onRow={(value) => ({
 							onClick: () => {

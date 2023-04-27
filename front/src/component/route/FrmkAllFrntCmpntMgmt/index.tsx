@@ -5,12 +5,6 @@ import {
 	SortQueryKeyType,
 	UtilTable,
 } from "@src/Util";
-import {
-	AllFrontComponentEntitiesSearchInput,
-	AllFrontComponentEntitiesSortInput,
-	AllFrontComponentEntityOutput,
-	MessageGroupEntityOutput,
-} from "@gqlType";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
@@ -22,10 +16,16 @@ import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { AllFrontComponentEntityDescriptions } from "@src/component/descriptions/AllFrontComponentEntityDescriptions";
 
 import AllFrontComponentEntityForm from "@src/component/form/AllFrontComponentEntityForm";
-import { useAllFrmkFrntCmpntMgmtData } from "@src/component/route/FrmkAllFrntCmpntMgmt/quires";
 import {
-	useInsertAllFrontComponent,
-	useUpdateAllFrontComponent,
+	AllFrontComponentOutput,
+	AllFrontComponentsSearchInput,
+	AllFrontComponentsSortInput,
+	MessageGroupOutput,
+} from "@gqlType";
+import { useFrmkAllFrntCmpntMgmtQuery } from "@src/component/route/FrmkAllFrntCmpntMgmt/quires";
+import {
+	useInsertAllFrontComponentMutation,
+	useUpdateAllFrontComponentMutation,
 } from "@src/component/route/FrmkAllFrntCmpntMgmt/mutations";
 
 /**
@@ -33,7 +33,7 @@ import {
  */
 
 type SrtQryKey = SortQueryKeyType<"id" | "fcId" | "desc" | "cat" | "uat">;
-const srtQryMap: Record<SrtQryKey, keyof AllFrontComponentEntitiesSortInput> = {
+const srtQryMap: Record<SrtQryKey, keyof AllFrontComponentsSortInput> = {
 	sort_id: "id",
 	sort_fcId: "frontComponentId",
 	sort_desc: "desc",
@@ -41,10 +41,7 @@ const srtQryMap: Record<SrtQryKey, keyof AllFrontComponentEntitiesSortInput> = {
 	sort_uat: "updatedAt",
 };
 type SrchQryKey = SearchQueryKeyType<"id" | "fcId">;
-const srchQryMap: Record<
-	SrchQryKey,
-	keyof AllFrontComponentEntitiesSearchInput
-> = {
+const srchQryMap: Record<SrchQryKey, keyof AllFrontComponentsSearchInput> = {
 	srch_id: "id",
 	srch_fcId: "frontComponentId",
 };
@@ -56,13 +53,13 @@ const qryObj: QryObj = {
 };
 
 const FrmkFrntCmpntMgmt: FC = () => {
-	const [form] = Form.useForm<AllFrontComponentEntityOutput>();
+	const [form] = Form.useForm<AllFrontComponentOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
 	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<AllFrontComponentEntityOutput>();
+		useMentionsState<AllFrontComponentOutput>();
 
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
 		usePaging();
@@ -75,11 +72,11 @@ const FrmkFrntCmpntMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useAllFrmkFrntCmpntMgmtData();
-	const [updateAllFrontComponent] = useUpdateAllFrontComponent({
+	const { data, loading, previousData } = useFrmkAllFrntCmpntMgmtQuery();
+	const [updateAllFrontComponent] = useUpdateAllFrontComponentMutation({
 		refetchQueries: refetchQueryMap.allFrontComponent,
 	});
-	const [insertAllFrontComponent] = useInsertAllFrontComponent({
+	const [insertAllFrontComponent] = useInsertAllFrontComponentMutation({
 		refetchQueries: refetchQueryMap.allFrontComponent,
 	});
 
@@ -148,7 +145,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageGroupEntityOutput>>
+				] as Array<ColumnType<MessageGroupOutput>>
 			).map((o) => {
 				return {
 					...o,
@@ -236,7 +233,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.allFrontComponentEntities.total,
+							total: data?.allFrontComponents.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -248,8 +245,8 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						columns={columns}
 						rowKey={"id"}
 						dataSource={
-							data?.allFrontComponentEntities.list ||
-							previousData?.allFrontComponentEntities.list
+							data?.allFrontComponents.list ||
+							previousData?.allFrontComponents.list
 						}
 						onRow={(value) => ({
 							onClick: () => {

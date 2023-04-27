@@ -1,41 +1,42 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import {
-	InsertMessageEntityInput,
-	MessageEntityOutput,
-	UpdateMessageEntityInput,
-} from "@gqlType";
+
 import { makeUseMutation } from "@src/lib/makeUseMutation";
+import {
+	InsertMessageInput,
+	MessageOutput,
+	UpdateMessageInput,
+} from "@gqlType";
 
-export const UPDATE_MESSAGE_ENTITY = gql`
-	mutation UPDATE_MESSAGE_ENTITY($input: UpdateMessageEntityInput!) {
-		updateMessageEntity(updateMessageEntityInput: $input) {
+export const UPDATE_MESSAGE_MUTATION = gql`
+	mutation UPDATE_MESSAGE($input: UpdateMessageInput!) {
+		updateMessage(updateMessageInput: $input) {
 			seqNo
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		updateMessageEntity: MessageEntityOutput;
+		updateMessage: MessageOutput;
 	},
 	{
-		input: UpdateMessageEntityInput;
+		input: UpdateMessageInput;
 	}
 >;
 
-export const useUpdateMessageEntity = makeUseMutation(UPDATE_MESSAGE_ENTITY);
+export const useUpdateMessage = makeUseMutation(UPDATE_MESSAGE_MUTATION);
 
-export const INSERT_MESSAGE_ENTITY = gql`
-	mutation INSERT_MESSAGE_ENTITY($input: InsertMessageEntityInput!) {
-		insertMessageEntity(insertMessageEntityInput: $input) {
+export const INSERT_MESSAGE_MUTATION = gql`
+	mutation INSERT_MESSAGE($input: InsertMessageInput!) {
+		message: insertMessage(insertMessageInput: $input) {
 			seqNo
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		insertMessageEntity: MessageEntityOutput;
+		message: MessageOutput;
 	},
 	{
-		input: InsertMessageEntityInput;
+		input: InsertMessageInput;
 	}
 >;
 
-export const useInsertMessageEntity = makeUseMutation(INSERT_MESSAGE_ENTITY);
+export const useInsertMessage = makeUseMutation(INSERT_MESSAGE_MUTATION);

@@ -1,21 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { UserEntityRepository } from '@modules/user/repository/user-entity.repository';
-import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
-import { UserEntity } from '@modules/user/entity/user.entity';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { UserOutput } from '@modules/user/dto/output/entity/user.output';
 import { UserService } from '@modules/user/user.service';
-import { UserEntityResolver } from '@modules/user/resolver/user-entity.resolver';
+import { UserResolver } from '@modules/user/resolver/user.resolver';
 
 @Module({
   imports: [
-    TypeOrmExModule.forCustomRepository([
-      UserEntityRepository,
-      RoleEntityRepository,
-    ]),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmExModule.forCustomRepository([UserRepository, RoleRepository]),
+    TypeOrmModule.forFeature([UserOutput]),
   ],
   exports: [UserService],
-  providers: [UserService, UserEntityResolver],
+  providers: [UserService, UserResolver],
 })
 export class UserModule {}

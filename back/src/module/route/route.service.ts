@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
 import { difference } from 'lodash';
-import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
-import { InsertRouteEntityInput } from '@modules/route/dto/input/insert-route-entity.input';
-import { UpdateRouteEntityInput } from '@modules/route/dto/input/update-route-entity.input';
-import { RouteEntity } from '@modules/route/dto/output/entity/route.entity';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { InsertRouteInput } from '@modules/route/dto/input/insert-route.input';
+import { UpdateRouteInput } from '@modules/route/dto/input/update-route.input';
+import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 
 @Injectable()
 export class RouteService {
   private readonly logger = new Logger(RouteService.name);
 
-  constructor(private routeRepository: RouteEntityRepository) {}
+  constructor(private routeRepository: RouteRepository) {}
 
   async save(
     e: EntityManager,
-    p: InsertRouteEntityInput | UpdateRouteEntityInput,
-  ): Promise<RouteEntity> {
+    p: InsertRouteInput | UpdateRouteInput,
+  ): Promise<RouteOutput> {
     const route = await e.save(
-      RouteEntity.create({
-        seqNo: p instanceof UpdateRouteEntityInput ? p.seqNo : undefined,
+      RouteOutput.create({
+        seqNo: p instanceof UpdateRouteInput ? p.seqNo : undefined,
         path: p.path,
         parentSeqNo: p.parentSeqNo,
         frontComponentId: p.frontComponentId,
@@ -27,7 +27,7 @@ export class RouteService {
 
     if (p.childSeqNos) {
       const childSeqNos = await e
-        .find(RouteEntity, {
+        .find(RouteOutput, {
           select: ['seqNo'],
           where: {
             parentSeqNo: route.seqNo,
@@ -38,7 +38,7 @@ export class RouteService {
       const willDelChildSeqNos = difference(childSeqNos, p.childSeqNos);
       if (willDelChildSeqNos.length > 0) {
         await e.update(
-          RouteEntity,
+          RouteOutput,
           {
             seqNo: In(willDelChildSeqNos),
           },
@@ -49,7 +49,7 @@ export class RouteService {
       }
 
       await e.update(
-        RouteEntity,
+        RouteOutput,
         {
           seqNo: In(p.childSeqNos),
         },
@@ -64,7 +64,7 @@ export class RouteService {
 
   async hasSeqNo(e: EntityManager, seqNo: number): Promise<boolean> {
     return await e
-      .countBy(RouteEntity, {
+      .countBy(RouteOutput, {
         seqNo,
       })
       .then((r) => r > 0);
@@ -76,7 +76,7 @@ export class RouteService {
     frontComponentId: string,
   ) {
     const seqNos = await entityManager
-      .find(RouteEntity, {
+      .find(RouteOutput, {
         select: ['seqNo'],
         where: {
           frontComponentId,
@@ -89,7 +89,7 @@ export class RouteService {
 
     if (willDeleteSeqNos.length > 0) {
       await entityManager.update(
-        RouteEntity,
+        RouteOutput,
         {
           seqNo: In(willDeleteSeqNos),
         },
@@ -101,7 +101,7 @@ export class RouteService {
 
     if (willUpdateSeqNos.length > 0) {
       await entityManager.update(
-        RouteEntity,
+        RouteOutput,
         {
           seqNo: In(willUpdateSeqNos),
         },

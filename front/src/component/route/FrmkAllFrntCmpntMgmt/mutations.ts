@@ -1,49 +1,49 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import {
-	AllFrontComponentEntityOutput,
-	InsertAllFrontComponentEntityInput,
-	UpdateAllFrontComponentEntityInput,
-} from "@gqlType";
 import { makeUseMutation } from "@src/lib/makeUseMutation";
+import {
+	AllFrontComponentOutput,
+	InsertAllFrontComponentInput,
+	UpdateAllFrontComponentInput,
+} from "@gqlType";
 
-export const UPDATE_ALL_FRONT_COMPONENT = gql`
-	mutation UPDATE_ALL_FRONT_COMPONENT(
-		$input: UpdateAllFrontComponentEntityInput!
-	) {
-		updateAllFrontComponent(updateAllFrontComponentInput: $input) {
+export const UPDATE_ALL_FRONT_COMPONENT_MUTATION = gql`
+	mutation UPDATE_ALL_FRONT_COMPONENT($input: UpdateAllFrontComponentInput!) {
+		allfrontComponent: updateAllFrontComponent(
+			updateAllFrontComponentInput: $input
+		) {
 			id
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		updateAllFrontComponent: AllFrontComponentEntityOutput;
+		allfrontComponent: AllFrontComponentOutput;
 	},
 	{
-		input: UpdateAllFrontComponentEntityInput;
+		input: UpdateAllFrontComponentInput;
 	}
 >;
 
-export const useUpdateAllFrontComponent = makeUseMutation(
-	UPDATE_ALL_FRONT_COMPONENT
+export const useUpdateAllFrontComponentMutation = makeUseMutation(
+	UPDATE_ALL_FRONT_COMPONENT_MUTATION
 );
 
-export const INSERT_ALL_FRONT_COMPONENT = gql`
-	mutation INSERT_ALL_FRONT_COMPONENT(
-		$input: InsertAllFrontComponentEntityInput!
-	) {
-		insertAllFrontComponent(insertAllFrontComponentInput: $input) {
+export const INSERT_ALL_FRONT_COMPONENT_MUTATION = gql`
+	mutation INSERT_ALL_FRONT_COMPONENT($input: InsertAllFrontComponentInput!) {
+		allFrontComponent: insertAllFrontComponent(
+			insertAllFrontComponentInput: $input
+		) {
 			id
 		}
 	}
 ` as TypedDocumentNode<
 	{
-		insertAllFrontComponent: AllFrontComponentEntityOutput;
+		allFrontComponent: AllFrontComponentOutput;
 	},
 	{
-		input: InsertAllFrontComponentEntityInput;
+		input: InsertAllFrontComponentInput;
 	}
 >;
 
-export const useInsertAllFrontComponent = makeUseMutation(
-	INSERT_ALL_FRONT_COMPONENT
+export const useInsertAllFrontComponentMutation = makeUseMutation(
+	INSERT_ALL_FRONT_COMPONENT_MUTATION
 );

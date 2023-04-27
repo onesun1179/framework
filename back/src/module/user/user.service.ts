@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { MetadataConstant } from '@common/constants/metadata.constant';
-import { UserEntityRepository } from '@modules/user/repository/user-entity.repository';
-import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
+import { UserRepository } from '@modules/user/repository/user.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
 import { LoginUser } from '@modules/user/user.type';
-import { UserEntity } from '@modules/user/entity/user.entity';
+import { UserOutput } from '@modules/user/dto/output/entity/user.output';
 
 @Injectable()
 export class UserService {
   constructor(
-    private userRepository: UserEntityRepository,
-    private roleRepository: RoleEntityRepository,
+    private userRepository: UserRepository,
+    private roleRepository: RoleRepository,
   ) {}
 
-  async saveNewMember(loginUser: LoginUser): Promise<UserEntity> {
+  async saveNewMember(loginUser: LoginUser): Promise<UserOutput> {
     const role = await this.roleRepository
       .createQueryBuilder('r')
       .where(`r.identifier = :identifier`, {
@@ -21,7 +21,7 @@ export class UserService {
       .getOneOrFail();
 
     return await this.userRepository.save(
-      UserEntity.create({
+      UserOutput.create({
         id: loginUser.id,
         roleSeqNo: role.seqNo,
       }),

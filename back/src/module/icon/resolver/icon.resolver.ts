@@ -7,32 +7,48 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
-import * as process from 'process';
-import { IconEntity } from '@modules/icon/dto/output/entity/icon.entity';
-import { IconOutput } from '@modules/icon/dto/output/icon.output';
-import { IconEntityRepository } from '@modules/icon/repository/icon-entity.repository';
+import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
+import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import process from 'process';
+import { IconRepository } from '@modules/icon/repository/icon.repository';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
 
 @Resolver(() => IconOutput)
 export class IconResolver {
   private readonly logger = new Logger(IconResolver.name);
 
-  constructor(private iconEntityRepository: IconEntityRepository) {}
+  constructor(
+    private iconRepository: IconRepository,
+    private menuRepository: MenuRepository,
+  ) {}
 
   @Query(() => IconOutput)
-  async icon(@Args('seqNo', { type: () => Int }) seqNo: number) {
-    return await this.iconEntityRepository.findOneOrFail({
-      where: {
-        seqNo,
-      },
-    });
+  async icon(@Args('seqNo', { type: () => Int }) seqNo: IconOutput['seqNo']) {
+    return await this.iconRepository.findOneByOrFail({ seqNo });
   }
 
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
 
+  @ResolveField(() => [MenuOutput])
+  async menus(
+    @Parent() { seqNo: iconSeqNo }: IconOutput,
+  ): Promise<MenuOutput[]> {
+    return await this.menuRepository.findBy({
+      iconSeqNo,
+    });
+  }
   @ResolveField(() => String)
-  filePath(@Parent() { filePath }: IconEntity): string {
+  filePath(@Parent() { filePath }: IconOutput): string {
     return process.env.FILE_PATH!.concat(filePath);
   }
+
+  // @Mutation(() => IconOutput)
+  // insertIcon(
+  //   @Args('icon', {
+  //     type: () => InsertIconIn,
+  //   })
+  //   insertIcon: InsertIconIn,
+  // ) {}
 }

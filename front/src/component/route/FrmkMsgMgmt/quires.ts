@@ -1,9 +1,10 @@
-import { gql } from "@apollo/client";
+import { gql, TypedDocumentNode } from "@apollo/client";
 import { makeUseQuery } from "@src/lib/makeUseQuery";
+import { MessagesInput, MessagesOutput, PagingInput } from "@gqlType";
 
 export const FRMK_MSG_MGMT_DATA = gql`
-	query FRMK_MSG_MGMT_DATA($paging: PagingInput, $param: MessageEntitiesInput) {
-		messageEntities(pagingInput: $paging, messageEntitiesInput: $param) {
+	query FRMK_MSG_MGMT_DATA($paging: PagingInput, $param: MessagesInput) {
+		messages(pagingInput: $paging, messagesInput: $param) {
 			list {
 				seqNo
 				name
@@ -17,6 +18,14 @@ export const FRMK_MSG_MGMT_DATA = gql`
 			total
 		}
 	}
-`;
+` as TypedDocumentNode<
+	{
+		messages: MessagesOutput;
+	},
+	{
+		paging: PagingInput;
+		param: MessagesInput;
+	}
+>;
 
 export const useFrmkMsgMgmtData = makeUseQuery(FRMK_MSG_MGMT_DATA);

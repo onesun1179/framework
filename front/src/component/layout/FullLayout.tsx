@@ -1,8 +1,8 @@
 import React, { FC, PropsWithChildren } from "react";
 import { Layout } from "antd";
 import { useWebStatusStore } from "@src/stores/webStatus.store";
-import SiderMenu from "@src/component/layout/menu/SiderMenu";
 import styled from "styled-components";
+import SiderMenu from "@src/component/layout/menu/SiderMenu";
 
 const { Sider, Header, Content } = Layout;
 

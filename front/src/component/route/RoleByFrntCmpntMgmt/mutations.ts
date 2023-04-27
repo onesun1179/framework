@@ -1,6 +1,6 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import { RoleFrontComponentMapEntityOutput } from "@gqlType";
 import { makeUseMutation } from "@src/lib/makeUseMutation";
+import { RoleFrontComponentMapOutput } from "@gqlType";
 
 export const UPDATE_ALL_FRONT_COMPONENT_BY_ROLE_FRONT_COMPONENT_MAP_ENTITY_MUTATION =
 	gql`
@@ -9,7 +9,7 @@ export const UPDATE_ALL_FRONT_COMPONENT_BY_ROLE_FRONT_COMPONENT_MAP_ENTITY_MUTAT
 			$frontComponentId: String!
 			$allFrontComponentId: String!
 		) {
-			roleFrontComponentMapEntity: updateAllFrontComponentByRoleFrontComponentMapEntity(
+			roleFrontComponentMapEntity: updateAllFrontComponentByRoleFrontComponentMap(
 				roleSeqNo: $roleSeqNo
 				frontComponentId: $frontComponentId
 				allFrontComponentId: $allFrontComponentId
@@ -19,7 +19,7 @@ export const UPDATE_ALL_FRONT_COMPONENT_BY_ROLE_FRONT_COMPONENT_MAP_ENTITY_MUTAT
 		}
 	` as TypedDocumentNode<
 		{
-			roleFrontComponentMapEntity: RoleFrontComponentMapEntityOutput;
+			roleFrontComponentMapEntity: RoleFrontComponentMapOutput;
 		},
 		{
 			roleSeqNo: number;

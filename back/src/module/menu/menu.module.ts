@@ -1,34 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
 import { MenuService } from '@modules/menu/menu.service';
-import { IconEntityRepository } from '@modules/icon/repository/icon-entity.repository';
-import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
+import { IconRepository } from '@modules/icon/repository/icon.repository';
+import { RouteRepository } from '@modules/route/repository/route.repository';
 import { MenuResolver } from '@modules/menu/resolver/menu.resolver';
-import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
-import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
-import { MenuEntityRepository } from '@modules/menu/repository/menu-entity.repository';
-import { MenuRoleMapEntityRepository } from '@modules/menu/repository/menu-role-map-entity.repository';
-import { MenuEntityResolver } from '@modules/menu/resolver/menu-entity.resolver';
-import { MenuByAuthEntityResolver } from '@modules/menu/resolver/menu-by-auth-entity.resolver';
+import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
+import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
+import { MenuByAuthResolver } from '@modules/menu/resolver/menu-by-auth.resolver';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MenuRoleMapEntity, MenuEntity]),
+    TypeOrmModule.forFeature([MenuRoleMapOutput, MenuOutput]),
     TypeOrmExModule.forCustomRepository([
-      MenuEntityRepository,
-      MenuRoleMapEntityRepository,
-      RoleEntityRepository,
-      IconEntityRepository,
-      RouteEntityRepository,
+      MenuRepository,
+      MenuRoleMapRepository,
+      RoleRepository,
+      IconRepository,
+      RouteRepository,
     ]),
   ],
-  providers: [
-    MenuService,
-    MenuEntityResolver,
-    MenuByAuthEntityResolver,
-    MenuResolver,
-  ],
+  providers: [MenuService, MenuResolver, MenuByAuthResolver, MenuResolver],
 })
 export class MenuModule {}

@@ -6,11 +6,6 @@ import {
 	UtilRefetch,
 	UtilTable,
 } from "@src/Util";
-import {
-	MessageGroupEntitiesSearchInput,
-	MessageGroupEntitiesSortInput,
-	MessageGroupEntityOutput,
-} from "@gqlType";
 import { useQueryObj } from "@src/hooks";
 import { usePaging } from "@src/hooks/usePaging";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
@@ -21,10 +16,15 @@ import { MessageGroupEntityForm } from "@src/component/form/MessageGroupEntityFo
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { EntityFormActionType } from "@src/types";
-import { useFrmkMsgGrkMgmtData } from "@src/component/route/FrmkMsgGrpMgmt/quires";
 import {
-	useInsertMessageGroupEntity,
-	useUpdateMessageGroupEntity,
+	MessageGroupOutput,
+	MessageGroupsSearchInput,
+	MessageGroupsSortInput,
+} from "@gqlType";
+import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/FrmkMsgGrpMgmt/quires";
+import {
+	useInsertMessageGroupMutation,
+	useUpdateMessageGroupMutation,
 } from "@src/component/route/FrmkMsgGrpMgmt/mutations";
 
 /**
@@ -32,7 +32,7 @@ import {
  */
 
 type SrtQryKey = SortQueryKeyType<"nm" | "cd" | "desc" | "cat" | "uat">;
-const srtQryMap: Record<SrtQryKey, keyof MessageGroupEntitiesSortInput> = {
+const srtQryMap: Record<SrtQryKey, keyof MessageGroupsSortInput> = {
 	sort_cd: "code",
 	sort_nm: "name",
 	sort_desc: "desc",
@@ -40,7 +40,7 @@ const srtQryMap: Record<SrtQryKey, keyof MessageGroupEntitiesSortInput> = {
 	sort_uat: "updatedAt",
 };
 type SrchQryKey = SearchQueryKeyType<"nm" | "cd">;
-const srchQryMap: Record<SrchQryKey, keyof MessageGroupEntitiesSearchInput> = {
+const srchQryMap: Record<SrchQryKey, keyof MessageGroupsSearchInput> = {
 	srch_nm: "name",
 	srch_cd: "code",
 };
@@ -52,13 +52,13 @@ const qryObj: QryObj = {
 };
 
 const FrmkMsgGrpMgmt: FC = () => {
-	const [form] = Form.useForm<MessageGroupEntityOutput>();
+	const [form] = Form.useForm<MessageGroupOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
 	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<MessageGroupEntityOutput>();
+		useMentionsState<MessageGroupOutput>();
 
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
 		usePaging();
@@ -71,7 +71,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useFrmkMsgGrkMgmtData({
+	const { data, loading, previousData } = useFrmkMsgGrkMgmtDataQuery({
 		variables: {
 			paging: pagingInput,
 			param: {
@@ -80,11 +80,11 @@ const FrmkMsgGrpMgmt: FC = () => {
 		},
 	});
 
-	const [updateMessageGroupEntityMutate] = useUpdateMessageGroupEntity({
+	const [updateMessageGroupEntityMutate] = useUpdateMessageGroupMutation({
 		refetchQueries: refetchQueryMap.messageGroup,
 	});
 
-	const [insertMessageGroupEntityMutate] = useInsertMessageGroupEntity({
+	const [insertMessageGroupEntityMutate] = useInsertMessageGroupMutation({
 		refetchQueries: refetchQueryMap.messageGroup,
 	});
 
@@ -153,7 +153,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageGroupEntityOutput>>
+				] as Array<ColumnType<MessageGroupOutput>>
 			).map((o) => {
 				return {
 					...o,
@@ -249,7 +249,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.messageGroupEntities.total,
+							total: data?.messageGroups.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -261,8 +261,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 						columns={columns}
 						rowKey={"code"}
 						dataSource={
-							data?.messageGroupEntities.list ||
-							previousData?.messageGroupEntities.list
+							data?.messageGroups.list || previousData?.messageGroups.list
 						}
 						onRow={(value) => ({
 							onClick: () => {

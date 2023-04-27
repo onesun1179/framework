@@ -1,19 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "antd/dist/reset.css";
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider, gql, TypedDocumentNode } from "@apollo/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NonIndexRouteObject } from "react-router/dist/lib/context";
 import FrontCRoute from "@src/component/common/FrontCRoute";
-import { RouteEntitiesOutput, RouteEntityOutput } from "@gqlType";
-import { AntdConfigProvider } from "@src/component/config/AntdConfigProvider";
 import { apolloClient } from "@src/graphql/apolloClient";
+import { RouteOutput, RoutesOutput } from "@gqlType";
+import AntdConfigProvider from "@src/component/config/AntdConfigProvider";
 
 const ROUTES_QUERY = gql`
 	query ROUTES {
-		routeEntities(
-			request: { search: { parentSeqNo: { isNull: { value: true } } } }
-		) {
+		routes(request: { search: { parentSeqNo: { isNull: { value: true } } } }) {
 			list {
 				seqNo
 				parentSeqNo
@@ -75,15 +73,15 @@ const ROUTES_QUERY = gql`
 			}
 		}
 	}
-`;
+` as TypedDocumentNode<{
+	routes: RoutesOutput;
+}>;
 
-type RouteType = RouteEntityOutput & {
+type RouteType = RouteOutput & {
 	children: Array<RouteType>;
 };
 
-const { data } = await apolloClient.query<{
-	routeEntities: RouteEntitiesOutput;
-}>({
+const { data } = await apolloClient.query({
 	query: ROUTES_QUERY,
 });
 
@@ -104,9 +102,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<ApolloProvider client={apolloClient}>
 		<AntdConfigProvider>
 			<RouterProvider
-				router={createBrowserRouter(
-					data.routeEntities.list.map(makeRouteObject)
-				)}
+				router={createBrowserRouter(data.routes.list.map(makeRouteObject))}
 			/>
 		</AntdConfigProvider>
 	</ApolloProvider>

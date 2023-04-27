@@ -1,25 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IconEntity } from '@modules/icon/dto/output/entity/icon.entity';
-import { IconGroupTreeEntity } from '@modules/icon/dto/output/entity/icon-group-tree.entity';
-import { IconGroupEntity } from '@modules/icon/dto/output/entity/icon-group.entity';
-import { IconIconGroupMapEntity } from '@modules/icon/dto/output/entity/icon-icon-group-map.entity';
+import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
+import { IconGroupTreeOutput } from '@modules/icon/dto/output/entity/icon-group-tree.output';
+import { IconGroupOutput } from '@modules/icon/dto/output/entity/icon-group.output';
+import { IconIconGroupMapOutput } from '@modules/icon/dto/output/entity/icon-icon-group-map.output';
 import { IconService } from '@modules/icon/icon.service';
-import { IconEntityResolver } from '@modules/icon/resolver/icon-entity.resolver';
 import { IconResolver } from '@modules/icon/resolver/icon.resolver';
 import { TypeOrmExModule } from '@common/module/TypeOrmExModule';
-import { IconEntityRepository } from '@modules/icon/repository/icon-entity.repository';
+import { IconRepository } from '@modules/icon/repository/icon.repository';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      IconEntity,
-      IconGroupTreeEntity,
-      IconGroupEntity,
-      IconIconGroupMapEntity,
+      IconOutput,
+      IconGroupTreeOutput,
+      IconGroupOutput,
+      IconIconGroupMapOutput,
     ]),
-    TypeOrmExModule.forCustomRepository([IconEntityRepository]),
+    TypeOrmExModule.forCustomRepository([IconRepository, MenuRepository]),
   ],
-  providers: [IconEntityResolver, IconService, IconResolver],
+  providers: [IconResolver, IconService],
 })
 export class IconModule {}

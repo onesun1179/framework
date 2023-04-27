@@ -1,20 +1,13 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import {
-	MessageGroupEntitiesInput,
-	MessageGroupEntitiesOutput,
-	PagingInput,
-} from "@gqlType";
 import { makeUseQuery } from "@src/lib/makeUseQuery";
+import { MessageGroupsInput, MessageGroupsOutput, PagingInput } from "@gqlType";
 
-export const FRMK_MSG_GRK_MGMT_DATA = gql`
+export const FRMK_MSG_GRK_MGMT_DATA_QUERY = gql`
 	query FRMK_MSG_GRK_MGMT_DATA(
 		$paging: PagingInput
-		$param: MessageGroupEntitiesInput
+		$param: MessageGroupsInput
 	) {
-		messageGroupEntities(
-			pagingInput: $paging
-			messageGroupEntitiesInput: $param
-		) {
+		messageGroups(pagingInput: $paging, messageGroupsInput: $param) {
 			list {
 				name
 				code
@@ -27,12 +20,14 @@ export const FRMK_MSG_GRK_MGMT_DATA = gql`
 	}
 ` as TypedDocumentNode<
 	{
-		messageGroupEntities: MessageGroupEntitiesOutput;
+		messageGroups: MessageGroupsOutput;
 	},
 	{
 		paging: PagingInput;
-		param: MessageGroupEntitiesInput;
+		param: MessageGroupsInput;
 	}
 >;
 
-export const useFrmkMsgGrkMgmtData = makeUseQuery(FRMK_MSG_GRK_MGMT_DATA);
+export const useFrmkMsgGrkMgmtDataQuery = makeUseQuery(
+	FRMK_MSG_GRK_MGMT_DATA_QUERY
+);

@@ -1,8 +1,8 @@
 import { ObjectType, PickType } from '@nestjs/graphql';
-import { MessageEntity } from '@modules/message/dto/output/entity/message.entity';
+import { MessageOutput } from '@modules/message/dto/output/entity/message.output';
 
 @ObjectType()
-export class MsgOutput extends PickType(MessageEntity, [
+export class MsgOutput extends PickType(MessageOutput, [
   'text',
   'code',
   'groupCode',

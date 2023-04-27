@@ -9,9 +9,14 @@ import {
 import { Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { RouteEntityRepository } from '@modules/route/repository/route-entity.repository';
-import { RoleEntityRepository } from '@modules/role/repository/role-entity.repository';
-import { RouteOutput } from '@modules/route/dto/output/route.output';
+import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
+import { RouteRepository } from '@modules/route/repository/route.repository';
+import { RoleRepository } from '@modules/role/repository/role.repository';
+import { RoutesOutput } from '@modules/route/dto/output/routes.output';
+import { PagingInput } from '@common/dto/input/paging.input';
+import { RoutesInput } from '@modules/route/dto/input/routes.input';
+import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
+import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
 import { RouteTreeOutput } from '@modules/route/dto/output/route-tree.output';
 
 @Resolver(() => RouteOutput)
@@ -19,8 +24,8 @@ export class RouteResolver {
   logger = new Logger(RouteResolver.name);
 
   constructor(
-    private routeRepository: RouteEntityRepository,
-    private roleRepository: RoleEntityRepository,
+    private routeRepository: RouteRepository,
+    private roleRepository: RoleRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
@@ -32,23 +37,62 @@ export class RouteResolver {
     @Args('seqNo', {
       type: () => Int,
     })
-    seqNo: number,
-  ): Promise<RouteOutput> {
-    return await this.routeRepository
-      .createQueryBuilder('route')
-      .where(`route.seqNo = :seqNo`, {
+    seqNo: RouteOutput['seqNo'],
+  ) {
+    return await this.routeRepository.findOneOrFail({
+      where: {
         seqNo,
-      })
-      .getOneOrFail()
-      .then((r) => r.toRouteOutput());
+      },
+    });
+  }
+
+  @Query(() => RoutesOutput)
+  async routes(
+    @Args('paging', {
+      type: () => PagingInput,
+      nullable: true,
+      defaultValue: null,
+    })
+    pagingInput: PagingInput,
+    @Args('request', {
+      type: () => RoutesInput,
+      nullable: true,
+    })
+    routesInput: RoutesInput,
+  ): Promise<RoutesOutput> {
+    return this.routeRepository.paging(pagingInput, routesInput);
   }
 
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
+
+  @ResolveField(() => [RouteOutput], {
+    defaultValue: [],
+  })
+  async children(
+    @Parent() { seqNo: parentSeqNo }: RouteOutput,
+  ): Promise<RouteOutput[]> {
+    return await this.routeRepository.findBy({
+      parentSeqNo,
+    });
+  }
+
+  @ResolveField(() => [RoleOutput])
+  async roles(@Parent() { seqNo }: RouteOutput): Promise<RoleOutput[]> {
+    return await this.roleRepository
+      .createQueryBuilder('r')
+      .innerJoinAndSelect(RoleRouteMapOutput, 'rrm')
+      .select('r')
+      .where('rrm.routeSeqNo = :seqNo', {
+        seqNo,
+      })
+      .getMany();
+  }
+
   @ResolveField(() => RouteTreeOutput)
   async treeInfo(@Parent() { seqNo }: RouteOutput): Promise<RouteTreeOutput> {
-    return await this.routeRepository
+    return await this.dataSource
       .query(
         `
               WITH RECURSIVE FullPath (full_path, seq_no, parent_seq_no, depth)
@@ -77,4 +121,32 @@ export class RouteResolver {
       )
       .then((r) => r[0]);
   }
+
+  /**************************************
+   *           MUTATION
+   ***************************************/
+  // @Mutation(() => RouteOutput)
+  // async insertRoute(
+  //   @Args('req', {
+  //     type: () => InsertRouteInput,
+  //   })
+  //   req: InsertRouteInput,
+  // ): Promise<RouteOutput> {
+  //   return await this.dataSource.transaction(async (e) => {
+  //     return this.routeService.save(e, req);
+  //   });
+  // }
+
+  // @Mutation(() => RouteOutput)
+  // async updateRoute(
+  //   @Args('req', {
+  //     type: () => UpdateRouteRequest,
+  //   })
+  //   req: UpdateRouteRequest,
+  // ): Promise<RouteOutput> {
+  //   if (await this.routeService.hasSeqNo(e, req.seqNo)) {
+  //     return this.routeService.save(e, req);
+  //   }
+  //
+  // }
 }
