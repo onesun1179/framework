@@ -12,6 +12,11 @@ const MenuForm: FC<MenuFormProps> = ({ actionType, ...props }) => {
 
 	return (
 		<Form<MenuOutput> layout={"vertical"} {...props}>
+			{updateYn && (
+				<Form.Item label={`ID`} name={"seqNo"}>
+					<Input disabled />
+				</Form.Item>
+			)}
 			<Form.Item
 				label={`이름`}
 				name={"name"}
@@ -23,7 +28,7 @@ const MenuForm: FC<MenuFormProps> = ({ actionType, ...props }) => {
 			>
 				<Input />
 			</Form.Item>
-			<Form.Item label={`아이콘`} name={"iconSeqNo"}>
+			<Form.Item label={`아이콘`} name={"icon"}>
 				<IconSelect />
 			</Form.Item>
 			<Form.Item label={`비고`} name={"desc"}>

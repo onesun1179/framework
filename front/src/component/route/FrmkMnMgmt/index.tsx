@@ -112,7 +112,6 @@ const FrmkMenuMgmt: FC = () => {
 					},
 					{
 						title: "라우트 정보",
-
 						children: [
 							{
 								key: "route",
@@ -211,12 +210,13 @@ const FrmkMenuMgmt: FC = () => {
 							onClick={async () => {
 								await form.validateFields();
 								const record = form.getFieldsValue();
+								console.log(record);
 								switch (actionType) {
 									case "insert":
 										await insertMutate({
 											variables: {
 												input: {
-													iconSeqNo: record.iconSeqNo,
+													iconSeqNo: record.icon?.seqNo,
 													desc: record.desc,
 													name: record.name,
 													routeSeqNo: record.routeSeqNo,
@@ -229,7 +229,7 @@ const FrmkMenuMgmt: FC = () => {
 											variables: {
 												input: {
 													seqNo: record.seqNo,
-													iconSeqNo: record.iconSeqNo,
+													iconSeqNo: record.icon?.seqNo,
 													desc: record.desc,
 													name: record.name,
 													routeSeqNo: record.routeSeqNo,
