@@ -32,7 +32,6 @@ export class UtilSearch {
   }
 
   static getSearchWhere(search: ObjectLiteral): FindOptionsWhere<any> {
-    console.log(search);
     return entries(search).reduce((r, [k, v]) => {
       if (
         v instanceof NonNullableStringSearchInput ||

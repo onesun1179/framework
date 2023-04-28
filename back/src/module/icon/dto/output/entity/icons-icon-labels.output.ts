@@ -3,33 +3,33 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
 import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
-import { IconGroupOutput } from '@modules/icon/dto/output/entity/icon-group.output';
+import { IconLabelOutput } from '@modules/icon/dto/output/entity/icon-label.output';
 
-@Entity('icon_icon_group_map')
+@Entity('icons_icon_labels')
 @InputType({
   isAbstract: true,
 })
 @ObjectType()
-export class IconIconGroupMapOutput extends CommonEntity {
+export class IconsIconLabelsOutput extends CommonEntity {
   @PrimaryColumn()
   @Field(() => Int)
   iconSeqNo!: number;
 
   @PrimaryColumn()
   @Field(() => Int)
-  iconGroupSeqNo!: number;
+  iconLabelSeqNo!: number;
 
-  @ManyToOne(() => IconOutput, (o) => o.iconIconGroupMaps)
   @JoinColumn({
     name: 'icon_seq_no',
   })
+  @ManyToOne(() => IconOutput, (o) => o.iconsIconLabelsList)
   @Type(() => IconOutput)
   icon!: IconOutput;
 
-  @ManyToOne(() => IconGroupOutput, (o) => o.iconIconGroupMaps)
   @JoinColumn({
-    name: 'icon_group_seq_no',
+    name: 'icon_label_seq_no',
   })
-  @Type(() => IconGroupOutput)
-  iconGroup!: IconGroupOutput;
+  @ManyToOne(() => IconLabelOutput, (o) => o.iconsIconLabelsList)
+  @Type(() => IconLabelOutput)
+  iconLabel!: IconLabelOutput;
 }

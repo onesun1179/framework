@@ -1,22 +1,22 @@
 import React, { FC, memo, useMemo } from "react";
-import { FrontComponentEntityOutput } from "@gqlType";
 import { Form, FormProps, Input } from "antd";
 import { useApolloClient } from "@apollo/client";
 import { EntityFormActionType } from "@src/types";
+import { FrontComponentOutput } from "@src/graphql-type";
 
 export interface FrontComponentEntityFormProps extends FormProps {
 	actionType?: EntityFormActionType;
 }
-const FrontComponentEntityForm: FC<FrontComponentEntityFormProps> = ({
+const FCForm: FC<FrontComponentEntityFormProps> = ({
 	actionType,
 	...props
 }) => {
 	const client = useApolloClient();
-	const [form] = Form.useForm<FrontComponentEntityOutput>(props.form);
+	const [form] = Form.useForm<FrontComponentOutput>(props.form);
 	const updateYn = useMemo(() => actionType === "update", [actionType]);
 
 	return (
-		<Form<FrontComponentEntityOutput> layout={"vertical"} {...props}>
+		<Form<FrontComponentOutput> layout={"vertical"} {...props}>
 			<Form.Item
 				label={`ID`}
 				name={"id"}
@@ -42,18 +42,8 @@ const FrontComponentEntityForm: FC<FrontComponentEntityFormProps> = ({
 			<Form.Item label={`비고`} name={"desc"}>
 				<Input />
 			</Form.Item>
-			{updateYn && (
-				<>
-					<Form.Item label={`생성일자`} name={"createdAt"}>
-						<Input disabled />
-					</Form.Item>
-					<Form.Item label={`수정일자`} name={"updatedAt"}>
-						<Input disabled />
-					</Form.Item>
-				</>
-			)}
 		</Form>
 	);
 };
 
-export default memo(FrontComponentEntityForm);
+export default memo(FCForm);

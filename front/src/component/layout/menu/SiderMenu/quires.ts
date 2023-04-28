@@ -7,8 +7,8 @@ export const MENUS_QUERY = gql`
 		seqNo
 		name
 		icon {
+			seqNo
 			name
-			filePath
 		}
 		route {
 			seqNo

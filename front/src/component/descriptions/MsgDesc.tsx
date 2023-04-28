@@ -1,13 +1,11 @@
 import { FC } from "react";
 import { Descriptions } from "antd";
-import { MessageEntityOutput } from "@gqlType";
+import { MessageOutput } from "@gqlType";
 
-export interface MessageEntityDescriptionsProps {
-	record?: MessageEntityOutput;
+export interface MsgDescProps {
+	record?: MessageOutput;
 }
-export const MessageEntityDescriptions: FC<MessageEntityDescriptionsProps> = ({
-	record,
-}) => {
+const MsgDesc: FC<MsgDescProps> = ({ record }) => {
 	return (
 		<Descriptions title="메세지" column={1}>
 			<Descriptions.Item label="일련번호">{record?.seqNo}</Descriptions.Item>
@@ -27,3 +25,5 @@ export const MessageEntityDescriptions: FC<MessageEntityDescriptionsProps> = ({
 		</Descriptions>
 	);
 };
+
+export default MsgDesc;

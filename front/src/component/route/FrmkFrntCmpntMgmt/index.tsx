@@ -13,8 +13,8 @@ import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { FrontComponentEntityDescriptions } from "@src/component/descriptions/FrontComponentEntityDescriptions";
-import FrontComponentEntityForm from "@src/component/form/FrontComponentEntityForm";
+import FCDesc from "@src/component/descriptions/FCDesc";
+import FrontComponentEntityForm from "@src/component/form/FCForm";
 import {
 	FrontComponentOutput,
 	FrontComponentsSearchInput,
@@ -154,7 +154,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 		<>
 			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<FrontComponentEntityDescriptions record={record} />
+				<FCDesc record={record} />
 			</Drawer>
 
 			<Drawer

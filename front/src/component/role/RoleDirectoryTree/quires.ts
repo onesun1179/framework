@@ -1,13 +1,11 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
-import { RoleGroupEntitiesOutput } from "@gqlType";
 import { makeUseQuery } from "@src/lib/makeUseQuery";
+import { RoleGroupsOutput } from "@gqlType";
 
 export const ROLE_DIRECTORY_TREE_QUERY = gql`
 	query ROLE_DIRECTORY_TREE {
-		roleGroupEntities(
-			roleGroupEntitiesInput: {
-				search: { parentSeqNo: { isNull: { value: true } } }
-			}
+		roleGroups(
+			roleGroupsInput: { search: { parentSeqNo: { isNull: { value: true } } } }
 		) {
 			list {
 				seqNo
@@ -53,7 +51,7 @@ export const ROLE_DIRECTORY_TREE_QUERY = gql`
 		}
 	}
 ` as TypedDocumentNode<{
-	roleGroupEntities: RoleGroupEntitiesOutput;
+	roleGroups: RoleGroupsOutput;
 }>;
 
 export const useRoleDirectoryTreeQuery = makeUseQuery(

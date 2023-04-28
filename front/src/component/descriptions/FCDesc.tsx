@@ -1,16 +1,14 @@
 import { FC } from "react";
 import { Descriptions } from "antd";
-import { MessageGroupEntityOutput } from "@gqlType";
+import { FrontComponentOutput } from "@gqlType";
 
-export interface MessageGroupEntityDescriptionsProps {
-	record?: MessageGroupEntityOutput;
+export interface FCDescProps {
+	record?: FrontComponentOutput;
 }
-export const MessageGroupEntityDescriptions: FC<
-	MessageGroupEntityDescriptionsProps
-> = ({ record }) => {
+const FCDesc: FC<FCDescProps> = ({ record }) => {
 	return (
-		<Descriptions title="메세지 그룹" column={1}>
-			<Descriptions.Item label="코드">{record?.code}</Descriptions.Item>
+		<Descriptions title="컴포넌트" column={1}>
+			<Descriptions.Item label="ID">{record?.id}</Descriptions.Item>
 			<Descriptions.Item label="이름">{record?.name}</Descriptions.Item>
 			<Descriptions.Item label="비고">{record?.desc}</Descriptions.Item>
 			<Descriptions.Item label="생성일자">
@@ -22,3 +20,5 @@ export const MessageGroupEntityDescriptions: FC<
 		</Descriptions>
 	);
 };
+
+export default FCDesc;

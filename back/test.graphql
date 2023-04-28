@@ -1,14 +1,22 @@
-
-query ($roleSeqNo : Int! = 2){
-    frontComponentEntities {
-        list {
-            id
+query {
+    icon(seqNo: 1) {
+        labels {
+            seqNo
             name
-            allFrontComponentByRole(roleSeqNo: $roleSeqNo) {
-                id
-
-            }
-
         }
+    }
+}
+
+query {
+    icons(iconsInput: {search: {iconLabel: {seqNo: {equal: {value: 1}}}}}) {
+        list {
+            seqNo
+            name
+            labels {
+                seqNo
+                name
+            }
+        }
+        total
     }
 }

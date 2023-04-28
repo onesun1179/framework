@@ -15,13 +15,13 @@ import {
 import { usePaging } from "@src/hooks/usePaging";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import React, { FC, useCallback, useMemo, useState } from "react";
-import { Index } from "@src/component/form/MessageEntityForm";
+import { Index } from "src/component/form/MsgForm";
 import { useMutation, useQuery } from "@apollo/client";
 import { UtilRefetch } from "@src/Util/Util.refetch";
 import { invert, mapValues, pick } from "lodash";
 import { Nullable } from "@src/types";
 import { ColumnsType } from "antd/es/table";
-import { MessageEntityDescriptions } from "@src/component/descriptions/MessageEntityDescriptions";
+import { MsgDesc } from "@src/component/descriptions/MsgDesc";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { MESSAGE_ENTITIES_TABLE_QUERY } from "@src/component/route/FrmkMsgMgmt";
 import { CustomFormActionType } from "@src/types/table";
@@ -253,7 +253,7 @@ export function EntityTable<
 		<>
 			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MessageEntityDescriptions record={record} />
+				<MsgDesc record={record} />
 			</Drawer>
 
 			<Drawer

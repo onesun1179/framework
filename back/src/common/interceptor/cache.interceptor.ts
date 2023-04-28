@@ -18,7 +18,6 @@ export class GraphqlCacheInterceptor implements NestInterceptor {
     context: ExecutionContextHost,
     next: CallHandler,
   ): Observable<any> | Promise<Observable<any>> {
-    console.log('intercept');
     const ctx = this.getGqlCtx(context);
 
     if (!ctx) {

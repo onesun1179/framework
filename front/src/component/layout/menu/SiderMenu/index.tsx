@@ -1,15 +1,15 @@
 import { MenuOutput } from "@gqlType";
 import { Menu, MenuProps } from "antd";
-import SvgPathToIcon from "@src/component/common/SvgPathToIcon";
 import { Link } from "react-router-dom";
 import React, { FC, useMemo } from "react";
 import { useMenusQuery } from "@src/component/layout/menu/SiderMenu/quires";
+import CustomIcon from "@src/component/common/CustomIcon";
 
 function getItem(menuItem: MenuOutput): Required<MenuProps>["items"][number] {
 	return {
 		key: menuItem.seqNo + "",
 		icon: menuItem.icon ? (
-			<SvgPathToIcon filePath={menuItem.icon.filePath} />
+			<CustomIcon iconSeqNo={menuItem.icon.seqNo} />
 		) : undefined,
 		children:
 			menuItem.children.length > 0

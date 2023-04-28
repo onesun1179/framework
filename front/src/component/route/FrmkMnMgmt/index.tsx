@@ -2,17 +2,35 @@
  * 프레임워크 메뉴 관리
  */
 import React, { FC, useMemo, useState } from "react";
-import { Button, Form, Layout, message, Space, Table } from "antd";
+import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
-import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { ColumnType } from "antd/es/table";
+import {
+	refetchQueryMap,
+	SearchQueryKeyType,
+	SortQueryKeyType,
+	UtilTable,
+} from "@src/Util";
+import { ColumnsType, ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { MenuOutput, MenusSearchInput, MenusSortInput } from "@gqlType";
+import {
+	IconOutput,
+	MenuOutput,
+	MenusSearchInput,
+	MenusSortInput,
+	RouteOutput,
+} from "@gqlType";
 import { useFrmkMnMgmtQuery } from "@src/component/route/FrmkMnMgmt/quires";
+import MenuDesc from "@src/component/descriptions/MenuDesc";
+import MenuForm from "@src/component/form/MenuForm";
+import {
+	useInsertMenuMutation,
+	useUpdateMenuMutation,
+} from "@src/component/route/FrmkMnMgmt/mutations";
+import CustomIcon from "@src/component/common/CustomIcon";
 
 type SrtQryKey = SortQueryKeyType<"no" | "nm" | "ino" | "rno">;
 const srtQryMap: Record<SrtQryKey, keyof MenusSortInput> = {
@@ -57,14 +75,14 @@ const FrmkMenuMgmt: FC = () => {
 		[queryObj]
 	);
 	const { data, loading, previousData } = useFrmkMnMgmtQuery();
-	// const [updateFrontComponent] = useUpdateFrontComponent({
-	// 	refetchQueries: refetchQueryMap.frontComponent,
-	// });
-	// const [insertFrontComponent] = useUpdateFrontComponent({
-	// 	refetchQueries: refetchQueryMap.frontComponent,
-	// });
+	const [updateMutate] = useUpdateMenuMutation({
+		refetchQueries: refetchQueryMap.menu,
+	});
+	const [insertMutate] = useInsertMenuMutation({
+		refetchQueries: refetchQueryMap.menu,
+	});
 
-	const columns = useMemo(
+	const columns = useMemo<ColumnsType<MenuOutput>>(
 		() =>
 			(
 				[
@@ -72,6 +90,8 @@ const FrmkMenuMgmt: FC = () => {
 						key: "seqNo",
 						dataIndex: "seqNo",
 						title: "ID",
+						width: 50,
+						align: "center",
 					},
 					{
 						key: "name",
@@ -79,10 +99,38 @@ const FrmkMenuMgmt: FC = () => {
 						title: "이름",
 					},
 					{
-						key: "desc",
-						dataIndex: "desc",
-						title: "비고",
-						width: 80,
+						key: "icon",
+						dataIndex: "icon",
+						title: "아이콘",
+						render(iconOutput: IconOutput, b) {
+							return iconOutput.fileFullPath ? (
+								<CustomIcon iconSeqNo={iconOutput.seqNo} />
+							) : null;
+						},
+						align: "center",
+						width: 70,
+					},
+					{
+						title: "라우트 정보",
+
+						children: [
+							{
+								key: "route",
+								title: "경로",
+								dataIndex: "route",
+								render(route: RouteOutput) {
+									return route.path;
+								},
+							},
+							{
+								key: "route",
+								title: "화면 컴포넌트",
+								dataIndex: "route",
+								render(route: RouteOutput) {
+									return route.frontComponentId;
+								},
+							},
+						],
 					},
 					{
 						key: "createdAt",
@@ -95,6 +143,12 @@ const FrmkMenuMgmt: FC = () => {
 						dataIndex: "updatedAt",
 						title: "수정일자",
 						width: 220,
+					},
+					{
+						key: "desc",
+						dataIndex: "desc",
+						title: "비고",
+						width: 80,
 					},
 					{
 						key: "action",
@@ -142,56 +196,59 @@ const FrmkMenuMgmt: FC = () => {
 	return (
 		<>
 			{contextHolder}
-			{/*<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>*/}
-			{/*	<FrontComponentEntityDescriptions record={record} />*/}
-			{/*</Drawer>*/}
+			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
+				<MenuDesc record={record} />
+			</Drawer>
 
-			{/*<Drawer*/}
-			{/*	open={formDrawerOpenYn}*/}
-			{/*	onClose={() => setFormDrawerOpenYn(false)}*/}
-			{/*	afterOpenChange={(open) => !open && setActionType(undefined)}*/}
-			{/*	extra={*/}
-			{/*		<Space>*/}
-			{/*			<Button*/}
-			{/*				type="primary"*/}
-			{/*				onClick={async () => {*/}
-			{/*					await form.validateFields();*/}
-			{/*					const record = form.getFieldsValue();*/}
-			{/*					switch (actionType) {*/}
-			{/*						case "insert":*/}
-			{/*							await insertFrontComponent({*/}
-			{/*								variables: {*/}
-			{/*									input: {*/}
-			{/*										id: record.id,*/}
-			{/*										name: record.name,*/}
-			{/*										desc: record.desc,*/}
-			{/*									},*/}
-			{/*								},*/}
-			{/*							});*/}
-			{/*							break;*/}
-			{/*						case "update":*/}
-			{/*							await updateFrontComponent({*/}
-			{/*								variables: {*/}
-			{/*									input: {*/}
-			{/*										id: record.id,*/}
-			{/*										name: record.name,*/}
-			{/*										desc: record.desc,*/}
-			{/*									},*/}
-			{/*								},*/}
-			{/*							});*/}
-			{/*							break;*/}
-			{/*					}*/}
-			{/*					setFormDrawerOpenYn(false);*/}
-			{/*					await messageApi.success("성공");*/}
-			{/*				}}*/}
-			{/*			>*/}
-			{/*				저장*/}
-			{/*			</Button>*/}
-			{/*		</Space>*/}
-			{/*	}*/}
-			{/*>*/}
-			{/*	<FrontComponentEntityForm form={form} actionType={actionType} />*/}
-			{/*</Drawer>*/}
+			<Drawer
+				open={formDrawerOpenYn}
+				onClose={() => setFormDrawerOpenYn(false)}
+				afterOpenChange={(open) => !open && setActionType(undefined)}
+				extra={
+					<Space>
+						<Button
+							type="primary"
+							onClick={async () => {
+								await form.validateFields();
+								const record = form.getFieldsValue();
+								switch (actionType) {
+									case "insert":
+										await insertMutate({
+											variables: {
+												input: {
+													iconSeqNo: record.iconSeqNo,
+													desc: record.desc,
+													name: record.name,
+													routeSeqNo: record.routeSeqNo,
+												},
+											},
+										});
+										break;
+									case "update":
+										await updateMutate({
+											variables: {
+												input: {
+													seqNo: record.seqNo,
+													iconSeqNo: record.iconSeqNo,
+													desc: record.desc,
+													name: record.name,
+													routeSeqNo: record.routeSeqNo,
+												},
+											},
+										});
+										break;
+								}
+								setFormDrawerOpenYn(false);
+								await messageApi.success("성공");
+							}}
+						>
+							저장
+						</Button>
+					</Space>
+				}
+			>
+				<MenuForm form={form} actionType={actionType} />
+			</Drawer>
 
 			<Layout>
 				<Layout.Header>

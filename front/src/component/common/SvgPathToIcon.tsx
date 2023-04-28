@@ -1,9 +1,10 @@
 import React, { FC, ReactElement } from "react";
 import useFetch from "@src/hooks/useFetch";
 import { IconComponentProps } from "@ant-design/icons/lib/components/Icon";
-import Icon from "@ant-design/icons/es";
 import { AntdIconProps } from "@ant-design/icons/es/components/AntdIcon";
 import { QuestionOutlined } from "@ant-design/icons";
+import parse from "html-react-parser";
+import Icon from "@ant-design/icons/es";
 
 type IconBaseProps = Pick<
 	AntdIconProps,
@@ -741,16 +742,16 @@ type IconProps = Pick<
 	| "component"
 >;
 
-const SvgPathToIcon: FC<
-	{
-		filePath: string;
-	} & IconProps & {
-			a?: {
-				Icon: React.ForwardRefExoticComponent<IconBaseProps>;
-				props?: IconBaseProps;
-			};
-		}
-> = ({
+export type SvgPathToIconProps = {
+	filePath?: string;
+} & IconProps & {
+		a?: {
+			Icon: React.ForwardRefExoticComponent<IconBaseProps>;
+			props?: IconBaseProps;
+		};
+	};
+
+const SvgPathToIcon: FC<SvgPathToIconProps> = ({
 	filePath,
 	a: { Icon: DefaultIcon, props: defaultProps } = {
 		Icon: QuestionOutlined,
@@ -758,16 +759,19 @@ const SvgPathToIcon: FC<
 	...iconProps
 }): ReactElement => {
 	const { loading, payload, error } = useFetch<string>(filePath);
+
 	if (!payload) {
 		return <DefaultIcon {...defaultProps} />;
 	}
+	// console.log(parse(payload)[1].props.children[1]);
+	// return parse(payload)
+	// return <Icon {...iconProps} component={CustomIcon(payload)} />;
+	// console.log(payload)
+	// console.log(payload);
 	return (
-		<Icon
-			{...iconProps}
-			dangerouslySetInnerHTML={{
-				__html: payload,
-			}}
-		/>
+		<Icon {...iconProps} viewBox={"0 0 1024 1024"}>
+			{parse(payload)}
+		</Icon>
 	);
 };
 

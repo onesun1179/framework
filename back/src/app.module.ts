@@ -30,6 +30,7 @@ import { ValidationPipe } from '@common/pipe/ValidationPipe';
 
 const initYn = false;
 // const initYn = true;
+
 @Module({
   controllers: [AppController],
   imports: [
@@ -40,6 +41,7 @@ const initYn = false;
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
+        FILE_PATH: Joi.string().required(),
         NODE_ENV: Joi.string().valid('dev', 'prod').required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),

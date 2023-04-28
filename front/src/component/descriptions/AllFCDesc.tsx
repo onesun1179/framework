@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { Descriptions } from "antd";
-import { AllFrontComponentEntityOutput } from "@gqlType";
+import { AllFrontComponentOutput } from "@gqlType";
 
 export interface AllFrontComponentEntityDescriptionsProps {
-	record?: AllFrontComponentEntityOutput;
+	record?: AllFrontComponentOutput;
 }
-export const AllFrontComponentEntityDescriptions: FC<
-	AllFrontComponentEntityDescriptionsProps
-> = ({ record }) => {
+const AllFCDesc: FC<AllFrontComponentEntityDescriptionsProps> = ({
+	record,
+}) => {
 	return (
 		<Descriptions title="컴포넌트" column={1}>
 			<Descriptions.Item label="ID">{record?.id}</Descriptions.Item>
@@ -24,3 +24,5 @@ export const AllFrontComponentEntityDescriptions: FC<
 		</Descriptions>
 	);
 };
+
+export default AllFCDesc;

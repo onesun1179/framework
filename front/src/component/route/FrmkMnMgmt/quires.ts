@@ -12,6 +12,15 @@ export const FRMK_MN_MGMT_QUERY = gql`
 				desc
 				updatedAt
 				createdAt
+				icon {
+					seqNo
+					fileFullPath
+				}
+				route {
+					seqNo
+					path
+					frontComponentId
+				}
 			}
 			total
 		}

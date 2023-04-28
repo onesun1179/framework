@@ -1,6 +1,7 @@
 import {
   Args,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -27,6 +28,8 @@ import { RouteRepository } from '@modules/route/repository/route.repository';
 import { CurrentUser } from '@common/decorator/CurrentUser';
 import { AfterAT } from '@auth/interfaces/AfterAT';
 import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { InsertMenuInput } from '@modules/menu/dto/input/insert-menu.input';
+import { UpdateMenuInput } from '@modules/menu/dto/input/update-menu.input';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuOutput)
@@ -154,5 +157,28 @@ export class MenuResolver {
         },
       )
       .getMany();
+  }
+
+  /**************************************
+   *           MUTATION
+   ***************************************/
+  @Mutation(() => MenuOutput)
+  async insertMenu(
+    @Args('insertMenuInput', {
+      type: () => InsertMenuInput,
+    })
+    insertMenuInput: InsertMenuInput,
+  ): Promise<MenuOutput> {
+    return await this.menuRepository.saveCustom(insertMenuInput);
+  }
+
+  @Mutation(() => MenuOutput)
+  async updateMenu(
+    @Args('updateMenuInput', {
+      type: () => UpdateMenuInput,
+    })
+    updateMenuInput: UpdateMenuInput,
+  ): Promise<MenuOutput> {
+    return await this.menuRepository.saveCustom(updateMenuInput);
   }
 }

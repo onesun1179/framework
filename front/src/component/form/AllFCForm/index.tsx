@@ -1,24 +1,18 @@
 import React, { FC, memo, useMemo } from "react";
-import {
-	AllFrontComponentEntityOutput,
-	MessageGroupEntityOutput,
-} from "@gqlType";
 import { Form, FormProps, Input } from "antd";
 import { useApolloClient } from "@apollo/client";
 import { EntityFormActionType } from "@src/types";
-import { FrontComponentEntitiesSelect } from "@src/component/select/FrontComponentEntitiesSelect";
-import { CHK_UNIQ_BY_ALL_FC_ID } from "@src/component/form/AllFrontComponentEntityForm/quires";
+import { CHK_UNIQ_BY_ALL_FC_ID } from "@src/component/form/AllFCForm/quires";
+import { AllFrontComponentOutput, MessageGroupOutput } from "@gqlType";
+import FCSelect from "@src/component/select/FCSelect";
 
-export interface AllFrontComponentEntityFormProps extends FormProps {
+export interface AllFCFormProps extends FormProps {
 	actionType?: EntityFormActionType;
 }
 
-const AllFrontComponentEntityForm: FC<AllFrontComponentEntityFormProps> = ({
-	actionType,
-	...props
-}) => {
+const AllFCForm: FC<AllFCFormProps> = ({ actionType, ...props }) => {
 	const client = useApolloClient();
-	const [form] = Form.useForm<MessageGroupEntityOutput>(props.form);
+	const [form] = Form.useForm<MessageGroupOutput>(props.form);
 	const updateYn = useMemo(() => actionType === "update", [actionType]);
 	const chkUniqByAllFcId = async (id: string) => {
 		const { data } = await client.query({
@@ -36,7 +30,7 @@ const AllFrontComponentEntityForm: FC<AllFrontComponentEntityFormProps> = ({
 	};
 
 	return (
-		<Form<AllFrontComponentEntityOutput> layout={"vertical"} {...props}>
+		<Form<AllFrontComponentOutput> layout={"vertical"} {...props}>
 			<Form.Item
 				label={`ID`}
 				name={"id"}
@@ -54,24 +48,14 @@ const AllFrontComponentEntityForm: FC<AllFrontComponentEntityFormProps> = ({
 				<Input disabled={updateYn} />
 			</Form.Item>
 			<Form.Item<string> label={`화면 컴포넌트 ID`} name={"frontComponentId"}>
-				<FrontComponentEntitiesSelect />
+				<FCSelect />
 			</Form.Item>
 
 			<Form.Item label={`비고`} name={"desc"}>
 				<Input />
 			</Form.Item>
-			{updateYn && (
-				<>
-					<Form.Item label={`생성일자`} name={"createdAt"}>
-						<Input disabled />
-					</Form.Item>
-					<Form.Item label={`수정일자`} name={"updatedAt"}>
-						<Input disabled />
-					</Form.Item>
-				</>
-			)}
 		</Form>
 	);
 };
 
-export default memo(AllFrontComponentEntityForm);
+export default memo(AllFCForm);

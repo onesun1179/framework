@@ -50,6 +50,15 @@ type RoleGroupOutput {
   parent: RoleGroupOutput
 }
 
+type IconLabelOutput {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  desc: String
+  seqNo: Int!
+  name: String!
+  icons: [IconOutput!]!
+}
+
 type IconOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -58,6 +67,8 @@ type IconOutput {
   name: String!
   filePath: String!
   menus: [MenuOutput!]!
+  fileFullPath: String!
+  labels: [IconLabelOutput!]!
 }
 
 type RoleFrontComponentMapOutput {
@@ -197,6 +208,11 @@ type RouteTreeOutput {
   depth: Int!
 }
 
+type IconsOutput {
+  list: [IconOutput!]!
+  total: Int!
+}
+
 type MenusOutput {
   list: [MenuOutput!]!
   total: Int!
@@ -204,6 +220,11 @@ type MenusOutput {
 
 type MenuRoleMapOutput {
   list: [MenuRoleMap!]!
+  total: Int!
+}
+
+type IconLabelsOutput {
+  list: [IconLabelOutput!]!
   total: Int!
 }
 
@@ -235,6 +256,10 @@ type Query {
   roleGroups(pagingInput: PagingInput, roleGroupsInput: RoleGroupsInput): RoleGroupsOutput!
   roleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!): RoleFrontComponentMapOutput
   icon(seqNo: Int!): IconOutput!
+  icons(pagingInput: PagingInput, iconsInput: IconsInput): IconsOutput!
+  iconLabel(iconLabelSeqNo: Int!): IconLabelOutput!
+  iconLabels(pagingInput: PagingInput, iconLabelsInput: IconLabelsInput): IconLabelsOutput!
+  iconLabelByIconSeqNo(iconSeqNo: Int!): [IconLabelOutput!]!
 }
 
 input PagingInput {
@@ -572,7 +597,42 @@ input RoleGroupsSortInput {
   updatedAt: SortTypeInput
 }
 
+input IconsInput {
+  search: IconsSearchInput
+  sort: IconsSortInput
+}
+
+input IconsSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  name: NonNullableStringSearchInput
+  filePath: NonNullableStringSearchInput
+  iconLabel: IconLabelsSearchInput
+}
+
+input IconLabelsSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  name: NonNullableStringSearchInput
+}
+
+input IconsSortInput {
+  seqNo: SortTypeInput
+  name: SortTypeInput
+  filePath: SortTypeInput
+}
+
+input IconLabelsInput {
+  search: IconLabelsSearchInput
+  sort: IconLabelsSortInput
+}
+
+input IconLabelsSortInput {
+  seqNo: SortTypeInput
+  name: SortTypeInput
+}
+
 type Mutation {
+  insertMenu(insertMenuInput: InsertMenuInput!): MenuOutput!
+  updateMenu(updateMenuInput: UpdateMenuInput!): MenuOutput!
   updateMessage(updateMessageInput: UpdateMessageInput!): MessageOutput!
   insertMessage(insertMessageInput: InsertMessageInput!): MessageOutput!
   deleteMessages(seqNos: [Int!]!): Boolean!
@@ -589,6 +649,21 @@ type Mutation {
   updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput!): RoleGroupOutput!
   removeRoleGroup(seqNo: Int!): RoleGroupOutput!
   updateAllFrontComponentByRoleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!, allFrontComponentId: String!): RoleFrontComponentMapOutput!
+}
+
+input InsertMenuInput {
+  desc: String
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
+}
+
+input UpdateMenuInput {
+  seqNo: Int!
+  desc: String
+  name: String!
+  iconSeqNo: Int
+  routeSeqNo: Int
 }
 
 input UpdateMessageInput {

@@ -9,6 +9,10 @@ import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
 import { MenusInput } from '@modules/menu/dto/input/menus.input';
 import { MenusOutput } from '@modules/menu/dto/output/menus.output';
 import { UtilPaging } from '@common/util/Util.paging';
+import { InsertMenuInput } from '@modules/menu/dto/input/insert-menu.input';
+import { UpdateMenuInput } from '@modules/menu/dto/input/update-menu.input';
+import { GqlError } from '@common/error/GqlError';
+import { MessageConstant } from '@common/constants/message.constant';
 
 @CustomRepository(MenuOutput)
 export class MenuRepository extends Repository<MenuOutput> {
@@ -27,11 +31,7 @@ export class MenuRepository extends Repository<MenuOutput> {
       console.log('search?.role open');
       search?.role &&
         (where.menuRoleMaps = UtilSearch.getSearchWhere(search.role));
-      console.log('search?.role close');
-      console.log(search?.role);
-      console.log(where.menuRoleMaps);
 
-      console.log(where);
       sort && UtilSort.setSortByQB(qb, sort);
     }
 
@@ -43,5 +43,34 @@ export class MenuRepository extends Repository<MenuOutput> {
       }),
       classRef: MenuOutput,
     });
+  }
+
+  async hasRow(seqNo: number) {
+    return await this.exist({
+      where: {
+        seqNo,
+      },
+    });
+  }
+
+  async saveCustom(p: InsertMenuInput | UpdateMenuInput): Promise<MenuOutput> {
+    return await this.save(
+      MenuOutput.create({
+        seqNo:
+          p instanceof UpdateMenuInput
+            ? await (async () => {
+                if (await this.hasRow(p.seqNo)) {
+                  return p.seqNo;
+                } else {
+                  throw new GqlError(MessageConstant.NOT_FOUND_VALUE([]));
+                }
+              })()
+            : undefined,
+        name: p.name,
+        iconSeqNo: p.iconSeqNo,
+        routeSeqNo: p.routeSeqNo,
+        desc: p.desc,
+      }),
+    );
   }
 }

@@ -1,9 +1,9 @@
 import React, { FC, memo, useMemo } from "react";
-import { ChkUniqMessageByCodeInput, MessageEntityOutput } from "@gqlType";
+import { ChkUniqMessageByCodeInput, MessageOutput } from "@gqlType";
 import { Form, FormProps, Input } from "antd";
-import { MessageGroupEntitiesSelect } from "@src/component/select";
+import { Index } from "@src/component/select";
 import { useApolloClient } from "@apollo/client";
-import { CHECK_UNIQUE } from "@src/component/form/MessageEntityForm/quires";
+import { CHECK_UNIQUE } from "@src/component/form/MsgForm/quires";
 import { EntityFormActionType } from "@src/types";
 
 export interface MessageEntityFormProps extends FormProps {
@@ -14,7 +14,7 @@ const MessageEntityForm: FC<MessageEntityFormProps> = ({
 	...props
 }) => {
 	const client = useApolloClient();
-	const [form] = Form.useForm<MessageEntityOutput>(props.form);
+	const [form] = Form.useForm<MessageOutput>(props.form);
 	const updateYn = useMemo(() => actionType === "update", [actionType]);
 	const checkUnique = async (col: "code" | "groupCode", value: string) => {
 		const _t = col === "code" ? "groupCode" : "code";
@@ -45,7 +45,7 @@ const MessageEntityForm: FC<MessageEntityFormProps> = ({
 	};
 
 	return (
-		<Form<MessageEntityOutput> layout={"vertical"} {...props}>
+		<Form<MessageOutput> layout={"vertical"} {...props}>
 			{updateYn && (
 				<Form.Item label={`ID`} name={"seqNo"}>
 					<Input disabled />
@@ -77,7 +77,7 @@ const MessageEntityForm: FC<MessageEntityFormProps> = ({
 					},
 				]}
 			>
-				<MessageGroupEntitiesSelect disabled={updateYn} />
+				<Index disabled={updateYn} />
 			</Form.Item>
 			<Form.Item
 				label={`코드`}
@@ -113,16 +113,6 @@ const MessageEntityForm: FC<MessageEntityFormProps> = ({
 			<Form.Item label={`비고`} name={"desc"}>
 				<Input />
 			</Form.Item>
-			{updateYn && (
-				<>
-					<Form.Item label={`생성일자`} name={"createdAt"}>
-						<Input disabled />
-					</Form.Item>
-					<Form.Item label={`수정일자`} name={"updatedAt"}>
-						<Input disabled />
-					</Form.Item>
-				</>
-			)}
 		</Form>
 	);
 };

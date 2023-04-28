@@ -343,6 +343,54 @@ export interface RoleGroupsSortInput {
     updatedAt?: Nullable<SortTypeInput>;
 }
 
+export interface IconsInput {
+    search?: Nullable<IconsSearchInput>;
+    sort?: Nullable<IconsSortInput>;
+}
+
+export interface IconsSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    filePath?: Nullable<NonNullableStringSearchInput>;
+    iconLabel?: Nullable<IconLabelsSearchInput>;
+}
+
+export interface IconLabelsSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+}
+
+export interface IconsSortInput {
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
+}
+
+export interface IconLabelsInput {
+    search?: Nullable<IconLabelsSearchInput>;
+    sort?: Nullable<IconLabelsSortInput>;
+}
+
+export interface IconLabelsSortInput {
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+}
+
+export interface InsertMenuInput {
+    desc?: Nullable<string>;
+    name: string;
+    iconSeqNo?: Nullable<number>;
+    routeSeqNo?: Nullable<number>;
+}
+
+export interface UpdateMenuInput {
+    seqNo: number;
+    desc?: Nullable<string>;
+    name: string;
+    iconSeqNo?: Nullable<number>;
+    routeSeqNo?: Nullable<number>;
+}
+
 export interface UpdateMessageInput {
     seqNo: number;
     desc?: Nullable<string>;
@@ -478,6 +526,15 @@ export interface RoleGroupOutput {
     parent?: Nullable<RoleGroupOutput>;
 }
 
+export interface IconLabelOutput {
+    createdAt: DateTime;
+    updatedAt: DateTime;
+    desc?: Nullable<string>;
+    seqNo: number;
+    name: string;
+    icons: IconOutput[];
+}
+
 export interface IconOutput {
     createdAt: DateTime;
     updatedAt: DateTime;
@@ -486,6 +543,8 @@ export interface IconOutput {
     name: string;
     filePath: string;
     menus: MenuOutput[];
+    fileFullPath: string;
+    labels: IconLabelOutput[];
 }
 
 export interface RoleFrontComponentMapOutput {
@@ -625,6 +684,11 @@ export interface RouteTreeOutput {
     depth: number;
 }
 
+export interface IconsOutput {
+    list: IconOutput[];
+    total: number;
+}
+
 export interface MenusOutput {
     list: MenuOutput[];
     total: number;
@@ -632,6 +696,11 @@ export interface MenusOutput {
 
 export interface MenuRoleMapOutput {
     list: MenuRoleMap[];
+    total: number;
+}
+
+export interface IconLabelsOutput {
+    list: IconLabelOutput[];
     total: number;
 }
 
@@ -663,9 +732,15 @@ export interface IQuery {
     roleGroups(pagingInput?: Nullable<PagingInput>, roleGroupsInput?: Nullable<RoleGroupsInput>): RoleGroupsOutput | Promise<RoleGroupsOutput>;
     roleFrontComponentMap(roleSeqNo: number, frontComponentId: string): Nullable<RoleFrontComponentMapOutput> | Promise<Nullable<RoleFrontComponentMapOutput>>;
     icon(seqNo: number): IconOutput | Promise<IconOutput>;
+    icons(pagingInput?: Nullable<PagingInput>, iconsInput?: Nullable<IconsInput>): IconsOutput | Promise<IconsOutput>;
+    iconLabel(iconLabelSeqNo: number): IconLabelOutput | Promise<IconLabelOutput>;
+    iconLabels(pagingInput?: Nullable<PagingInput>, iconLabelsInput?: Nullable<IconLabelsInput>): IconLabelsOutput | Promise<IconLabelsOutput>;
+    iconLabelByIconSeqNo(iconSeqNo: number): IconLabelOutput[] | Promise<IconLabelOutput[]>;
 }
 
 export interface IMutation {
+    insertMenu(insertMenuInput: InsertMenuInput): MenuOutput | Promise<MenuOutput>;
+    updateMenu(updateMenuInput: UpdateMenuInput): MenuOutput | Promise<MenuOutput>;
     updateMessage(updateMessageInput: UpdateMessageInput): MessageOutput | Promise<MessageOutput>;
     insertMessage(insertMessageInput: InsertMessageInput): MessageOutput | Promise<MessageOutput>;
     deleteMessages(seqNos: number[]): boolean | Promise<boolean>;

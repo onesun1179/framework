@@ -3,7 +3,7 @@ import { Tree } from "antd";
 import { DataNode } from "antd/es/tree";
 import { DirectoryTreeProps } from "antd/es/tree/DirectoryTree";
 import { useRoleDirectoryTreeQuery } from "@src/component/role/RoleDirectoryTree/quires";
-import { RoleGroupEntityOutput } from "@gqlType";
+import { RoleGroupOutput } from "@gqlType";
 
 type DataNodeType = DataNode & {
 	seqNo: number;
@@ -13,9 +13,7 @@ type DataNodeType = DataNode & {
 interface RoleDirectoryTreeProps
 	extends Omit<DirectoryTreeProps<DataNodeType>, "treeData"> {}
 
-function makeRoleTreeData(
-	data: Array<RoleGroupEntityOutput>
-): Array<DataNodeType> {
+function makeRoleTreeData(data: Array<RoleGroupOutput>): Array<DataNodeType> {
 	return data.map((o) => {
 		return {
 			title: o.name,
@@ -46,7 +44,7 @@ function RoleDirectoryTree({ ...props }: RoleDirectoryTreeProps) {
 	const _data = useMemo(() => data || previousData, [data, previousData]);
 
 	const roleGroupEntities = useMemo(
-		() => (_data ? makeRoleTreeData(_data?.roleGroupEntities.list) : undefined),
+		() => (_data ? makeRoleTreeData(_data?.roleGroups.list) : undefined),
 		[_data]
 	);
 	return props.defaultExpandAll ? (

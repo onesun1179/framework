@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from "react";
-import { MessageEntityOutput, MessageGroupEntityOutput } from "@gqlType";
 import { Form, FormProps, Input } from "antd";
 import { gql, useApolloClient } from "@apollo/client";
+import { MessageGroupOutput, MessageOutput } from "@gqlType";
 
 export const ENABLE_MESSAGE_GROUP_OF_CODE_QUERY = gql`
 	query ENABLE_MESSAGE_GROUP_OF_CODE($code: String!) {
@@ -12,12 +12,12 @@ export type MessageGroupEntityFormActionType = "update" | "insert";
 export interface MessageGroupEntityFormProps extends FormProps {
 	actionType?: MessageGroupEntityFormActionType;
 }
-export const MessageGroupEntityForm: FC<MessageGroupEntityFormProps> = ({
+const MsgGrpForm: FC<MessageGroupEntityFormProps> = ({
 	actionType,
 	...props
 }) => {
 	const client = useApolloClient();
-	const [form] = Form.useForm<MessageGroupEntityOutput>(props.form);
+	const [form] = Form.useForm<MessageGroupOutput>(props.form);
 	const updateYn = useMemo(() => actionType === "update", [actionType]);
 	const enableMessageGroupOfCode = async (code: string) => {
 		const { data } = await client.query<
@@ -40,7 +40,7 @@ export const MessageGroupEntityForm: FC<MessageGroupEntityFormProps> = ({
 	};
 
 	return (
-		<Form<MessageEntityOutput> layout={"vertical"} {...props}>
+		<Form<MessageOutput> layout={"vertical"} {...props}>
 			<Form.Item
 				label={`코드`}
 				name={"code"}
@@ -72,16 +72,8 @@ export const MessageGroupEntityForm: FC<MessageGroupEntityFormProps> = ({
 			<Form.Item label={`비고`} name={"desc"}>
 				<Input />
 			</Form.Item>
-			{updateYn && (
-				<>
-					<Form.Item label={`생성일자`} name={"createdAt"}>
-						<Input disabled />
-					</Form.Item>
-					<Form.Item label={`수정일자`} name={"updatedAt"}>
-						<Input disabled />
-					</Form.Item>
-				</>
-			)}
 		</Form>
 	);
 };
+
+export default MsgGrpForm;

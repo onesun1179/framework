@@ -11,8 +11,7 @@ import { usePaging } from "@src/hooks/usePaging";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { MessageGroupEntityDescriptions } from "@src/component/descriptions/MessageGroupEntityDescriptions";
-import { MessageGroupEntityForm } from "@src/component/form/MessageGroupEntityForm";
+import MsgGrpForm from "@src/component/form/MsgGrpForm";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { EntityFormActionType } from "@src/types";
@@ -26,6 +25,7 @@ import {
 	useInsertMessageGroupMutation,
 	useUpdateMessageGroupMutation,
 } from "@src/component/route/FrmkMsgGrpMgmt/mutations";
+import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
 
 /**
  * 프레임워크 메뉴 그룹 관리
@@ -103,12 +103,6 @@ const FrmkMsgGrpMgmt: FC = () => {
 						title: "코드",
 					},
 					{
-						key: "desc",
-						dataIndex: "desc",
-						title: "비고",
-						width: 80,
-					},
-					{
 						key: "createdAt",
 						dataIndex: "createdAt",
 						title: "생성일자",
@@ -119,6 +113,12 @@ const FrmkMsgGrpMgmt: FC = () => {
 						dataIndex: "updatedAt",
 						title: "수정일자",
 						width: 220,
+					},
+					{
+						key: "desc",
+						dataIndex: "desc",
+						title: "비고",
+						width: 80,
 					},
 					{
 						key: "action",
@@ -167,7 +167,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 		<>
 			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MessageGroupEntityDescriptions record={record} />
+				<MsgGrpDesc record={record} />
 			</Drawer>
 
 			<Drawer
@@ -216,7 +216,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 					</Space>
 				}
 			>
-				<MessageGroupEntityForm form={form} actionType={actionType} />
+				<MsgGrpForm form={form} actionType={actionType} />
 			</Drawer>
 
 			<Layout>

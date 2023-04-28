@@ -1,1 +1,1 @@
-export * from "./MessageGroupEntitiesSelect";
+export * from "./MsgGrpSelect";
