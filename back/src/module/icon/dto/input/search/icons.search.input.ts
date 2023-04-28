@@ -12,6 +12,7 @@ export class IconsSearchInput extends SearchType({
   seqNo: NonNullableNumberSearchInput,
   name: NonNullableStringSearchInput,
   filePath: NonNullableStringSearchInput,
+  // test
 }) {
   @Field(() => IconLabelsSearchInput, {
     nullable: true,
