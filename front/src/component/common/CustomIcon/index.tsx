@@ -6,8 +6,10 @@ import { Tooltip } from "antd";
 
 export interface CustomIcon {
 	iconSeqNo?: number;
+	tooltip?: boolean;
 }
-const CustomIcon: FC<CustomIcon> = ({ iconSeqNo }) => {
+
+const CustomIcon: FC<CustomIcon> = ({ iconSeqNo, tooltip = false }) => {
 	const { data } = useCustomIcon1Query({
 		skip: isNil(iconSeqNo),
 		variables: {
@@ -15,7 +17,7 @@ const CustomIcon: FC<CustomIcon> = ({ iconSeqNo }) => {
 		},
 	});
 	return (
-		<Tooltip title={data?.icon.name}>
+		<Tooltip title={data?.icon.name} open={tooltip ? undefined : false}>
 			<SvgPathToIcon filePath={data?.icon.fileFullPath} />
 		</Tooltip>
 	);

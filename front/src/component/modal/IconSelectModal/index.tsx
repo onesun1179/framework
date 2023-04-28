@@ -1,12 +1,22 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
 	useIconSelectModal1Query,
 	useIconSelectModal2Query,
 } from "@src/component/select/IconSelect/quires";
-import { Button, Col, Modal, ModalProps, Row, Segmented } from "antd";
+import {
+	Button,
+	Col,
+	Input,
+	Modal,
+	ModalProps,
+	Row,
+	Segmented,
+	Tooltip,
+} from "antd";
 import { chunk, isNil } from "lodash";
 import SvgPathToIcon from "@src/component/common/SvgPathToIcon";
 import { IconOutput } from "@gqlType";
+import { SearchOutlined } from "@ant-design/icons";
 
 export interface IconSelectModalProps extends Omit<ModalProps, "footer"> {
 	initialLabelSeqNo?: number;
@@ -18,6 +28,8 @@ const IconSelectModal: FC<IconSelectModalProps> = ({
 	...props
 }) => {
 	const [iconLabelSeqNo, setIconLabelSeqNo] = useState<number>();
+	const [searchValue, setSearchValue] = useState<string>();
+
 	const data1 = useIconSelectModal1Query();
 	const data2 = useIconSelectModal2Query({
 		skip: isNil(iconLabelSeqNo) || !props.open,
@@ -35,11 +47,18 @@ const IconSelectModal: FC<IconSelectModalProps> = ({
 			},
 		},
 	});
+
+	useEffect(() => {
+		!isNil(data1.data) &&
+			setIconLabelSeqNo(data1.data.iconLabels.list[0].seqNo);
+	}, [data1.data]);
+
 	return (
 		<>
 			<Modal title="아이콘 선택" footer={null} {...props}>
 				<Segmented
 					block
+					value={iconLabelSeqNo}
 					options={(data1.data?.iconLabels.list || []).map((o) => ({
 						value: o.seqNo,
 						label: o.name,
@@ -48,22 +67,36 @@ const IconSelectModal: FC<IconSelectModalProps> = ({
 						setIconLabelSeqNo(o as number);
 					}}
 				/>
-
-				{chunk(data2.loading ? [] : data2.data?.icons.list, 14).map((o, i) => {
-					return (
-						<Row key={i}>
-							{o.map((oo, ii) => (
-								<Col key={ii}>
+				<Input
+					placeholder={"검색어를 입력해주세요."}
+					value={searchValue}
+					onChange={(o) => setSearchValue(o.target.value)}
+					addonAfter={<SearchOutlined />}
+					allowClear
+				/>
+				{chunk(
+					data2.loading
+						? []
+						: searchValue
+						? data2.data?.icons.list.filter((o) =>
+								o.name.match(new RegExp(searchValue, "g"))
+						  )
+						: data2.data?.icons.list,
+					14
+				).map((o, i) => (
+					<Row key={i}>
+						{o.map((oo, ii) => (
+							<Col key={ii}>
+								<Tooltip title={oo.name}>
 									<Button
 										icon={<SvgPathToIcon filePath={oo.fileFullPath} />}
 										onClick={() => setValue(oo)}
 									/>
-								</Col>
-							))}
-						</Row>
-					);
-				})}
-				<div>test</div>
+								</Tooltip>
+							</Col>
+						))}
+					</Row>
+				))}
 			</Modal>
 		</>
 	);

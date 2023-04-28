@@ -763,11 +763,6 @@ const SvgPathToIcon: FC<SvgPathToIconProps> = ({
 	if (!payload) {
 		return <DefaultIcon {...defaultProps} />;
 	}
-	// console.log(parse(payload)[1].props.children[1]);
-	// return parse(payload)
-	// return <Icon {...iconProps} component={CustomIcon(payload)} />;
-	// console.log(payload)
-	// console.log(payload);
 	return (
 		<Icon {...iconProps} viewBox={"0 0 1024 1024"}>
 			{parse(payload)}
