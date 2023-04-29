@@ -1,11 +1,14 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
 import { CodeMapOutput } from './code-map.output';
 
 @Entity('code')
-@ObjectType(`CodeEntityOutput`)
+@InputType({
+  isAbstract: true,
+})
+@ObjectType()
 export class CodeOutput extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -18,18 +21,12 @@ export class CodeOutput extends CommonEntity {
   @OneToMany(() => CodeMapOutput, (o) => o.child, {
     nullable: true,
   })
-  @Field(() => [CodeMapOutput], {
-    nullable: true,
-  })
   @Type(() => CodeMapOutput)
   children?: Array<CodeMapOutput>;
 
   @OneToMany(() => CodeMapOutput, (o) => o.parent, {
     nullable: true,
   })
-  @Field(() => [CodeMapOutput], {
-    nullable: true,
-  })
   @Type(() => CodeMapOutput)
-  parents?: CodeMapOutput[];
+  parents?: Array<CodeMapOutput>;
 }

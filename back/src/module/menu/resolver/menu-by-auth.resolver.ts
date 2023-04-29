@@ -114,10 +114,10 @@ export class MenuByAuthResolver {
   //   })
   //   pagingInput: PagingInput,
   //   @Args('menusInput', {
-  //     type: () => MenusInput,
+  //     type: () => CodesInput,
   //     nullable: true,
   //   })
-  //   menusInput: MenusInput,
+  //   menusInput: CodesInput,
   // ): Promise<MenusOutput> {
   //   return await this.menuRepository.paging(pagingInput, menusInput);
   // }
@@ -126,10 +126,10 @@ export class MenuByAuthResolver {
   // async children(
   //   @Parent() { seqNo: parentSeqNo, roleSeqNo }: MenuByAuthOutput,
   //   @Args('menusInput', {
-  //     type: () => MenusInput,
+  //     type: () => CodesInput,
   //     nullable: true,
   //   })
-  //   menusInput: MenusInput,
+  //   menusInput: CodesInput,
   // ): Promise<MenuOutput[]> {
   //   console.log({
   //     parentSeqNo,

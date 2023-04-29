@@ -2,18 +2,13 @@
  * 프레임워크 메뉴 관리
  */
 import React, { FC, useMemo, useState } from "react";
-import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
-import {
-	refetchQueryMap,
-	SearchQueryKeyType,
-	SortQueryKeyType,
-	UtilTable,
-} from "@src/Util";
+import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import {
@@ -25,11 +20,7 @@ import {
 } from "@gqlType";
 import { useFrmkMnMgmtQuery } from "@src/component/route/FrmkMnMgmt/quires";
 import MenuDesc from "@src/component/descriptions/MenuDesc";
-import MenuForm from "@src/component/form/MenuForm";
-import {
-	useInsertMenuMutation,
-	useUpdateMenuMutation,
-} from "@src/component/route/FrmkMnMgmt/mutations";
+import MenuFormDrawer from "@src/component/form/menu/MenuFormDrawer";
 import CustomIcon from "@src/component/common/CustomIcon";
 
 type SrtQryKey = SortQueryKeyType<"no" | "nm" | "ino" | "rno">;
@@ -68,19 +59,12 @@ const FrmkMenuMgmt: FC = () => {
 
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
 	const { data, loading, previousData } = useFrmkMnMgmtQuery();
-	const [updateMutate] = useUpdateMenuMutation({
-		refetchQueries: refetchQueryMap.menu,
-	});
-	const [insertMutate] = useInsertMenuMutation({
-		refetchQueries: refetchQueryMap.menu,
-	});
 
 	const columns = useMemo<ColumnsType<MenuOutput>>(
 		() =>
@@ -194,61 +178,16 @@ const FrmkMenuMgmt: FC = () => {
 
 	return (
 		<>
-			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
 				<MenuDesc record={record} />
 			</Drawer>
 
-			<Drawer
+			<MenuFormDrawer
+				actionType={actionType}
 				open={formDrawerOpenYn}
-				onClose={() => setFormDrawerOpenYn(false)}
-				afterOpenChange={(open) => !open && setActionType(undefined)}
-				extra={
-					<Space>
-						<Button
-							type="primary"
-							onClick={async () => {
-								await form.validateFields();
-								const record = form.getFieldsValue();
-								console.log(record);
-								switch (actionType) {
-									case "insert":
-										await insertMutate({
-											variables: {
-												input: {
-													iconSeqNo: record.icon?.seqNo,
-													desc: record.desc,
-													name: record.name,
-													routeSeqNo: record.routeSeqNo,
-												},
-											},
-										});
-										break;
-									case "update":
-										await updateMutate({
-											variables: {
-												input: {
-													seqNo: record.seqNo,
-													iconSeqNo: record.icon?.seqNo,
-													desc: record.desc,
-													name: record.name,
-													routeSeqNo: record.routeSeqNo,
-												},
-											},
-										});
-										break;
-								}
-								setFormDrawerOpenYn(false);
-								await messageApi.success("성공");
-							}}
-						>
-							저장
-						</Button>
-					</Space>
-				}
-			>
-				<MenuForm form={form} actionType={actionType} />
-			</Drawer>
+				setOpen={setFormDrawerOpenYn}
+				form={form}
+			/>
 
 			<Layout>
 				<Layout.Header>

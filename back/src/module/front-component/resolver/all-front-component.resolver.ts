@@ -42,20 +42,6 @@ export class AllFrontComponentResolver {
    *              QUERY
    ***************************************/
 
-  @Query(() => Boolean)
-  async chkUniqByAllFcId(
-    @Args('input', {
-      type: () => ChkUniqByAllFcIdInput,
-    })
-    input: ChkUniqByAllFcIdInput,
-  ): Promise<boolean> {
-    return !(await this.allFrontComponentRepository.exist({
-      where: {
-        id: input.id,
-      },
-    }));
-  }
-
   @Query(() => AllFrontComponentOutput)
   async allFrontComponentById(
     @Args('allFrontComponentId', {
@@ -198,5 +184,19 @@ export class AllFrontComponentResolver {
     return await this.allFrontComponentRepository.saveCustom(
       updateAllFrontComponentInput,
     );
+  }
+
+  @Mutation(() => Boolean)
+  async chkUniqByAllFcId(
+    @Args('input', {
+      type: () => ChkUniqByAllFcIdInput,
+    })
+    input: ChkUniqByAllFcIdInput,
+  ): Promise<boolean> {
+    return !(await this.allFrontComponentRepository.exist({
+      where: {
+        id: input.id,
+      },
+    }));
   }
 }

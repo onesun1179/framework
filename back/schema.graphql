@@ -132,7 +132,7 @@ type MenuOutput {
   children: [MenuOutput!]!
 }
 
-type MenuRoleMap {
+type MenuRoleMapOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
@@ -143,7 +143,7 @@ type MenuRoleMap {
   orderNo: Int!
   menu: MenuOutput!
   role: RoleOutput!
-  parent: MenuRoleMap
+  parent: MenuRoleMapOutput
 }
 
 type RoleOutput {
@@ -190,12 +190,19 @@ type FrontComponentsOutput {
   total: Int!
 }
 
-type CodeMapOutput {
+type CodeOutput {
   createdAt: DateTime!
   updatedAt: DateTime!
   desc: String
-  childSeqNo: Int!
-  parentSeqNo: Int!
+  seqNo: Int!
+  name: String!
+  parents: [CodeOutput!]!
+  children: [CodeOutput!]!
+}
+
+type CodesOutput {
+  list: [CodeOutput!]!
+  total: Int!
 }
 
 type RoutesOutput {
@@ -218,8 +225,8 @@ type MenusOutput {
   total: Int!
 }
 
-type MenuRoleMapOutput {
-  list: [MenuRoleMap!]!
+type MenuRoleMapsOutput {
+  list: [MenuRoleMapOutput!]!
   total: Int!
 }
 
@@ -231,22 +238,21 @@ type IconLabelsOutput {
 type Query {
   authCheck: Boolean!
   user(id: String!): UserOutput!
+  code(seqNo: Int!): CodeOutput!
+  codes(pagingInput: PagingInput, codesInput: CodesInput): CodesOutput!
   menu(seqNo: Int!): MenuOutput!
   menus(pagingInput: PagingInput, menusInput: MenusInput): MenusOutput!
-  menuRoleMap(seqNo: Int!): MenuRoleMap!
-  menuRoleMaps(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapsInput): MenuRoleMapOutput!
+  menuRoleMap(seqNo: Int!): MenuRoleMapOutput!
+  menuRoleMaps(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapsInput): MenuRoleMapsOutput!
   route(seqNo: Int!): RouteOutput!
   routes(paging: PagingInput = null, request: RoutesInput): RoutesOutput!
   messageBySeqNo(seqNo: Int!): MessageOutput!
   messageByCode(groupCode: String!, code: String!): MessageOutput!
   messages(pagingInput: PagingInput, messagesInput: MessagesInput): MessagesOutput!
-  chkUniqMessageByCode(input: ChkUniqMessageByCodeInput!): Boolean!
-  enableMessageGroupOfCode(code: String!): Boolean!
   messageGroup(code: String!): MessageGroupOutput!
   messageGroups(pagingInput: PagingInput, messageGroupsInput: MessageGroupsInput): MessageGroupsOutput!
   frontComponents(pagingInput: PagingInput, frontComponentsInput: FrontComponentsInput): FrontComponentsOutput!
   frontComponentById(frontComponentId: String!): FrontComponentOutput!
-  chkUniqByAllFcId(input: ChkUniqByAllFcIdInput!): Boolean!
   allFrontComponentById(allFrontComponentId: String!): AllFrontComponentOutput!
   allFrontComponentByIdAndRole(frontComponentId: String!, roleSeqNo: Int!): AllFrontComponentOutput
   allFrontComponents(pagingInput: PagingInput, allFrontComponentsInput: AllFrontComponentsInput): AllFrontComponentsOutput!
@@ -267,17 +273,14 @@ input PagingInput {
   take: Int!
 }
 
-input MenusInput {
-  search: MenusSearchInput
-  sort: MenusSortInput
+input CodesInput {
+  search: CodesSearchInput
+  sort: CodesSortInput
 }
 
-input MenusSearchInput {
+input CodesSearchInput {
   seqNo: NonNullableNumberSearchInput
   name: NonNullableStringSearchInput
-  iconSeqNo: NullableNumberSearchInput
-  routeSeqNo: NullableNumberSearchInput
-  role: RoleSearchInput
 }
 
 input NonNullableNumberSearchInput {
@@ -359,6 +362,34 @@ input NonNullableInStringSearchInput {
   not: Boolean = false
 }
 
+input CodesSortInput {
+  seqNo: SortTypeInput
+  name: SortTypeInput
+}
+
+input SortTypeInput {
+  sort: SortEnum!
+  order: Int!
+}
+
+enum SortEnum {
+  ASC
+  DESC
+}
+
+input MenusInput {
+  search: MenusSearchInput
+  sort: MenusSortInput
+}
+
+input MenusSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  name: NonNullableStringSearchInput
+  iconSeqNo: NullableNumberSearchInput
+  routeSeqNo: NullableNumberSearchInput
+  role: RoleSearchInput
+}
+
 input NullableNumberSearchInput {
   equal: EqualNumberSearchInput
   any: NullableAnyNumberSearchInput
@@ -393,16 +424,6 @@ input MenusSortInput {
   name: SortTypeInput
   iconSeqNo: SortTypeInput
   routeSeqNo: SortTypeInput
-}
-
-input SortTypeInput {
-  sort: SortEnum!
-  order: Int!
-}
-
-enum SortEnum {
-  ASC
-  DESC
 }
 
 input MenuRoleMapsInput {
@@ -468,11 +489,6 @@ input MessagesSortInput {
   updatedAt: SortTypeInput
 }
 
-input ChkUniqMessageByCodeInput {
-  code: String!
-  groupCode: String!
-}
-
 input MessageGroupsInput {
   search: MessageGroupsSearchInput
   sort: MessageGroupsSortInput
@@ -507,10 +523,6 @@ input FrontComponentsSortInput {
   desc: SortTypeInput
   createdAt: SortTypeInput
   updatedAt: SortTypeInput
-}
-
-input ChkUniqByAllFcIdInput {
-  id: String!
 }
 
 input AllFrontComponentsInput {
@@ -631,24 +643,40 @@ input IconLabelsSortInput {
 }
 
 type Mutation {
+  insertCode(insertCodeInput: InsertCodeInput!): CodeOutput!
+  updateCode(updateCodeInput: UpdateCodeInput!): CodeOutput!
   insertMenu(insertMenuInput: InsertMenuInput!): MenuOutput!
   updateMenu(updateMenuInput: UpdateMenuInput!): MenuOutput!
   updateMessage(updateMessageInput: UpdateMessageInput!): MessageOutput!
   insertMessage(insertMessageInput: InsertMessageInput!): MessageOutput!
   deleteMessages(seqNos: [Int!]!): Boolean!
   deleteMessage(seqNo: Int!): Boolean!
+  chkUniqMessageByCode(input: ChkUniqMessageByCodeInput!): Boolean!
   updateMessageGroup(updateMessageGroupInput: UpdateMessageGroupInput!): MessageGroupOutput
   insertMessageGroup(insertMessageGroupInput: InsertMessageGroupInput!): MessageGroupOutput!
+  enableMessageGroupOfCode(code: String!): Boolean!
   insertFrontComponent(insertFrontComponentInput: InsertFrontComponentInput!): FrontComponentOutput!
   updateFrontComponent(updateFrontComponentInput: UpdateFrontComponentInput!): FrontComponentOutput!
   insertAllFrontComponent(insertAllFrontComponentInput: InsertAllFrontComponentInput!): AllFrontComponentOutput!
   updateAllFrontComponent(updateAllFrontComponentInput: UpdateAllFrontComponentInput!): AllFrontComponentOutput!
+  chkUniqByAllFcId(input: ChkUniqByAllFcIdInput!): Boolean!
   insertRole(insertRoleInput: InsertRoleInput!): RoleOutput!
   updateRole(updateRoleInput: UpdateRoleInput!): RoleOutput!
   insertRoleGroup(insertRoleGroupInput: InsertRoleGroupInput!): RoleGroupOutput!
   updateRoleGroup(updateRoleGroupInput: UpdateRoleGroupInput!): RoleGroupOutput!
   removeRoleGroup(seqNo: Int!): RoleGroupOutput!
   updateAllFrontComponentByRoleFrontComponentMap(roleSeqNo: Int!, frontComponentId: String!, allFrontComponentId: String!): RoleFrontComponentMapOutput!
+}
+
+input InsertCodeInput {
+  desc: String
+  name: String!
+}
+
+input UpdateCodeInput {
+  seqNo: Int!
+  desc: String
+  name: String
 }
 
 input InsertMenuInput {
@@ -680,6 +708,11 @@ input InsertMessageInput {
   code: String!
   name: String!
   text: String!
+  groupCode: String!
+}
+
+input ChkUniqMessageByCodeInput {
+  code: String!
   groupCode: String!
 }
 
@@ -723,6 +756,10 @@ input UpdateAllFrontComponentInput {
   desc: String
   id: String!
   frontComponentId: String
+}
+
+input ChkUniqByAllFcIdInput {
+  id: String!
 }
 
 input InsertRoleInput {

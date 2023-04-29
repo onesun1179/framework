@@ -7,6 +7,7 @@ import { FRMK_MSG_MGMT_DATA } from "@src/component/route/FrmkMsgMgmt/quires";
 import { ROLE_DIRECTORY_TREE_QUERY } from "@src/component/role/RoleDirectoryTree/quires";
 import { ROLE_BY_FRNT_CMPNT_MGMT_QUERY } from "@src/component/route/RoleByFrntCmpntMgmt/quries";
 import { FRMK_MN_MGMT_QUERY } from "@src/component/route/FrmkMnMgmt/quires";
+import { FRMK_CD_MGMT_1_QUERY } from "@src/component/route/FrmkCdMgmt/quires";
 
 export const refetchQueryMap = {
 	messageGroup: [FRMK_MSG_GRK_MGMT_DATA_QUERY],
@@ -19,6 +20,7 @@ export const refetchQueryMap = {
 	roleGroup: [ROLE_DIRECTORY_TREE_QUERY],
 	role: [ROLE_DIRECTORY_TREE_QUERY],
 	menu: [FRMK_MN_MGMT_QUERY],
+	code: [FRMK_CD_MGMT_1_QUERY],
 };
 export const UtilRefetch = mapValues(refetchQueryMap, (o) => {
 	return async () =>

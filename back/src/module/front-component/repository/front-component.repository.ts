@@ -36,6 +36,8 @@ export class FrontComponentRepository extends Repository<FrontComponentOutput> {
   async saveCustom(p: InsertFrontComponentInput | UpdateFrontComponentInput) {
     const frontComponent = await FrontComponentOutput.create({
       id: p.id,
+      name: p.name,
+      desc: p.desc,
     }).save();
 
     return frontComponent;

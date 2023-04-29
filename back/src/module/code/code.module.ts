@@ -6,12 +6,13 @@ import { CodeMapOutput } from '@modules/code/dto/output/entity/code-map.output';
 import { CodeRepository } from '@modules/code/repository/code.repository';
 import { CodeMapRepository } from '@modules/code/repository/code-map.repository';
 import { CodeService } from '@modules/code/code.service';
+import { CodeResolver } from '@modules/code/resolver/code.resolver';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CodeOutput, CodeMapOutput]),
     TypeOrmExModule.forCustomRepository([CodeRepository, CodeMapRepository]),
   ],
-  providers: [CodeService],
+  providers: [CodeService, CodeResolver],
 })
 export class CodeModule {}

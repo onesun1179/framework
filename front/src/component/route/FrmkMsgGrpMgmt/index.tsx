@@ -1,30 +1,16 @@
 import React, { FC, memo, useMemo, useState } from "react";
-import {
-	refetchQueryMap,
-	SearchQueryKeyType,
-	SortQueryKeyType,
-	UtilRefetch,
-	UtilTable,
-} from "@src/Util";
+import { SearchQueryKeyType, SortQueryKeyType, UtilRefetch, UtilTable } from "@src/Util";
 import { useQueryObj } from "@src/hooks";
 import { usePaging } from "@src/hooks/usePaging";
-import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import MsgGrpForm from "@src/component/form/MsgGrpForm";
+import MsgGrpFormDrawer from "@src/component/form/messageGroup/MsgGrpFormDrawer";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { EntityFormActionType } from "@src/types";
-import {
-	MessageGroupOutput,
-	MessageGroupsSearchInput,
-	MessageGroupsSortInput,
-} from "@gqlType";
+import { MessageGroupOutput, MessageGroupsSearchInput, MessageGroupsSortInput } from "@gqlType";
 import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/FrmkMsgGrpMgmt/quires";
-import {
-	useInsertMessageGroupMutation,
-	useUpdateMessageGroupMutation,
-} from "@src/component/route/FrmkMsgGrpMgmt/mutations";
 import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
 
 /**
@@ -65,7 +51,6 @@ const FrmkMsgGrpMgmt: FC = () => {
 
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
 		() => UtilTable.toSortInputType(queryObj, qryObj),
@@ -78,14 +63,6 @@ const FrmkMsgGrpMgmt: FC = () => {
 				sort: sortInputType,
 			},
 		},
-	});
-
-	const [updateMessageGroupEntityMutate] = useUpdateMessageGroupMutation({
-		refetchQueries: refetchQueryMap.messageGroup,
-	});
-
-	const [insertMessageGroupEntityMutate] = useInsertMessageGroupMutation({
-		refetchQueries: refetchQueryMap.messageGroup,
 	});
 
 	const columns = useMemo(
@@ -165,59 +142,16 @@ const FrmkMsgGrpMgmt: FC = () => {
 
 	return (
 		<>
-			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
 				<MsgGrpDesc record={record} />
 			</Drawer>
 
-			<Drawer
+			<MsgGrpFormDrawer
+				actionType={actionType}
 				open={formDrawerOpenYn}
-				onClose={() => setFormDrawerOpenYn(false)}
-				afterOpenChange={(open) => !open && setActionType(undefined)}
-				extra={
-					<Space>
-						<Button
-							type="primary"
-							onClick={async () => {
-								await form.validateFields();
-								const record = form.getFieldsValue();
-								switch (actionType) {
-									case "insert":
-										await insertMessageGroupEntityMutate({
-											variables: {
-												input: {
-													name: record.name,
-													code: record.code,
-													desc: record.desc,
-												},
-											},
-										});
-
-										break;
-									case "update":
-										console.log(record);
-										await updateMessageGroupEntityMutate({
-											variables: {
-												input: {
-													name: record.name,
-													code: record.code,
-													desc: record.desc,
-												},
-											},
-										});
-										break;
-								}
-								setFormDrawerOpenYn(false);
-								await messageApi.success("성공");
-							}}
-						>
-							저장
-						</Button>
-					</Space>
-				}
-			>
-				<MsgGrpForm form={form} actionType={actionType} />
-			</Drawer>
+				setOpen={setFormDrawerOpenYn}
+				form={form}
+			/>
 
 			<Layout>
 				<Layout.Header>

@@ -39,19 +39,6 @@ export class MessageGroupResolver {
    *              QUERY
    ***************************************/
 
-  @Query(() => Boolean)
-  async enableMessageGroupOfCode(
-    @Args('code', {
-      type: () => String,
-    })
-    code: MessageGroupOutput['code'],
-  ) {
-    return !(await this.messageGroupRepository.exist({
-      where: {
-        code,
-      },
-    }));
-  }
   @Query(() => MessageGroupOutput)
   messageGroup(
     @Args('code', {
@@ -130,5 +117,19 @@ export class MessageGroupResolver {
     } else {
       return this.messageGroupRepository.saveCustom(insertMessageGroupInput);
     }
+  }
+
+  @Mutation(() => Boolean)
+  async enableMessageGroupOfCode(
+    @Args('code', {
+      type: () => String,
+    })
+    code: MessageGroupOutput['code'],
+  ) {
+    return !(await this.messageGroupRepository.exist({
+      where: {
+        code,
+      },
+    }));
   }
 }

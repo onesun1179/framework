@@ -18,7 +18,7 @@ import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
 @InputType({
   isAbstract: true,
 })
-@ObjectType(`MenuRoleMap`)
+@ObjectType()
 @Unique('SEQ_NO', ['roleSeqNo', 'menuSeqNo'])
 @Unique('ORDER', ['roleSeqNo', 'parentSeqNo', 'orderNo'])
 export class MenuRoleMapOutput extends CommonEntity {

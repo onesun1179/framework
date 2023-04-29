@@ -1,11 +1,6 @@
 import React, { FC, memo, useMemo, useState } from "react";
-import {
-	refetchQueryMap,
-	SearchQueryKeyType,
-	SortQueryKeyType,
-	UtilTable,
-} from "@src/Util";
-import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
+import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
@@ -14,14 +9,9 @@ import { EntityFormActionType } from "@src/types";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import FCDesc from "@src/component/descriptions/FCDesc";
-import FrontComponentEntityForm from "@src/component/form/FCForm";
-import {
-	FrontComponentOutput,
-	FrontComponentsSearchInput,
-	FrontComponentsSortInput,
-} from "@gqlType";
+import FCFormDrawer from "@src/component/form/frontComponent/FCFormDrawer";
+import { FrontComponentOutput, FrontComponentsSearchInput, FrontComponentsSortInput } from "@gqlType";
 import { useFrmkFrntCmpntMgmtQuery } from "@src/component/route/FrmkFrntCmpntMgmt/quires";
-import { useUpdateFrontComponentMutation } from "@src/component/route/FrmkFrntCmpntMgmt/mutations";
 
 /**
  * 프레임워크 컴포넌트 관리
@@ -61,19 +51,12 @@ const FrmkFrntCmpntMgmt: FC = () => {
 
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
 	const { data, loading, previousData } = useFrmkFrntCmpntMgmtQuery();
-	const [updateFrontComponent] = useUpdateFrontComponentMutation({
-		refetchQueries: refetchQueryMap.frontComponent,
-	});
-	const [insertFrontComponent] = useUpdateFrontComponentMutation({
-		refetchQueries: refetchQueryMap.frontComponent,
-	});
 
 	const columns = useMemo(
 		() =>
@@ -152,57 +135,16 @@ const FrmkFrntCmpntMgmt: FC = () => {
 
 	return (
 		<>
-			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
 				<FCDesc record={record} />
 			</Drawer>
 
-			<Drawer
+			<FCFormDrawer
+				actionType={actionType}
 				open={formDrawerOpenYn}
-				onClose={() => setFormDrawerOpenYn(false)}
-				afterOpenChange={(open) => !open && setActionType(undefined)}
-				extra={
-					<Space>
-						<Button
-							type="primary"
-							onClick={async () => {
-								await form.validateFields();
-								const record = form.getFieldsValue();
-								switch (actionType) {
-									case "insert":
-										await insertFrontComponent({
-											variables: {
-												input: {
-													id: record.id,
-													name: record.name,
-													desc: record.desc,
-												},
-											},
-										});
-										break;
-									case "update":
-										await updateFrontComponent({
-											variables: {
-												input: {
-													id: record.id,
-													name: record.name,
-													desc: record.desc,
-												},
-											},
-										});
-										break;
-								}
-								setFormDrawerOpenYn(false);
-								await messageApi.success("성공");
-							}}
-						>
-							저장
-						</Button>
-					</Space>
-				}
-			>
-				<FrontComponentEntityForm form={form} actionType={actionType} />
-			</Drawer>
+				setOpen={setFormDrawerOpenYn}
+				form={form}
+			/>
 
 			<Layout>
 				<Layout.Header>

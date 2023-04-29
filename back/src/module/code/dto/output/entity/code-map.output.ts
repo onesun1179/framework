@@ -1,10 +1,13 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
 import { CodeOutput } from '@modules/code/dto/output/entity/code.output';
 
 @Entity('code_map')
+@InputType({
+  isAbstract: true,
+})
 @ObjectType()
 export class CodeMapOutput extends CommonEntity {
   @PrimaryColumn()

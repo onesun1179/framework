@@ -20,3 +20,24 @@ query {
         total
     }
 }
+
+query {
+    codes(codesInput: {search: {name: {equal: {value: "이름"}}}}) {
+        list {
+            seqNo
+            name
+        }
+    }
+    code(seqNo: 1) {
+        seqNo
+        name
+        parents {
+            seqNo
+            name
+        }
+        children {
+            seqNo
+            name
+        }
+    }
+}

@@ -91,18 +91,6 @@ export class MessageResolver {
   ): Promise<MessagesOutput> {
     return await this.messageRepository.paging(pagingInput, messagesInput);
   }
-  @Query(() => Boolean)
-  async chkUniqMessageByCode(
-    @Args('input', {
-      type: () => ChkUniqMessageByCodeInput,
-    })
-    input: ChkUniqMessageByCodeInput,
-  ): Promise<boolean> {
-    return !(await this.messageRepository.exist({
-      where: input,
-    }));
-  }
-
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
@@ -170,5 +158,17 @@ export class MessageResolver {
   ): Promise<boolean> {
     await this.messageRepository.delete(seqNo);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async chkUniqMessageByCode(
+    @Args('input', {
+      type: () => ChkUniqMessageByCodeInput,
+    })
+    input: ChkUniqMessageByCodeInput,
+  ): Promise<boolean> {
+    return !(await this.messageRepository.exist({
+      where: input,
+    }));
   }
 }

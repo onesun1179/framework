@@ -17,4 +17,5 @@ export const All_FRONT_COMPONENT: {
 	RoleByFrntCmpntMgmt: lazy(
 		() => import("@src/component/route/RoleByFrntCmpntMgmt")
 	),
+	FrmkCdMgmt: lazy(() => import("@src/component/route/FrmkCdMgmt")),
 };

@@ -18,7 +18,7 @@ import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 @InputType({
   isAbstract: true,
 })
-@ObjectType(`MenuOutput`)
+@ObjectType()
 export class MenuOutput extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

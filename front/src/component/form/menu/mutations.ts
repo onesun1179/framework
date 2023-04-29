@@ -3,8 +3,8 @@ import { InsertMenuInput, MenuOutput, UpdateMenuInput } from "@gqlType";
 import { makeUseMutation } from "@src/lib/makeUseMutation";
 
 export const INSERT_MENU_MUTATION = gql`
-	mutation INSERT_MENU($input: InsertMenuInput!) {
-		menu: insertMenu(insertMenuInput: $input) {
+	mutation INSERT_MENU($insertMenuInput: InsertMenuInput!) {
+		menu: insertMenu(insertMenuInput: $insertMenuInput) {
 			seqNo
 		}
 	}
@@ -18,8 +18,8 @@ export const INSERT_MENU_MUTATION = gql`
 >;
 
 export const UPDATE_MENU_MUTATION = gql`
-	mutation UPDATE_MENU($input: UpdateMenuInput!) {
-		menu: updateMenu(updateMenuInput: $input) {
+	mutation UPDATE_MENU($updateMenuInput: UpdateMenuInput!) {
+		menu: updateMenu(updateMenuInput: $updateMenuInput) {
 			seqNo
 		}
 	}

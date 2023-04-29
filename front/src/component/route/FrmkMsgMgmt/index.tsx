@@ -2,33 +2,24 @@
  * 프레임워크 메뉴 관리
  */
 import React, { FC, memo, useMemo, useState } from "react";
-import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { useQueryObj } from "@src/hooks";
-import {
-	refetchQueryMap,
-	SearchQueryKeyType,
-	SortQueryKeyType,
-	UtilTable,
-} from "@src/Util";
+import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
 import { UtilRefetch } from "@src/Util/Util.refetch";
 import { usePaging } from "@src/hooks/usePaging";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useFrmkMsgMgmtData } from "@src/component/route/FrmkMsgMgmt/quires";
 import { EntityFormActionType } from "@src/types";
-import MessageEntityForm from "@src/component/form/MsgForm";
+import MsgFormDrawer from "@src/component/form/message/MsgFormDrawer";
 import {
 	MessageOutput,
 	MessagesSearchInput,
 	MessagesSortInput,
 } from "@gqlType";
-import {
-	useInsertMessage,
-	useUpdateMessage,
-} from "@src/component/route/FrmkMsgMgmt/mutations";
 import MsgDesc from "@src/component/descriptions/MsgDesc";
 
 type SrtQryKey = SortQueryKeyType<
@@ -69,7 +60,6 @@ const FrmkMsgMgmt: FC = () => {
 	const [form] = Form.useForm<MessageOutput>();
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const sortInputType = useMemo(
 		() => UtilTable.toSortInputType(queryObj, qryObj),
@@ -88,13 +78,6 @@ const FrmkMsgMgmt: FC = () => {
 				sort: sortInputType,
 			},
 		},
-	});
-	const [updateMessageMutate] = useUpdateMessage({
-		refetchQueries: refetchQueryMap.message,
-	});
-
-	const [insertMessageMutate] = useInsertMessage({
-		refetchQueries: refetchQueryMap.message,
 	});
 
 	const columns: ColumnsType<MessageOutput> = useMemo(
@@ -195,63 +178,16 @@ const FrmkMsgMgmt: FC = () => {
 
 	return (
 		<>
-			{contextHolder}
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
 				<MsgDesc record={record} />
 			</Drawer>
 
-			<Drawer
+			<MsgFormDrawer
+				actionType={actionType}
 				open={formDrawerOpenYn}
-				onClose={() => setFormDrawerOpenYn(false)}
-				afterOpenChange={(open) => !open && setActionType(undefined)}
-				extra={
-					<Space>
-						<Button
-							type="primary"
-							onClick={async () => {
-								await form.validateFields();
-								const record = form.getFieldsValue();
-								switch (actionType) {
-									case "insert":
-										await insertMessageMutate({
-											variables: {
-												input: {
-													groupCode: record.groupCode,
-													name: record.name,
-													text: record.text,
-													code: record.code,
-													desc: record.desc,
-												},
-											},
-										});
-
-										await UtilRefetch.message();
-										break;
-									case "update":
-										await updateMessageMutate({
-											variables: {
-												input: {
-													seqNo: record.seqNo,
-													name: record.name,
-													text: record.text,
-													desc: record.desc,
-												},
-											},
-										});
-										await UtilRefetch.message();
-										break;
-								}
-								setFormDrawerOpenYn(false);
-								await messageApi.success("성공");
-							}}
-						>
-							저장
-						</Button>
-					</Space>
-				}
-			>
-				<MessageEntityForm form={form} actionType={actionType} />
-			</Drawer>
+				setOpen={setFormDrawerOpenYn}
+				form={form}
+			/>
 
 			<Layout>
 				<Layout.Header>
