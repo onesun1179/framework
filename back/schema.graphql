@@ -238,6 +238,8 @@ type IconLabelsOutput {
 type Query {
   authCheck: Boolean!
   user(id: String!): UserOutput!
+  childCodes(seqNo: Int!): [CodeOutput!]!
+  nonChildCodes(seqNo: Int!): [CodeOutput!]!
   code(seqNo: Int!): CodeOutput!
   codes(pagingInput: PagingInput, codesInput: CodesInput): CodesOutput!
   menu(seqNo: Int!): MenuOutput!
@@ -281,6 +283,7 @@ input CodesInput {
 input CodesSearchInput {
   seqNo: NonNullableNumberSearchInput
   name: NonNullableStringSearchInput
+  parent: ParentCodesSearchInput
 }
 
 input NonNullableNumberSearchInput {
@@ -360,6 +363,11 @@ input NonNullableAnyStringSearchInput {
 input NonNullableInStringSearchInput {
   value: [String!]!
   not: Boolean = false
+}
+
+input ParentCodesSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  name: NonNullableStringSearchInput
 }
 
 input CodesSortInput {
@@ -671,12 +679,16 @@ type Mutation {
 input InsertCodeInput {
   desc: String
   name: String!
+  parentCodeSeqNos: [Int!]
+  childCodeSeqNos: [Int!]
 }
 
 input UpdateCodeInput {
   seqNo: Int!
   desc: String
   name: String
+  parentCodeSeqNos: [Int!]
+  childCodeSeqNos: [Int!]
 }
 
 input InsertMenuInput {

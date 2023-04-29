@@ -14,7 +14,9 @@ export class CodeOutput extends CommonEntity {
   @Field(() => Int)
   seqNo!: number;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   @Field()
   name!: string;
 

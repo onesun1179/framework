@@ -21,23 +21,20 @@ query {
     }
 }
 
-query {
-    codes(codesInput: {search: {name: {equal: {value: "이름"}}}}) {
-        list {
-            seqNo
-            name
-        }
-    }
-    code(seqNo: 1) {
+query  {
+    nonChildCodes(seqNo: 3) {
         seqNo
         name
-        parents {
-            seqNo
-            name
-        }
-        children {
-            seqNo
-            name
-        }
+    }
+    childCodes(seqNo: 3) {
+        seqNo
+        name
+    }
+}
+
+
+mutation {
+    updateCode(updateCodeInput: {parentCodeSeqNos: [2], seqNo: 3}) {
+        seqNo
     }
 }

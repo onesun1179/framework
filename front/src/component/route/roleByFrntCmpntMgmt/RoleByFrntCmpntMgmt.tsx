@@ -4,11 +4,11 @@
 import React, { FC, memo, useMemo, useState } from "react";
 import { Col, ConfigProvider, Row, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/RoleByFrntCmpntMgmt/quries";
+import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/roleByFrntCmpntMgmt/quries";
 import RoleDirectoryTree from "@src/component/role/RoleDirectoryTree";
 import { isNil } from "lodash";
 import styled from "styled-components";
-import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/RoleByFrntCmpntMgmt/mutations";
+import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/roleByFrntCmpntMgmt/mutations";
 import { refetchQueryMap } from "@src/Util";
 import { FrontComponentOutput } from "@gqlType";
 

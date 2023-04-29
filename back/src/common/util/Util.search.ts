@@ -12,6 +12,7 @@ import {
   Like,
   MoreThan,
   Not,
+  Raw,
 } from 'typeorm';
 import { entries, isNil } from 'lodash';
 import { Regexp } from '@common/typeorm/find-operators/Regexp';
@@ -124,7 +125,14 @@ export class UtilSearch {
 
     if (!isNil(equal))
       UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
-        where.push(equal!.not ? Not(arg) : arg),
+        where.push(
+          equal!.not
+            ? Raw(
+                (columnAlias) =>
+                  `(${columnAlias} != ${equal.value} OR ${columnAlias} is null)`,
+              )
+            : arg,
+        ),
       );
     if (!isNil(moreThan))
       UtilCommon.applyFuncWithArg(MoreThan(moreThan.value), (arg) =>

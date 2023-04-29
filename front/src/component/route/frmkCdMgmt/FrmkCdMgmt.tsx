@@ -1,63 +1,50 @@
 /**
- * 프레임워크 메뉴 관리
+ * 프레임워크 코드 관리
  */
-import React, { FC, memo, useMemo, useState } from "react";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-
-import { ColumnsType, ColumnType } from "antd/es/table";
-import { useQueryObj } from "@src/hooks";
+import React, { useMemo, useState } from "react";
 import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { UtilRefetch } from "@src/Util/Util.refetch";
-import { usePaging } from "@src/hooks/usePaging";
-import { useMentionsState } from "@src/hooks/useMentionsState";
+import { CodeOutput, CodesSearchInput, CodesSortInput } from "@gqlType";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
-import { useFrmkMsgMgmtData } from "@src/component/route/FrmkMsgMgmt/quires";
+import { useMentionsState } from "@src/hooks/useMentionsState";
+import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
-import MsgFormDrawer from "@src/component/form/message/MsgFormDrawer";
-import {
-	MessageOutput,
-	MessagesSearchInput,
-	MessagesSortInput,
-} from "@gqlType";
-import MsgDesc from "@src/component/descriptions/MsgDesc";
+import { ColumnType } from "antd/es/table";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { useFrmkCdMgmt1Query } from "@src/component/route/frmkCdMgmt/quires";
+import CdDesc from "@src/component/descriptions/CdDesc";
+import CdFormDrawer from "@src/component/form/code/CdFormDrawer";
 
-type SrtQryKey = SortQueryKeyType<
-	"nm" | "cd" | "gpcd" | "msg" | "no" | "desc" | "cat" | "uat"
->;
-const srtQryMap: Record<SrtQryKey, keyof MessagesSortInput> = {
-	sort_gpcd: "groupCode",
-	sort_cd: "code",
-	sort_msg: "text",
-	sort_nm: "name",
+type SrtQryKey = SortQueryKeyType<"nm" | "no">;
+const srtQryMap: Record<SrtQryKey, keyof CodesSortInput> = {
 	sort_no: "seqNo",
-	sort_desc: "desc",
-	sort_cat: "createdAt",
-	sort_uat: "updatedAt",
+	sort_nm: "name",
 };
-type SrchQryKey = SearchQueryKeyType<"nm" | "no" | "gpcd" | "msg">;
-const srchQryMap: Record<SrchQryKey, keyof MessagesSearchInput> = {
+type SrchQryKey = SearchQueryKeyType<"nm" | "no">;
+const srchQryMap: Record<SrchQryKey, keyof CodesSearchInput> = {
 	srch_no: "seqNo",
-	srch_msg: "text",
 	srch_nm: "name",
-	srch_gpcd: "groupCode",
 };
+
 type QryObj = typeof srtQryMap & typeof srchQryMap;
 const qryObj: QryObj = {
 	...srtQryMap,
 	...srchQryMap,
 };
 
-const FrmkMsgMgmt: FC = () => {
+function FrmkCdMgmt() {
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
+	const { getColumnSort } = useQrySort(srtQryMap);
+	const [form] = Form.useForm<CodeOutput>();
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<MessageOutput>();
-	const { getColumnSort } = useQrySort(srtQryMap);
+		useMentionsState<CodeOutput>();
+
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
-		usePaging(10);
-	const [form] = Form.useForm<MessageOutput>();
+		usePaging();
+
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
 
@@ -65,22 +52,16 @@ const FrmkMsgMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-
-	const searchInputType = useMemo(
-		() => UtilTable.toSortInputType(queryObj, qryObj),
-		[queryObj]
-	);
-
-	const { data, loading, previousData } = useFrmkMsgMgmtData({
+	const { data, loading, previousData, refetch } = useFrmkCdMgmt1Query({
 		variables: {
-			paging: pagingInput,
-			param: {
+			pagingInput: pagingInput,
+			codesInput: {
 				sort: sortInputType,
 			},
 		},
 	});
 
-	const columns: ColumnsType<MessageOutput> = useMemo(
+	const columns = useMemo(
 		() =>
 			(
 				[
@@ -88,44 +69,26 @@ const FrmkMsgMgmt: FC = () => {
 						key: "seqNo",
 						dataIndex: "seqNo",
 						title: "ID",
-						width: 20,
 						align: "center",
+						width: 50,
 					},
 					{
 						key: "name",
 						dataIndex: "name",
 						title: "이름",
 					},
-					{
-						key: "groupCode",
-						dataIndex: "groupCode",
-						title: "그룹 코드",
-						width: 110,
-						align: "center",
-					},
-					{
-						key: "code",
-						dataIndex: "code",
-						title: "코드",
-						width: 80,
-						align: "center",
-					},
-					{
-						key: "text",
-						dataIndex: "text",
-						title: "메세지",
-					},
+
 					{
 						key: "createdAt",
 						dataIndex: "createdAt",
 						title: "생성일자",
-						width: 220,
+						width: 250,
 					},
 					{
 						key: "updatedAt",
 						dataIndex: "updatedAt",
 						title: "수정일자",
-						width: 220,
+						width: 250,
 					},
 					{
 						key: "desc",
@@ -145,8 +108,8 @@ const FrmkMsgMgmt: FC = () => {
 										onClick={(e) => {
 											e.stopPropagation();
 											setActionType("update");
-											setFormDrawerOpenYn(true);
 											form.setFieldsValue(record);
+											setFormDrawerOpenYn(true);
 										}}
 									>
 										수정
@@ -166,29 +129,27 @@ const FrmkMsgMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageOutput>>
+				] as Array<ColumnType<CodeOutput>>
 			).map((o) => {
 				return {
 					...o,
 					...getColumnSort(o),
 				};
 			}),
-		[queryObj, record, setActionType, setFormDrawerOpenYn, form, getColumnSort]
+		[setActionType, setFormDrawerOpenYn, srtQryMap, getColumnSort]
 	);
 
 	return (
 		<>
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MsgDesc record={record} />
+				<CdDesc record={record} />
 			</Drawer>
-
-			<MsgFormDrawer
+			<CdFormDrawer
 				actionType={actionType}
 				open={formDrawerOpenYn}
 				setOpen={setFormDrawerOpenYn}
 				form={form}
 			/>
-
 			<Layout>
 				<Layout.Header>
 					<Space>
@@ -205,7 +166,7 @@ const FrmkMsgMgmt: FC = () => {
 							icon={<ReloadOutlined />}
 							type={"primary"}
 							onClick={() => {
-								UtilRefetch.message();
+								refetch();
 							}}
 						/>
 					</Space>
@@ -219,7 +180,7 @@ const FrmkMsgMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.messages.total,
+							total: data?.codes.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -230,7 +191,7 @@ const FrmkMsgMgmt: FC = () => {
 						loading={loading}
 						columns={columns}
 						rowKey={"seqNo"}
-						dataSource={data?.messages.list || previousData?.messages.list}
+						dataSource={data?.codes.list || previousData?.codes.list}
 						onRow={(value) => ({
 							onClick: () => {
 								setRecord(value);
@@ -242,6 +203,6 @@ const FrmkMsgMgmt: FC = () => {
 			</Layout>
 		</>
 	);
-};
+}
 
-export default memo(FrmkMsgMgmt);
+export default FrmkCdMgmt;

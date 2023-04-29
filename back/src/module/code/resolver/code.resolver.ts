@@ -23,6 +23,8 @@ import { InsertCodeInput } from '@modules/code/dto/input/insert-code.input';
 import { UpdateCodeInput } from '@modules/code/dto/input/update-code.input';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
+import { CodeService } from '@modules/code/code.service';
 
 @Resolver(() => CodeOutput)
 @UseGuards(GqlAuthGuard)
@@ -30,11 +32,61 @@ export class CodeResolver {
   constructor(
     private codeRepository: CodeRepository,
     private codeMapRepository: CodeMapRepository,
+    private codeService: CodeService,
   ) {}
 
   /**************************************
    *              QUERY
    ***************************************/
+
+  @Query(() => [CodeOutput])
+  async childCodes(
+    @Args('seqNo', {
+      type: () => Int,
+    })
+    seqNo: number,
+  ) {
+    return await this.codeRepository
+      .createQueryBuilder(`cd`)
+      .innerJoin(CodeMapOutput, `cdm`, `cd.seq_no = cdm.child_seq_no`)
+      .where(`cdm.parent_seq_no = :seqNo`, {
+        seqNo,
+      })
+      .getMany();
+  }
+  @Query(() => [CodeOutput])
+  async nonChildCodes(
+    @Args('seqNo', {
+      type: () => Int,
+    })
+    seqNo: number,
+  ) {
+    return await this.codeRepository
+      .query(
+        `
+        SELECT cd.*
+          FROM code cd
+         WHERE NOT EXISTS
+             (
+             SELECT 1
+               FROM code_map child
+              WHERE child.child_seq_no = cd.seq_no
+                AND child.parent_seq_no = ${seqNo} )
+           AND cd.seq_no != ${seqNo}
+    `,
+      )
+      .then((r) =>
+        r.map((o: any) =>
+          CodeOutput.create({
+            seqNo: o.seq_no,
+            name: o.name,
+            desc: o.desc,
+            createdAt: o.createdAt,
+            updatedAt: o.updatedAt,
+          }),
+        ),
+      );
+  }
   @Query(() => CodeOutput)
   async code(
     @Args('seqNo', {
@@ -61,8 +113,25 @@ export class CodeResolver {
     codesInput: CodesInput,
   ): Promise<CodesOutput> {
     const qb = await this.codeRepository.createQueryBuilder('cd');
+    let where: FindOptionsWhere<CodeOutput> = {};
 
-    codesInput.search && UtilSearch.setSearchByQB(qb, codesInput.search);
+    if (codesInput.search) {
+      where = UtilSearch.getSearchWhere(codesInput.search);
+
+      if (codesInput.search.parent) {
+        where = {
+          ...where,
+          children: {
+            parent: UtilSearch.getSearchWhere(codesInput.search.parent),
+          },
+        };
+      }
+
+      qb.setFindOptions({
+        where,
+      });
+    }
+
     codesInput.sort && UtilSort.setSortByQB(qb, codesInput.sort);
     return UtilPaging.getRes({
       pagingInput,
@@ -121,7 +190,7 @@ export class CodeResolver {
     })
     insertCodeInput: InsertCodeInput,
   ): Promise<CodeOutput> {
-    return await this.codeRepository.saveCustom(insertCodeInput);
+    return await this.codeService.saveCodeCustom(insertCodeInput);
   }
 
   @Mutation(() => CodeOutput)
@@ -132,7 +201,7 @@ export class CodeResolver {
     updateCodeInput: UpdateCodeInput,
   ): Promise<CodeOutput> {
     if (await this.codeRepository.hasRow(updateCodeInput.seqNo)) {
-      return await this.codeRepository.saveCustom(updateCodeInput);
+      return await this.codeService.saveCodeCustom(updateCodeInput);
     } else {
       throw new GqlError(MessageConstant.NOT_FOUND_VALUE([]));
     }

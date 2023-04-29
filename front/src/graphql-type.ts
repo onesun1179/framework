@@ -26,6 +26,7 @@ export interface CodesInput {
 export interface CodesSearchInput {
 	seqNo?: Nullable<NonNullableNumberSearchInput>;
 	name?: Nullable<NonNullableStringSearchInput>;
+	parent?: Nullable<ParentCodesSearchInput>;
 }
 
 export interface NonNullableNumberSearchInput {
@@ -38,8 +39,8 @@ export interface NonNullableNumberSearchInput {
 }
 
 export interface EqualNumberSearchInput {
-    value: number;
-    not?: Nullable<boolean>;
+	value: number;
+	not?: Nullable<boolean>;
 }
 
 export interface NonNullableAnyNumberSearchInput {
@@ -107,6 +108,11 @@ export interface NonNullableInStringSearchInput {
 	not?: Nullable<boolean>;
 }
 
+export interface ParentCodesSearchInput {
+	seqNo?: Nullable<NonNullableNumberSearchInput>;
+	name?: Nullable<NonNullableStringSearchInput>;
+}
+
 export interface CodesSortInput {
 	seqNo?: Nullable<SortTypeInput>;
 	name?: Nullable<SortTypeInput>;
@@ -146,8 +152,8 @@ export interface NullableAnyNumberSearchInput {
 }
 
 export interface NullableInNumberSearchInput {
-    value: Nullable<number>[];
-    not?: Nullable<boolean>;
+	value: Nullable<number>[];
+	not?: Nullable<boolean>;
 }
 
 export interface IsNullNumberSearchInput {
@@ -385,12 +391,16 @@ export interface IconLabelsSortInput {
 export interface InsertCodeInput {
 	desc?: Nullable<string>;
 	name: string;
+	parentCodeSeqNos?: Nullable<number[]>;
+	childCodeSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateCodeInput {
 	seqNo: number;
 	desc?: Nullable<string>;
 	name?: Nullable<string>;
+	parentCodeSeqNos?: Nullable<number[]>;
+	childCodeSeqNos?: Nullable<number[]>;
 }
 
 export interface InsertMenuInput {
@@ -409,12 +419,12 @@ export interface UpdateMenuInput {
 }
 
 export interface UpdateMessageInput {
-    seqNo: number;
-    desc?: Nullable<string>;
-    code?: Nullable<string>;
-    name?: Nullable<string>;
-    text?: Nullable<string>;
-    groupCode?: Nullable<string>;
+	seqNo: number;
+	desc?: Nullable<string>;
+	code?: Nullable<string>;
+	name?: Nullable<string>;
+	text?: Nullable<string>;
+	groupCode?: Nullable<string>;
 }
 
 export interface InsertMessageInput {
@@ -452,12 +462,12 @@ export interface InsertFrontComponentInput {
 }
 
 export interface UpdateFrontComponentInput {
-    desc?: Nullable<string>;
-    id: string;
-    name: string;
-    allFrontComponentIds?: Nullable<string[]>;
-    roleSeqNos?: Nullable<number[]>;
-    routeSeqNos?: Nullable<number[]>;
+	desc?: Nullable<string>;
+	id: string;
+	name: string;
+	allFrontComponentIds?: Nullable<string[]>;
+	roleSeqNos?: Nullable<number[]>;
+	routeSeqNos?: Nullable<number[]>;
 }
 
 export interface InsertAllFrontComponentInput {
@@ -495,10 +505,10 @@ export interface UpdateRoleInput {
 }
 
 export interface InsertRoleGroupInput {
-    name: string;
-    parentSeqNo?: Nullable<number>;
-    roleSeqNos?: Nullable<number[]>;
-    childSeqNos?: Nullable<number[]>;
+	name: string;
+	parentSeqNo?: Nullable<number>;
+	roleSeqNos?: Nullable<number[]>;
+	childSeqNos?: Nullable<number[]>;
 }
 
 export interface UpdateRoleGroupInput {
@@ -664,12 +674,12 @@ export interface RoleOutput {
 }
 
 export interface UserOutput {
-    createdAt: DateTime;
-    updatedAt: DateTime;
-    desc?: Nullable<string>;
-    id: string;
-    roleSeqNo: number;
-    role: RoleOutput;
+	createdAt: DateTime;
+	updatedAt: DateTime;
+	desc?: Nullable<string>;
+	id: string;
+	roleSeqNo: number;
+	role: RoleOutput;
 }
 
 export interface RolesOutput {
@@ -723,8 +733,8 @@ export interface IconsOutput {
 }
 
 export interface MenusOutput {
-    list: MenuOutput[];
-    total: number;
+	list: MenuOutput[];
+	total: number;
 }
 
 export interface MenuRoleMapsOutput {
@@ -741,6 +751,10 @@ export interface IQuery {
 	authCheck(): boolean | Promise<boolean>;
 
 	user(id: string): UserOutput | Promise<UserOutput>;
+
+	childCodes(seqNo: number): CodeOutput[] | Promise<CodeOutput[]>;
+
+	nonChildCodes(seqNo: number): CodeOutput[] | Promise<CodeOutput[]>;
 
 	code(seqNo: number): CodeOutput | Promise<CodeOutput>;
 
@@ -801,46 +815,58 @@ export interface IQuery {
 	allFrontComponentById(
 		allFrontComponentId: string
 	): AllFrontComponentOutput | Promise<AllFrontComponentOutput>;
+
 	allFrontComponentByIdAndRole(
 		frontComponentId: string,
 		roleSeqNo: number
 	):
 		| Nullable<AllFrontComponentOutput>
 		| Promise<Nullable<AllFrontComponentOutput>>;
+
 	allFrontComponents(
 		pagingInput?: Nullable<PagingInput>,
 		allFrontComponentsInput?: Nullable<AllFrontComponentsInput>
 	): AllFrontComponentsOutput | Promise<AllFrontComponentsOutput>;
+
 	allFrontComponentByFcId(
 		frontComponentId: string
 	):
 		| Nullable<AllFrontComponentOutput>
 		| Promise<Nullable<AllFrontComponentOutput>>;
+
 	role(seqNo: number): Nullable<RoleOutput> | Promise<Nullable<RoleOutput>>;
+
 	roles(
 		pagingInput?: Nullable<PagingInput>,
 		rolesInput?: Nullable<RolesInput>
 	): RolesOutput | Promise<RolesOutput>;
+
 	roleGroups(
 		pagingInput?: Nullable<PagingInput>,
 		roleGroupsInput?: Nullable<RoleGroupsInput>
 	): RoleGroupsOutput | Promise<RoleGroupsOutput>;
+
 	roleFrontComponentMap(
 		roleSeqNo: number,
 		frontComponentId: string
 	):
 		| Nullable<RoleFrontComponentMapOutput>
 		| Promise<Nullable<RoleFrontComponentMapOutput>>;
+
 	icon(seqNo: number): IconOutput | Promise<IconOutput>;
+
 	icons(
 		pagingInput?: Nullable<PagingInput>,
 		iconsInput?: Nullable<IconsInput>
 	): IconsOutput | Promise<IconsOutput>;
+
 	iconLabel(iconLabelSeqNo: number): IconLabelOutput | Promise<IconLabelOutput>;
+
 	iconLabels(
 		pagingInput?: Nullable<PagingInput>,
 		iconLabelsInput?: Nullable<IconLabelsInput>
 	): IconLabelsOutput | Promise<IconLabelsOutput>;
+
 	iconLabelByIconSeqNo(
 		iconSeqNo: number
 	): IconLabelOutput[] | Promise<IconLabelOutput[]>;

@@ -17,7 +17,7 @@ import {
 	AllFrontComponentsSortInput,
 	MessageGroupOutput
 } from "@gqlType";
-import { useFrmkAllFrntCmpntMgmtQuery } from "@src/component/route/FrmkAllFrntCmpntMgmt/quires";
+import { useFrmkAllFrntCmpntMgmtQuery } from "@src/component/route/frmkAllFrntCmpntMgmt/quires";
 
 /**
  * 프레임워크 컴포넌트 관리

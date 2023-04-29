@@ -7,7 +7,7 @@ import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
-import { EntityFormActionType } from "@src/types";
+import { EntityFormActionType, Nullable } from "@src/types";
 import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
@@ -18,7 +18,7 @@ import {
 	MenusSortInput,
 	RouteOutput,
 } from "@gqlType";
-import { useFrmkMnMgmtQuery } from "@src/component/route/FrmkMnMgmt/quires";
+import { useFrmkMnMgmtQuery } from "@src/component/route/frmkMnMgmt/quires";
 import MenuDesc from "@src/component/descriptions/MenuDesc";
 import MenuFormDrawer from "@src/component/form/menu/MenuFormDrawer";
 import CustomIcon from "@src/component/common/CustomIcon";
@@ -86,9 +86,9 @@ const FrmkMenuMgmt: FC = () => {
 						key: "icon",
 						dataIndex: "icon",
 						title: "아이콘",
-						render(iconOutput: IconOutput, b) {
-							return iconOutput.fileFullPath ? (
-								<CustomIcon iconSeqNo={iconOutput.seqNo} />
+						render(iconOutput: Nullable<IconOutput>, b) {
+							return iconOutput?.fileFullPath ? (
+								<CustomIcon iconSeqNo={iconOutput!.seqNo} />
 							) : null;
 						},
 						align: "center",

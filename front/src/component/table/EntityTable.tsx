@@ -23,7 +23,7 @@ import { Nullable } from "@src/types";
 import { ColumnsType } from "antd/es/table";
 import { MsgDesc } from "@src/component/descriptions/MsgDesc";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { MESSAGE_ENTITIES_TABLE_QUERY } from "@src/component/route/FrmkMsgMgmt";
+import { MESSAGE_ENTITIES_TABLE_QUERY } from "@src/component/route/frmkMsgMgmt/FrmkMsgMgmt";
 import { CustomFormActionType } from "@src/types/table";
 
 export interface EntityTableProps<

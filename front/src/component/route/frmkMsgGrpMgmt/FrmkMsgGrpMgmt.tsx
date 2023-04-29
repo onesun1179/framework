@@ -1,34 +1,34 @@
 import React, { FC, memo, useMemo, useState } from "react";
-import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { SearchQueryKeyType, SortQueryKeyType, UtilRefetch, UtilTable } from "@src/Util";
 import { useQueryObj } from "@src/hooks";
-import { useQrySort } from "@src/hooks/useQrySort";
-import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
-import { EntityFormActionType } from "@src/types";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import FCDesc from "@src/component/descriptions/FCDesc";
-import FCFormDrawer from "@src/component/form/frontComponent/FCFormDrawer";
-import { FrontComponentOutput, FrontComponentsSearchInput, FrontComponentsSortInput } from "@gqlType";
-import { useFrmkFrntCmpntMgmtQuery } from "@src/component/route/FrmkFrntCmpntMgmt/quires";
+import MsgGrpFormDrawer from "@src/component/form/messageGroup/MsgGrpFormDrawer";
+import { useMentionsState } from "@src/hooks/useMentionsState";
+import { useQrySort } from "@src/hooks/useQrySort";
+import { EntityFormActionType } from "@src/types";
+import { MessageGroupOutput, MessageGroupsSearchInput, MessageGroupsSortInput } from "@gqlType";
+import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/frmkMsgGrpMgmt/quires";
+import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
 
 /**
- * 프레임워크 컴포넌트 관리
+ * 프레임워크 메뉴 그룹 관리
  */
 
-type SrtQryKey = SortQueryKeyType<"id" | "nm" | "desc" | "cat" | "uat">;
-const srtQryMap: Record<SrtQryKey, keyof FrontComponentsSortInput> = {
-	sort_id: "id",
+type SrtQryKey = SortQueryKeyType<"nm" | "cd" | "desc" | "cat" | "uat">;
+const srtQryMap: Record<SrtQryKey, keyof MessageGroupsSortInput> = {
+	sort_cd: "code",
 	sort_nm: "name",
 	sort_desc: "desc",
 	sort_cat: "createdAt",
 	sort_uat: "updatedAt",
 };
-type SrchQryKey = SearchQueryKeyType<"id" | "nm">;
-const srchQryMap: Record<SrchQryKey, keyof FrontComponentsSearchInput> = {
-	srch_id: "id",
+type SrchQryKey = SearchQueryKeyType<"nm" | "cd">;
+const srchQryMap: Record<SrchQryKey, keyof MessageGroupsSearchInput> = {
 	srch_nm: "name",
+	srch_cd: "code",
 };
 
 type QryObj = typeof srtQryMap & typeof srchQryMap;
@@ -37,14 +37,14 @@ const qryObj: QryObj = {
 	...srchQryMap,
 };
 
-const FrmkFrntCmpntMgmt: FC = () => {
-	const [form] = Form.useForm<FrontComponentOutput>();
+const FrmkMsgGrpMgmt: FC = () => {
+	const [form] = Form.useForm<MessageGroupOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
 	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<FrontComponentOutput>();
+		useMentionsState<MessageGroupOutput>();
 
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
 		usePaging();
@@ -56,27 +56,28 @@ const FrmkFrntCmpntMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useFrmkFrntCmpntMgmtQuery();
+	const { data, loading, previousData } = useFrmkMsgGrkMgmtDataQuery({
+		variables: {
+			paging: pagingInput,
+			param: {
+				sort: sortInputType,
+			},
+		},
+	});
 
 	const columns = useMemo(
 		() =>
 			(
 				[
 					{
-						key: "id",
-						dataIndex: "id",
-						title: "ID",
-					},
-					{
 						key: "name",
 						dataIndex: "name",
 						title: "이름",
 					},
 					{
-						key: "desc",
-						dataIndex: "desc",
-						title: "비고",
-						width: 80,
+						key: "code",
+						dataIndex: "code",
+						title: "코드",
 					},
 					{
 						key: "createdAt",
@@ -89,6 +90,12 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						dataIndex: "updatedAt",
 						title: "수정일자",
 						width: 220,
+					},
+					{
+						key: "desc",
+						dataIndex: "desc",
+						title: "비고",
+						width: 80,
 					},
 					{
 						key: "action",
@@ -123,7 +130,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<FrontComponentOutput>>
+				] as Array<ColumnType<MessageGroupOutput>>
 			).map((o) => {
 				return {
 					...o,
@@ -136,10 +143,10 @@ const FrmkFrntCmpntMgmt: FC = () => {
 	return (
 		<>
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<FCDesc record={record} />
+				<MsgGrpDesc record={record} />
 			</Drawer>
 
-			<FCFormDrawer
+			<MsgGrpFormDrawer
 				actionType={actionType}
 				open={formDrawerOpenYn}
 				setOpen={setFormDrawerOpenYn}
@@ -158,7 +165,13 @@ const FrmkFrntCmpntMgmt: FC = () => {
 								setActionType("insert");
 							}}
 						/>
-						<Button icon={<ReloadOutlined />} type={"primary"} />
+						<Button
+							icon={<ReloadOutlined />}
+							type={"primary"}
+							onClick={() => {
+								UtilRefetch.message();
+							}}
+						/>
 					</Space>
 				</Layout.Header>
 				<Layout.Content>
@@ -170,7 +183,7 @@ const FrmkFrntCmpntMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.frontComponents.total,
+							total: data?.messageGroups.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -180,9 +193,9 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						}}
 						loading={loading}
 						columns={columns}
-						rowKey={"id"}
+						rowKey={"code"}
 						dataSource={
-							data?.frontComponents.list || previousData?.frontComponents.list
+							data?.messageGroups.list || previousData?.messageGroups.list
 						}
 						onRow={(value) => ({
 							onClick: () => {
@@ -197,4 +210,4 @@ const FrmkFrntCmpntMgmt: FC = () => {
 	);
 };
 
-export default memo(FrmkFrntCmpntMgmt);
+export default memo(FrmkMsgGrpMgmt);
