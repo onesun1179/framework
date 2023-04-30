@@ -1,8 +1,8 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { Nullable } from 'src/common/type';
-import { RoleGroupsSearchInput } from '@modules/role/dto/input/role-groups-search.input';
-import { RoleGroupsSortInput } from '@modules/role/dto/input/role-groups-sort.input';
+import { RoleGroupsSearchInput } from '@modules/role/dto/input/search/role-groups-search.input';
+import { RoleGroupsSortInput } from '@modules/role/dto/input/sort/role-groups-sort.input';
 
 @InputType()
 @ArgsType()

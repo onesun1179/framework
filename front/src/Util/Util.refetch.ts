@@ -11,6 +11,8 @@ import {
 	FRMK_CD_MAP_MGMT_1_QUERY,
 	FRMK_CD_MAP_MGMT_2_QUERY,
 } from "@src/component/route/frmkCdMapMgmt";
+import { ROLE_GROUPS_QUERY } from "@src/component/select/RoleGroupSelect/quires";
+import { FRMK_ROLE_MGMT_1_QUERY } from "@src/component/route/frmkRoleMgmt";
 
 export const refetchQueryMap = {
 	messageGroup: [FRMK_MSG_GRK_MGMT_DATA_QUERY],
@@ -20,8 +22,8 @@ export const refetchQueryMap = {
 		ROLE_BY_FRNT_CMPNT_MGMT_QUERY,
 	],
 	frontComponent: [FRMK_FRNT_CMPNT_MGMT_QUERY],
-	roleGroup: [ROLE_DIRECTORY_TREE_QUERY],
-	role: [ROLE_DIRECTORY_TREE_QUERY],
+	roleGroup: [ROLE_DIRECTORY_TREE_QUERY, ROLE_GROUPS_QUERY],
+	role: [ROLE_DIRECTORY_TREE_QUERY, FRMK_ROLE_MGMT_1_QUERY],
 	menu: [FRMK_MN_MGMT_QUERY],
 	code: [FRMK_CD_MGMT_1_QUERY, FRMK_CD_MAP_MGMT_1_QUERY],
 	codeMap: [FRMK_CD_MAP_MGMT_2_QUERY],

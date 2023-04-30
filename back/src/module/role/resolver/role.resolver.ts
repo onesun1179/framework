@@ -27,12 +27,14 @@ import { MessageConstant } from '@common/constants/message.constant';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { RolesOutput } from '@modules/role/dto/output/roles.output';
 import { RolesInput } from '@modules/role/dto/input/roles.input';
+import { RoleService } from '@modules/role/role.service';
 
 @Resolver(() => RoleOutput)
 export class RoleResolver {
   private readonly logger = new Logger(RoleResolver.name);
 
   constructor(
+    private roleService: RoleService,
     private roleRepository: RoleRepository,
     private userRepository: UserRepository,
     private routeRepository: RouteRepository,
@@ -147,7 +149,7 @@ export class RoleResolver {
     })
     insertRoleInput: InsertRoleInput,
   ): Promise<RoleOutput> {
-    return await this.roleRepository.saveCustom(insertRoleInput);
+    return await this.roleService.saveRoleCustom(insertRoleInput);
   }
 
   @Mutation(() => RoleOutput)
@@ -166,6 +168,6 @@ export class RoleResolver {
     ) {
       throw new GqlError(MessageConstant.NOT_FOUND_VALUE());
     }
-    return await this.roleRepository.saveCustom(updateRoleInput);
+    return await this.roleService.saveRoleCustom(updateRoleInput);
   }
 }

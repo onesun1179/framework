@@ -7,7 +7,6 @@ export class RolesSortInput extends SortType([
   'seqNo',
   'name',
   'identifier',
-  'roleGroupSeqNo',
   'desc',
   'createdAt',
   'updatedAt',

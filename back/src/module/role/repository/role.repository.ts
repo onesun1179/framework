@@ -1,8 +1,6 @@
 import { Repository } from 'typeorm';
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
-import { InsertRoleInput } from '@modules/role/dto/input/insert-role.input';
-import { UpdateRoleInput } from '@modules/role/dto/input/update-role.input';
 import { Nullable } from '@common/type';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { UtilSearch } from '@common/util/Util.search';
@@ -31,15 +29,5 @@ export class RoleRepository extends Repository<RoleOutput> {
       builder: qb,
       classRef: RolesOutput,
     });
-  }
-
-  async saveCustom(p: InsertRoleInput | UpdateRoleInput): Promise<RoleOutput> {
-    const role = await RoleOutput.create({
-      seqNo: p instanceof UpdateRoleInput ? p.seqNo : undefined,
-      identifier: p instanceof InsertRoleInput ? p.identifier : undefined,
-      roleGroupSeqNo: p.roleGroupSeqNo,
-    }).save();
-
-    return role;
   }
 }

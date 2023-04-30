@@ -584,14 +584,12 @@ input RolesSearchInput {
   seqNo: NonNullableNumberSearchInput
   name: NonNullableStringSearchInput
   identifier: NullableStringSearchInput
-  roleGroupSeqNo: NullableNumberSearchInput
 }
 
 input RolesSortInput {
   seqNo: SortTypeInput
   name: SortTypeInput
   identifier: SortTypeInput
-  roleGroupSeqNo: SortTypeInput
   desc: SortTypeInput
   createdAt: SortTypeInput
   updatedAt: SortTypeInput
@@ -775,8 +773,8 @@ input ChkUniqByAllFcIdInput {
 }
 
 input InsertRoleInput {
+  desc: String
   name: String!
-  identifier: String
   roleGroupSeqNo: Int!
   userIds: String
   menuSeqNos: [Int!]
@@ -785,6 +783,7 @@ input InsertRoleInput {
 
 input UpdateRoleInput {
   seqNo: Int!
+  desc: String
   name: String
   roleGroupSeqNo: Int
   userIds: String

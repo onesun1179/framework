@@ -10,11 +10,5 @@ import { InsertRoleInput } from '@modules/role/dto/input/insert-role.input';
 @InputType()
 export class UpdateRoleInput extends IntersectionType(
   PickType(RoleOutput, ['seqNo']),
-  PickType(PartialType(InsertRoleInput), [
-    'name',
-    'roleGroupSeqNo',
-    'userIds',
-    'menuSeqNos',
-    'routeSeqNos',
-  ]),
+  PartialType(InsertRoleInput),
 ) {}

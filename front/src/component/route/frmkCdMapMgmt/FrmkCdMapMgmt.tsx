@@ -34,7 +34,7 @@ const FrmkCdMapMgmt: FC<FrmkCdMapMgmtProps> = () => {
 	return (
 		<Row gutter={[12, 12]}>
 			<Col span={8}>
-				<Card title={"test"}>
+				<Card title={"코드"}>
 					<Table
 						dataSource={data?.codes.list}
 						columns={codeColumns}
@@ -49,7 +49,7 @@ const FrmkCdMapMgmt: FC<FrmkCdMapMgmtProps> = () => {
 				</Card>
 			</Col>
 			<Col span={16}>
-				<Card title={"test"}>
+				<Card title={"코드 매핑"}>
 					<Transfer
 						onChange={(targetKeys, direction, moveKeys) => {
 							updateMutate({
@@ -64,7 +64,6 @@ const FrmkCdMapMgmt: FC<FrmkCdMapMgmtProps> = () => {
 						}}
 						showSearch
 						dataSource={data2?.codes.list}
-						oneWay
 						rowKey={(o) => o.seqNo + ""}
 						titles={["nonChildCodes", "childCodes"]}
 						targetKeys={data2?.childCodes.map((o) => o.seqNo + "")}

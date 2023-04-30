@@ -8,8 +8,8 @@ import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 @InputType()
 export class InsertRoleInput extends PickType(RoleOutput, [
   'name',
-  'identifier',
   'roleGroupSeqNo',
+  'desc',
 ]) {
   @Field(() => String, {
     nullable: true,

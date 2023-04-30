@@ -1,40 +1,13 @@
 query {
-    icon(seqNo: 1) {
-        labels {
-            seqNo
-            name
-        }
-    }
-}
-
-query {
-    icons(iconsInput: {search: {iconLabel: {seqNo: {equal: {value: 1}}}}}) {
+    roles {
         list {
             seqNo
             name
-            labels {
-                seqNo
-                name
-            }
+            createdAt
+            updatedAt
+            desc
+            identifier
         }
         total
-    }
-}
-
-query  {
-    nonChildCodes(seqNo: 3) {
-        seqNo
-        name
-    }
-    childCodes(seqNo: 3) {
-        seqNo
-        name
-    }
-}
-
-
-mutation {
-    updateCode(updateCodeInput: {parentCodeSeqNos: [2], seqNo: 3}) {
-        seqNo
     }
 }

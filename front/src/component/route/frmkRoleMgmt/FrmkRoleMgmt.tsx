@@ -1,54 +1,59 @@
-import React, { FC, memo, useMemo, useState } from "react";
-import { SearchQueryKeyType, SortQueryKeyType, UtilRefetch, UtilTable } from "@src/Util";
+import React, { FC, useMemo, useState } from "react";
+import {
+	SearchQueryKeyType,
+	SortQueryKeyType,
+	UtilRefetch,
+	UtilTable,
+} from "@src/Util";
+import {
+	RoleGroupOutput,
+	RoleOutput,
+	RolesSearchInput,
+	RolesSortInput,
+} from "@gqlType";
 import { useQueryObj } from "@src/hooks";
-import { usePaging } from "@src/hooks/usePaging";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
-import { ColumnType } from "antd/es/table";
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import MsgGrpFormDrawer from "@src/component/form/messageGroup/MsgGrpFormDrawer";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
+import { usePaging } from "@src/hooks/usePaging";
+import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { EntityFormActionType } from "@src/types";
-import { MessageGroupOutput, MessageGroupsSearchInput } from "@gqlType";
-import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/frmkMsgGrpMgmt/quires";
-import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
+import { ColumnsType, ColumnType } from "antd/es/table";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { useFrmkRoleMgmt1Query } from "@src/component/route/frmkRoleMgmt/quires";
+import RoleDesc from "@src/component/descriptions/RoleDesc";
+import RoleFormDrawer from "@src/component/form/role/RoleFormDrawer";
 
-/**
- * 프레임워크 메뉴 그룹 관리
- */
-
-type SrtQryKey = SortQueryKeyType<"nm" | "cd" | "desc" | "cat" | "uat">;
-const srtQryMap: Record<SrtQryKey, keyof MessageGroupsSortInput> = {
-	sort_cd: "code",
+type SrtQryKey = SortQueryKeyType<"no" | "nm" | "id" | "desc" | "cat" | "uat">;
+const srtQryMap: Record<SrtQryKey, keyof RolesSortInput> = {
+	sort_no: "seqNo",
 	sort_nm: "name",
-	sort_desc: "desc",
-	sort_cat: "createdAt",
+	sort_id: "identifier",
 	sort_uat: "updatedAt",
+	sort_cat: "createdAt",
+	sort_desc: "desc",
 };
-type SrchQryKey = SearchQueryKeyType<"nm" | "cd">;
-const srchQryMap: Record<SrchQryKey, keyof MessageGroupsSearchInput> = {
+type SrchQryKey = SearchQueryKeyType<"nm" | "no" | "id">;
+const srchQryMap: Record<SrchQryKey, keyof RolesSearchInput> = {
+	srch_no: "seqNo",
 	srch_nm: "name",
-	srch_cd: "code",
+	srch_id: "identifier",
 };
-
 type QryObj = typeof srtQryMap & typeof srchQryMap;
 const qryObj: QryObj = {
 	...srtQryMap,
 	...srchQryMap,
 };
 
-const FrmkMsgGrpMgmt: FC = () => {
-	const [form] = Form.useForm<MessageGroupOutput>();
+const FrmkRoleMgmt: FC = () => {
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
-	const { getColumnSort } = useQrySort(srtQryMap);
 
 	const { mentionsShowYn, record, setMentionsShowYn, setRecord } =
-		useMentionsState<MessageGroupOutput>();
-
+		useMentionsState<RoleOutput>();
+	const { getColumnSort } = useQrySort(srtQryMap);
 	const { makeSkip, pagingInput, setPagingInput, current, setTake } =
-		usePaging();
-
+		usePaging(10);
+	const [form] = Form.useForm<RoleOutput>();
 	const [formDrawerOpenYn, setFormDrawerOpenYn] = useState(false);
 	const [actionType, setActionType] = useState<EntityFormActionType>();
 
@@ -56,28 +61,44 @@ const FrmkMsgGrpMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useFrmkMsgGrkMgmtDataQuery({
+
+	const searchInputType = useMemo(
+		() => UtilTable.toSortInputType(queryObj, qryObj),
+		[queryObj]
+	);
+
+	const { data, loading, previousData } = useFrmkRoleMgmt1Query({
 		variables: {
-			paging: pagingInput,
-			param: {
+			pagingInput,
+			rolesInput: {
 				sort: sortInputType,
 			},
 		},
 	});
 
-	const columns = useMemo(
+	const columns: ColumnsType<RoleOutput> = useMemo(
 		() =>
 			(
 				[
+					{
+						key: "seqNo",
+						dataIndex: "seqNo",
+						title: "ID",
+						width: 20,
+						align: "center",
+					},
 					{
 						key: "name",
 						dataIndex: "name",
 						title: "이름",
 					},
 					{
-						key: "code",
-						dataIndex: "code",
-						title: "코드",
+						key: "roleGroup",
+						dataIndex: "roleGroup",
+						title: "그룹명",
+						render(o: RoleGroupOutput, record) {
+							return o.name;
+						},
 					},
 					{
 						key: "createdAt",
@@ -130,23 +151,23 @@ const FrmkMsgGrpMgmt: FC = () => {
 							);
 						},
 					},
-				] as Array<ColumnType<MessageGroupOutput>>
+				] as Array<ColumnType<RoleOutput>>
 			).map((o) => {
 				return {
 					...o,
 					...getColumnSort(o),
 				};
 			}),
-		[setActionType, setFormDrawerOpenYn, form, srtQryMap, getColumnSort]
+		[queryObj, record, setActionType, setFormDrawerOpenYn, form, getColumnSort]
 	);
 
 	return (
 		<>
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MsgGrpDesc record={record} />
+				<RoleDesc record={record} />
 			</Drawer>
 
-			<MsgGrpFormDrawer
+			<RoleFormDrawer
 				actionType={actionType}
 				open={formDrawerOpenYn}
 				setOpen={setFormDrawerOpenYn}
@@ -183,7 +204,7 @@ const FrmkMsgGrpMgmt: FC = () => {
 							onShowSizeChange: (_, take) => setTake(take),
 							pageSize: pagingInput.take,
 							current,
-							total: data?.messageGroups.total,
+							total: data?.roles.total,
 							onChange(page, take) {
 								setPagingInput({
 									take,
@@ -193,10 +214,8 @@ const FrmkMsgGrpMgmt: FC = () => {
 						}}
 						loading={loading}
 						columns={columns}
-						rowKey={"code"}
-						dataSource={
-							data?.messageGroups.list || previousData?.messageGroups.list
-						}
+						rowKey={"seqNo"}
+						dataSource={data?.roles.list || previousData?.roles.list}
 						onRow={(value) => ({
 							onClick: () => {
 								setRecord(value);
@@ -210,4 +229,4 @@ const FrmkMsgGrpMgmt: FC = () => {
 	);
 };
 
-export default memo(FrmkMsgGrpMgmt);
+export default FrmkRoleMgmt;

@@ -3,6 +3,12 @@ import { FC, lazy } from "react";
 export const All_FRONT_COMPONENT: {
 	[C: string]: FC;
 } = {
+	RoleByMnMgmt: lazy(
+		() => import("@src/component/route/roleByMnMgmt/RoleByMnMgmt")
+	),
+	FrmkRoleMgmt: lazy(
+		() => import("@src/component/route/frmkRoleMgmt/FrmkRoleMgmt")
+	),
 	Hm: lazy(() => import("@src/component/route/Hm")),
 	MnMgmt: lazy(() => import("@src/component/route/MnMgmt")),
 	FrmkMnMgmt: lazy(() => import("@src/component/route/frmkMnMgmt/FrmkMnMgmt")),

@@ -1,7 +1,7 @@
 /**
  * 프레임워크 메뉴 관리
  */
-import React, { FC, memo, useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { Button, Drawer, Form, Layout, Space, Table } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
@@ -244,4 +244,4 @@ const FrmkMsgMgmt: FC = () => {
 	);
 };
 
-export default memo(FrmkMsgMgmt);
+export default FrmkMsgMgmt;
