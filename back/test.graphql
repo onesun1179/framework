@@ -1,13 +1,12 @@
 query {
-    roles {
+    codes {
         list {
             seqNo
-            name
-            createdAt
-            updatedAt
-            desc
-            identifier
+            parents {
+                list {
+                    seqNo
+                }
+            }
         }
-        total
     }
 }

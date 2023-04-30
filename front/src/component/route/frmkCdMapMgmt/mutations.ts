@@ -3,9 +3,17 @@ import { CodeOutput } from "@gqlType";
 import { makeUseMutation } from "@src/lib/makeUseMutation";
 
 export const UPDATE_CODE_CHILDREN_MUTATION = gql`
-	mutation UPDATE_CODE_CHILDREN($childCodeSeqNos: [Int!]!, $seqNo: Int!) {
+	mutation UPDATE_CODE_CHILDREN(
+		$parentCodeSeqNos: [Int!]
+		$childCodeSeqNos: [Int!]
+		$seqNo: Int!
+	) {
 		code: updateCode(
-			updateCodeInput: { childCodeSeqNos: $childCodeSeqNos, seqNo: $seqNo }
+			updateCodeInput: {
+				childCodeSeqNos: $childCodeSeqNos
+				parentCodeSeqNos: $parentCodeSeqNos
+				seqNo: $seqNo
+			}
 		) {
 			seqNo
 		}
@@ -14,10 +22,14 @@ export const UPDATE_CODE_CHILDREN_MUTATION = gql`
 	{
 		code: CodeOutput;
 	},
-	{
-		childCodeSeqNos: Array<number>;
-		seqNo: number;
-	}
+	| {
+			childCodeSeqNos: Array<number>;
+			seqNo: number;
+	  }
+	| {
+			parentCodeSeqNos: Array<number>;
+			seqNo: number;
+	  }
 >;
 
 export const useUpdateCodeChildrenMutation = makeUseMutation(

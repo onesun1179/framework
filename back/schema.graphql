@@ -196,8 +196,13 @@ type CodeOutput {
   desc: String
   seqNo: Int!
   name: String!
-  parents: [CodeOutput!]!
-  children: [CodeOutput!]!
+  parents(pagingInput: PagingInput): CodesOutput!
+  children(pagingInput: PagingInput): CodesOutput!
+}
+
+input PagingInput {
+  skip: Int!
+  take: Int!
 }
 
 type CodesOutput {
@@ -238,8 +243,9 @@ type IconLabelsOutput {
 type Query {
   authCheck: Boolean!
   user(id: String!): UserOutput!
-  childCodes(seqNo: Int!): [CodeOutput!]!
-  nonChildCodes(seqNo: Int!): [CodeOutput!]!
+  parentCodes(seqNo: Int!, pagingInput: PagingInput): CodesOutput!
+  childCodes(seqNo: Int!, pagingInput: PagingInput): CodesOutput!
+  nonChildCodes(seqNo: Int!): CodesOutput!
   code(seqNo: Int!): CodeOutput!
   codes(pagingInput: PagingInput, codesInput: CodesInput): CodesOutput!
   menu(seqNo: Int!): MenuOutput!
@@ -268,11 +274,6 @@ type Query {
   iconLabel(iconLabelSeqNo: Int!): IconLabelOutput!
   iconLabels(pagingInput: PagingInput, iconLabelsInput: IconLabelsInput): IconLabelsOutput!
   iconLabelByIconSeqNo(iconSeqNo: Int!): [IconLabelOutput!]!
-}
-
-input PagingInput {
-  skip: Int!
-  take: Int!
 }
 
 input CodesInput {

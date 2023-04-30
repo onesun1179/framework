@@ -12,7 +12,6 @@ import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 import { CodeRepository } from '@modules/code/repository/code.repository';
 import { CodeMapRepository } from '@modules/code/repository/code-map.repository';
 import { CodeOutput } from '@modules/code/dto/output/entity/code.output';
-import { CodeMapOutput } from '@modules/code/dto/output/entity/code-map.output';
 import { CodesOutput } from '@modules/code/dto/output/codes.output';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { CodesInput } from '@modules/code/dto/input/codes.input';
@@ -25,6 +24,7 @@ import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { CodeService } from '@modules/code/code.service';
+import { Nullable } from '@common/type';
 
 @Resolver(() => CodeOutput)
 @UseGuards(GqlAuthGuard)
@@ -39,53 +39,43 @@ export class CodeResolver {
    *              QUERY
    ***************************************/
 
-  @Query(() => [CodeOutput])
+  @Query(() => CodesOutput)
+  async parentCodes(
+    @Args('seqNo', {
+      type: () => Int,
+    })
+    seqNo: number,
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput?: Nullable<PagingInput>,
+  ): Promise<CodesOutput> {
+    return await this.codeService.parentCodes(seqNo, pagingInput);
+  }
+
+  @Query(() => CodesOutput)
   async childCodes(
     @Args('seqNo', {
       type: () => Int,
     })
     seqNo: number,
-  ) {
-    return await this.codeRepository
-      .createQueryBuilder(`cd`)
-      .innerJoin(CodeMapOutput, `cdm`, `cd.seq_no = cdm.child_seq_no`)
-      .where(`cdm.parent_seq_no = :seqNo`, {
-        seqNo,
-      })
-      .getMany();
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput?: Nullable<PagingInput>,
+  ): Promise<CodesOutput> {
+    return await this.codeService.childCodes(seqNo, pagingInput);
   }
-  @Query(() => [CodeOutput])
+  @Query(() => CodesOutput)
   async nonChildCodes(
     @Args('seqNo', {
       type: () => Int,
     })
     seqNo: number,
-  ) {
-    return await this.codeRepository
-      .query(
-        `
-        SELECT cd.*
-          FROM code cd
-         WHERE NOT EXISTS
-             (
-             SELECT 1
-               FROM code_map child
-              WHERE child.child_seq_no = cd.seq_no
-                AND child.parent_seq_no = ${seqNo} )
-           AND cd.seq_no != ${seqNo}
-    `,
-      )
-      .then((r) =>
-        r.map((o: any) =>
-          CodeOutput.create({
-            seqNo: o.seq_no,
-            name: o.name,
-            desc: o.desc,
-            createdAt: o.createdAt,
-            updatedAt: o.updatedAt,
-          }),
-        ),
-      );
+  ): Promise<CodesOutput> {
+    return this.codeService.nonChildCodes(seqNo);
   }
   @Query(() => CodeOutput)
   async code(
@@ -143,41 +133,28 @@ export class CodeResolver {
   /**************************************
    *           RESOLVE_FIELD
    ***************************************/
-  @ResolveField(() => [CodeOutput])
-  async parents(@Parent() { seqNo }: CodeOutput): Promise<Array<CodeOutput>> {
-    return await this.codeRepository
-      .createQueryBuilder('cd')
-      .innerJoin(
-        CodeMapOutput,
-        `cdm`,
-        `
-      cdm.parent_seq_no = cd.seq_no AND
-      cdm.child_seq_no = :seqNo 
-      `,
-        {
-          seqNo,
-        },
-      )
-
-      .getMany();
+  @ResolveField(() => CodesOutput)
+  async parents(
+    @Parent() { seqNo }: CodeOutput,
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput?: Nullable<PagingInput>,
+  ): Promise<CodesOutput> {
+    return this.codeService.parentCodes(seqNo, pagingInput);
   }
 
-  @ResolveField(() => [CodeOutput])
-  async children(@Parent() { seqNo }: CodeOutput): Promise<Array<CodeOutput>> {
-    return await this.codeRepository
-      .createQueryBuilder('cd')
-      .innerJoin(
-        CodeMapOutput,
-        `cdm`,
-        `
-      cdm.child_seq_no = cd.seq_no AND
-      cdm.parent_seq_no = :seqNo 
-      `,
-        {
-          seqNo,
-        },
-      )
-      .getMany();
+  @ResolveField(() => CodesOutput)
+  async children(
+    @Parent() { seqNo }: CodeOutput,
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput?: Nullable<PagingInput>,
+  ): Promise<CodesOutput> {
+    return await this.codeService.childCodes(seqNo, pagingInput);
   }
 
   /**************************************

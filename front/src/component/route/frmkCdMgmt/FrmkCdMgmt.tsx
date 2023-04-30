@@ -77,7 +77,6 @@ function FrmkCdMgmt() {
 						dataIndex: "name",
 						title: "이름",
 					},
-
 					{
 						key: "createdAt",
 						dataIndex: "createdAt",

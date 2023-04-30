@@ -26,7 +26,7 @@ export const refetchQueryMap = {
 	role: [ROLE_DIRECTORY_TREE_QUERY, FRMK_ROLE_MGMT_1_QUERY],
 	menu: [FRMK_MN_MGMT_QUERY],
 	code: [FRMK_CD_MGMT_1_QUERY, FRMK_CD_MAP_MGMT_1_QUERY],
-	codeMap: [FRMK_CD_MAP_MGMT_2_QUERY],
+	codeMap: [FRMK_CD_MAP_MGMT_2_QUERY, FRMK_CD_MAP_MGMT_1_QUERY],
 };
 export const UtilRefetch = mapValues(refetchQueryMap, (o) => {
 	return async () =>

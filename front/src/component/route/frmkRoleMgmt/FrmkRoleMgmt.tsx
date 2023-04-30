@@ -93,6 +93,11 @@ const FrmkRoleMgmt: FC = () => {
 						title: "이름",
 					},
 					{
+						key: "identifier",
+						dataIndex: "identifier",
+						title: "식별자",
+					},
+					{
 						key: "roleGroup",
 						dataIndex: "roleGroup",
 						title: "그룹명",
