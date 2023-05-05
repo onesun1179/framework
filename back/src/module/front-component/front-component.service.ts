@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, In } from 'typeorm';
-import { difference, isNil } from 'lodash';
+import { difference } from 'lodash';
 import { RouteService } from '@modules/route/route.service';
 import { InsertAllFrontComponentInput } from '@modules/front-component/dto/input/insert-all-front-component.input';
 import { UpdateAllFrontComponentInput } from '@modules/front-component/dto/input/update-all-front-component.input';
@@ -10,6 +10,7 @@ import { UpdateFrontComponentInput } from '@modules/front-component/dto/input/up
 import { FrontComponentOutput } from '@modules/front-component/dto/output/entity/front-component.output';
 import { RoleFrontComponentMapOutput } from '@modules/role/dto/output/entity/role-front-component-map.output';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
+import { UtilCommon } from '@common/util/Util.common';
 
 @Injectable()
 export class FrontComponentService {
@@ -56,21 +57,20 @@ export class FrontComponentService {
         }),
       );
 
-      if (!isNil(p.roleSeqNos)) {
+      await UtilCommon.nilToNull(p.roleSeqNos, async (_) => {
         await this.saveRoleSeqNosToFrontComponent(
           entityManager,
           frontComponent.id,
-          p.roleSeqNos,
+          _,
         );
-      }
-
-      if (!isNil(p.routeSeqNos)) {
+      });
+      await UtilCommon.nilToNull(p.routeSeqNos, async (_) => {
         await this.saveRouteSeqNosToFrontComponent(
           entityManager,
           frontComponent.id,
-          p.routeSeqNos,
+          _,
         );
-      }
+      });
 
       return frontComponent;
     });

@@ -19,7 +19,7 @@ import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map
 import { MenuRoleMapsOutput } from '@modules/menu/dto/output/menu-role-maps.output';
 import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
-import { isNil } from 'lodash';
+import { UtilCommon } from '@common/util/Util.common';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuRoleMapOutput)
@@ -98,58 +98,12 @@ export class MenuByAuthResolver {
   async parent(
     @Parent() { parentSeqNo }: MenuRoleMapOutput,
   ): Promise<MenuRoleMapOutput | null> {
-    if (isNil(parentSeqNo)) return null;
-    return await this.menuRoleMapRepository.findOne({
-      where: {
-        seqNo: parentSeqNo,
-      },
-    });
+    return await UtilCommon.nilToNull(
+      parentSeqNo,
+      async (_) =>
+        await this.menuRoleMapRepository.findOneBy({
+          seqNo: _,
+        }),
+    );
   }
-
-  // @Query(() => MenusOutput)
-  // async menus(
-  //   @Args('pagingInput', {
-  //     type: () => PagingInput,
-  //     nullable: true,
-  //   })
-  //   pagingInput: PagingInput,
-  //   @Args('menusInput', {
-  //     type: () => CodesInput,
-  //     nullable: true,
-  //   })
-  //   menusInput: CodesInput,
-  // ): Promise<MenusOutput> {
-  //   return await this.menuRepository.paging(pagingInput, menusInput);
-  // }
-  //
-  // @ResolveField(() => [MenuOutput])
-  // async children(
-  //   @Parent() { seqNo: parentSeqNo, roleSeqNo }: MenuByAuthOutput,
-  //   @Args('menusInput', {
-  //     type: () => CodesInput,
-  //     nullable: true,
-  //   })
-  //   menusInput: CodesInput,
-  // ): Promise<MenuOutput[]> {
-  //   console.log({
-  //     parentSeqNo,
-  //     roleSeqNo,
-  //   });
-  //   return await this.menuRepository
-  //     .createQueryBuilder('menu')
-  //     .innerJoin(
-  //       MenuRoleMapOutput,
-  //       `child`,
-  //       `
-  //       child.parentSeqNo = :parentSeqNo AND
-  //       child.roleSeqNo = :roleSeqNo AND
-  //       menu.seqNo = child.menuSeqNo`,
-  //       {
-  //         parentSeqNo,
-  //         roleSeqNo,
-  //       },
-  //     )
-  //     .distinct()
-  //     .getMany();
-  // }
 }

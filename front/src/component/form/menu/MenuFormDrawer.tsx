@@ -33,12 +33,11 @@ const MenuFormDrawer: FC<MenuFormDrawerProps> = ({
 	const onSave = useCallback(async () => {
 		await form.validateFields();
 		const record = form.getFieldsValue();
-		console.log(record);
 		switch (actionType) {
 			case "insert":
 				await insertMutate({
 					variables: {
-						input: {
+						insertMenuInput: {
 							iconSeqNo: record.icon?.seqNo,
 							desc: record.desc,
 							name: record.name,
@@ -50,7 +49,7 @@ const MenuFormDrawer: FC<MenuFormDrawerProps> = ({
 			case "update":
 				await updateMutate({
 					variables: {
-						input: {
+						updateMenuInput: {
 							seqNo: record.seqNo,
 							iconSeqNo: record.icon?.seqNo,
 							desc: record.desc,
@@ -63,7 +62,7 @@ const MenuFormDrawer: FC<MenuFormDrawerProps> = ({
 		}
 		setOpen(false);
 		await messageApi.success("성공");
-	}, [setOpen, messageApi, insertMutate, updateMutate, form]);
+	}, [setOpen, messageApi, insertMutate, updateMutate, form, actionType]);
 	return (
 		<>
 			{contextHolder}

@@ -18,6 +18,9 @@ import { RoutesInput } from '@modules/route/dto/input/routes.input';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
 import { RouteTreeOutput } from '@modules/route/dto/output/route-tree.output';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
+import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { Nullable } from '@common/type';
 
 @Resolver(() => RouteOutput)
 export class RouteResolver {
@@ -26,6 +29,7 @@ export class RouteResolver {
   constructor(
     private routeRepository: RouteRepository,
     private roleRepository: RoleRepository,
+    private menuRepository: MenuRepository,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
@@ -67,15 +71,30 @@ export class RouteResolver {
    *           RESOLVE_FIELD
    ***************************************/
 
-  @ResolveField(() => [RouteOutput], {
-    defaultValue: [],
-  })
+  @ResolveField(() => [RouteOutput])
   async children(
     @Parent() { seqNo: parentSeqNo }: RouteOutput,
   ): Promise<RouteOutput[]> {
-    return await this.routeRepository.findBy({
-      parentSeqNo,
-    });
+    return await this.routeRepository
+      .createQueryBuilder(`r`)
+      .where(`r.parent_seq_no = :parentSeqNo`, {
+        parentSeqNo,
+      })
+      .getMany();
+  }
+
+  @ResolveField(() => MenuOutput, {
+    nullable: true,
+  })
+  async menu(
+    @Parent() { seqNo: routeSeqNo }: RouteOutput,
+  ): Promise<Nullable<MenuOutput>> {
+    return await this.menuRepository
+      .createQueryBuilder(`m`)
+      .where(`m.route_seq_no = :routeSeqNo`, {
+        routeSeqNo,
+      })
+      .getOne();
   }
 
   @ResolveField(() => [RoleOutput])

@@ -1,12 +1,21 @@
 query {
-    codes {
+    roleGroups {
         list {
             seqNo
-            parents {
+            name
+            roles(rolesInput: {search: {seqNo: {equal: {value: 1}}}}) {
                 list {
                     seqNo
+                    name
                 }
             }
         }
     }
+#    users {
+#        total
+#        list {
+#            id
+#            roleSeqNo
+#        }
+#    }
 }

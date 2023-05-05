@@ -1,14 +1,19 @@
 /**
  * 프레임워크 메뉴 관리
  */
-import React, { FC, useMemo, useState } from "react";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import React, { useMemo, useState } from "react";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType, Nullable } from "@src/types";
-import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
+import {
+	SearchQueryKeyType,
+	SortQueryKeyType,
+	UtilCommon,
+	UtilTable,
+} from "@src/Util";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import {
@@ -21,14 +26,19 @@ import {
 import { useFrmkMnMgmtQuery } from "@src/component/route/frmkMnMgmt/quires";
 import MenuDesc from "@src/component/descriptions/MenuDesc";
 import MenuFormDrawer from "@src/component/form/menu/MenuFormDrawer";
-import CustomIcon from "@src/component/common/CustomIcon";
+import CustomIcon from "@src/component/common/customIcon/CustomIcon";
 
-type SrtQryKey = SortQueryKeyType<"no" | "nm" | "ino" | "rno">;
+type SrtQryKey = SortQueryKeyType<
+	"no" | "nm" | "path" | "fcid" | "uat" | "cat" | "dc"
+>;
 const srtQryMap: Record<SrtQryKey, keyof MenusSortInput> = {
 	sort_no: "seqNo",
 	sort_nm: "name",
-	sort_ino: "iconSeqNo",
-	sort_rno: "routeSeqNo",
+	sort_path: "path",
+	sort_fcid: "frontComponentId",
+	sort_cat: "createdAt",
+	sort_uat: "updatedAt",
+	sort_dc: "desc",
 };
 type SrchQryKey = SearchQueryKeyType<"no" | "nm" | "ino" | "rno">;
 const srchQryMap: Record<SrchQryKey, keyof MenusSearchInput> = {
@@ -44,8 +54,8 @@ const qryObj: QryObj = {
 	...srchQryMap,
 };
 
-interface FrmkMenuMgmtProps {}
-const FrmkMenuMgmt: FC = () => {
+export interface FrmkMenuMgmtProps {}
+export default function FrmkMenuMgmt({}: FrmkMenuMgmtProps) {
 	const [form] = Form.useForm<MenuOutput>();
 	const { queryObj, setQueryObj, searchParams, setSearchParams } =
 		useQueryObj<Partial<QryObj>>();
@@ -64,7 +74,14 @@ const FrmkMenuMgmt: FC = () => {
 		() => UtilTable.toSortInputType(queryObj, qryObj),
 		[queryObj]
 	);
-	const { data, loading, previousData } = useFrmkMnMgmtQuery();
+	const { data, refetch, loading, previousData } = useFrmkMnMgmtQuery({
+		variables: {
+			pagingInput: pagingInput,
+			menusInput: {
+				sort: sortInputType,
+			},
+		},
+	});
 
 	const columns = useMemo<ColumnsType<MenuOutput>>(
 		() =>
@@ -86,32 +103,28 @@ const FrmkMenuMgmt: FC = () => {
 						key: "icon",
 						dataIndex: "icon",
 						title: "아이콘",
-						render(iconOutput: Nullable<IconOutput>, b) {
-							return iconOutput?.fileFullPath ? (
-								<CustomIcon iconSeqNo={iconOutput!.seqNo} />
-							) : null;
-						},
+						render: (iconOutput: Nullable<IconOutput>) =>
+							UtilCommon.nilToNull(iconOutput, (iconOutput) => (
+								<CustomIcon iconSeqNo={iconOutput.seqNo} />
+							)),
 						align: "center",
 						width: 70,
 					},
 					{
 						title: "라우트 정보",
+						key: "route",
 						children: [
 							{
-								key: "route",
+								key: "path",
 								title: "경로",
 								dataIndex: "route",
-								render(route: RouteOutput) {
-									return route.path;
-								},
+								render: (route: RouteOutput) => route.path,
 							},
 							{
-								key: "route",
+								key: "frontComponentId",
 								title: "화면 컴포넌트",
 								dataIndex: "route",
-								render(route: RouteOutput) {
-									return route.frontComponentId;
-								},
+								render: (route: RouteOutput) => route.frontComponentId,
 							},
 						],
 					},
@@ -189,53 +202,56 @@ const FrmkMenuMgmt: FC = () => {
 				form={form}
 			/>
 
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"메뉴 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
 								setActionType("insert");
 							}}
 						/>
-						<Button icon={<ReloadOutlined />} type={"primary"} />
+						<Button
+							icon={<ReloadOutlined />}
+							type={"primary"}
+							onClick={() => {
+								refetch();
+							}}
+						/>
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.menus.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"seqNo"}
-						dataSource={data?.menus.list || previousData?.menus.list}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.menus.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"seqNo"}
+					dataSource={data?.menus.list}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
-};
-
-export default FrmkMenuMgmt;
+}

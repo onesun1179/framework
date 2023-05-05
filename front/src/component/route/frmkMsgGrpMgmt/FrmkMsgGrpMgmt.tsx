@@ -2,14 +2,14 @@ import React, { FC, memo, useMemo, useState } from "react";
 import { SearchQueryKeyType, SortQueryKeyType, UtilRefetch, UtilTable } from "@src/Util";
 import { useQueryObj } from "@src/hooks";
 import { usePaging } from "@src/hooks/usePaging";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import MsgGrpFormDrawer from "@src/component/form/messageGroup/MsgGrpFormDrawer";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { EntityFormActionType } from "@src/types";
-import { MessageGroupOutput, MessageGroupsSearchInput } from "@gqlType";
+import { MessageGroupOutput, MessageGroupsSearchInput, MessageGroupsSortInput } from "@gqlType";
 import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/frmkMsgGrpMgmt/quires";
 import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
 
@@ -152,13 +152,12 @@ const FrmkMsgGrpMgmt: FC = () => {
 				setOpen={setFormDrawerOpenYn}
 				form={form}
 			/>
-
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"메세지 코드 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -173,39 +172,38 @@ const FrmkMsgGrpMgmt: FC = () => {
 							}}
 						/>
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.messageGroups.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"code"}
-						dataSource={
-							data?.messageGroups.list || previousData?.messageGroups.list
-						}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.messageGroups.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"code"}
+					dataSource={
+						data?.messageGroups.list || previousData?.messageGroups.list
+					}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 };

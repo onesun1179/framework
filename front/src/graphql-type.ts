@@ -18,15 +18,15 @@ export interface PagingInput {
     take: number;
 }
 
-export interface CodesInput {
-    search?: Nullable<CodesSearchInput>;
-    sort?: Nullable<CodesSortInput>;
+export interface RolesInput {
+    search?: Nullable<RolesSearchInput>;
+    sort?: Nullable<RolesSortInput>;
 }
 
-export interface CodesSearchInput {
+export interface RolesSearchInput {
     seqNo?: Nullable<NonNullableNumberSearchInput>;
     name?: Nullable<NonNullableStringSearchInput>;
-    parent?: Nullable<ParentCodesSearchInput>;
+    identifier?: Nullable<NullableStringSearchInput>;
 }
 
 export interface NonNullableNumberSearchInput {
@@ -108,14 +108,48 @@ export interface NonNullableInStringSearchInput {
     not?: Nullable<boolean>;
 }
 
-export interface ParentCodesSearchInput {
-    seqNo?: Nullable<NonNullableNumberSearchInput>;
-    name?: Nullable<NonNullableStringSearchInput>;
+export interface NullableStringSearchInput {
+    regex?: Nullable<RegexStringSearchInput>;
+    like?: Nullable<LikeStringSearchInput>;
+    equal?: Nullable<EqualStringSearchInput>;
+    ilike?: Nullable<IlikeStringSearchInput>;
+    any?: Nullable<NullableAnyStringSearchInput>;
+    in?: Nullable<NullableInStringSearchInput>;
+    isNull?: Nullable<IsNullStringSearchInput>;
 }
 
-export interface CodesSortInput {
+export interface NullableAnyStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface NullableInStringSearchInput {
+    value: Nullable<string>[];
+    not?: Nullable<boolean>;
+}
+
+export interface IsNullStringSearchInput {
+    value: boolean;
+}
+
+export interface RolesSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface SortTypeInput {
@@ -123,17 +157,15 @@ export interface SortTypeInput {
     order: number;
 }
 
-export interface MenusInput {
-    search?: Nullable<MenusSearchInput>;
-    sort?: Nullable<MenusSortInput>;
+export interface RoleGroupsInput {
+    search?: Nullable<RoleGroupsSearchInput>;
+    sort?: Nullable<RoleGroupsSortInput>;
 }
 
-export interface MenusSearchInput {
+export interface RoleGroupsSearchInput {
     seqNo?: Nullable<NonNullableNumberSearchInput>;
     name?: Nullable<NonNullableStringSearchInput>;
-    iconSeqNo?: Nullable<NullableNumberSearchInput>;
-    routeSeqNo?: Nullable<NullableNumberSearchInput>;
-    role?: Nullable<RoleSearchInput>;
+    parentSeqNo?: Nullable<NullableNumberSearchInput>;
 }
 
 export interface NullableNumberSearchInput {
@@ -160,16 +192,128 @@ export interface IsNullNumberSearchInput {
     value: boolean;
 }
 
+export interface RoleGroupsSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
+}
+
+export interface UsersInput {
+    search?: Nullable<UsersSearchInput>;
+    sort?: Nullable<UsersSortInput>;
+}
+
+export interface UsersSearchInput {
+    id?: Nullable<NonNullableStringSearchInput>;
+    roleSeqNo?: Nullable<NonNullableNumberSearchInput>;
+}
+
+export interface UsersSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
+}
+
+export interface CodesInput {
+    search?: Nullable<CodesSearchInput>;
+    sort?: Nullable<CodesSortInput>;
+}
+
+export interface CodesSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    parent?: Nullable<ParentCodesSearchInput>;
+}
+
+export interface ParentCodesSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+}
+
+export interface CodesSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
+}
+
+export interface MenusInput {
+    search?: Nullable<MenusSearchInput>;
+    sort?: Nullable<MenusSortInput>;
+}
+
+export interface MenusSearchInput {
+    seqNo?: Nullable<NonNullableNumberSearchInput>;
+    name?: Nullable<NonNullableStringSearchInput>;
+    iconSeqNo?: Nullable<NullableNumberSearchInput>;
+    routeSeqNo?: Nullable<NullableNumberSearchInput>;
+    role?: Nullable<RoleSearchInput>;
+}
+
 export interface RoleSearchInput {
     parentSeqNo?: Nullable<NullableNumberSearchInput>;
     orderNo?: Nullable<NonNullableNumberSearchInput>;
 }
 
 export interface MenusSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
     iconSeqNo?: Nullable<SortTypeInput>;
-    routeSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface MenuRoleMapsInput {
@@ -187,9 +331,23 @@ export interface MenuRoleMapsSearchInput {
 }
 
 export interface MenuRoleMapsSortInput {
-    seqNo?: Nullable<SortTypeInput>;
-    menuSeqNo?: Nullable<SortTypeInput>;
+    id?: Nullable<SortTypeInput>;
     roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
+    name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
     menu?: Nullable<MenusSortInput>;
 }
 
@@ -225,14 +383,23 @@ export interface MessagesSearchInput {
 }
 
 export interface MessagesSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
-    code?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
-    text?: Nullable<SortTypeInput>;
-    groupCode?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
     desc?: Nullable<SortTypeInput>;
     createdAt?: Nullable<SortTypeInput>;
     updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface MessageGroupsInput {
@@ -246,11 +413,23 @@ export interface MessageGroupsSearchInput {
 }
 
 export interface MessageGroupsSortInput {
-    code?: Nullable<SortTypeInput>;
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
     desc?: Nullable<SortTypeInput>;
     createdAt?: Nullable<SortTypeInput>;
     updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface FrontComponentsInput {
@@ -265,10 +444,22 @@ export interface FrontComponentsSearchInput {
 
 export interface FrontComponentsSortInput {
     id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
+    seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
     desc?: Nullable<SortTypeInput>;
     createdAt?: Nullable<SortTypeInput>;
     updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface AllFrontComponentsInput {
@@ -281,76 +472,24 @@ export interface AllFrontComponentsSearchInput {
     frontComponentId?: Nullable<NullableStringSearchInput>;
 }
 
-export interface NullableStringSearchInput {
-    regex?: Nullable<RegexStringSearchInput>;
-    like?: Nullable<LikeStringSearchInput>;
-    equal?: Nullable<EqualStringSearchInput>;
-    ilike?: Nullable<IlikeStringSearchInput>;
-    any?: Nullable<NullableAnyStringSearchInput>;
-    in?: Nullable<NullableInStringSearchInput>;
-    isNull?: Nullable<IsNullStringSearchInput>;
-}
-
-export interface NullableAnyStringSearchInput {
-    value: Nullable<string>[];
-    not?: Nullable<boolean>;
-}
-
-export interface NullableInStringSearchInput {
-    value: Nullable<string>[];
-    not?: Nullable<boolean>;
-}
-
-export interface IsNullStringSearchInput {
-    value: boolean;
-}
-
 export interface AllFrontComponentsSortInput {
     id?: Nullable<SortTypeInput>;
-    frontComponentId?: Nullable<SortTypeInput>;
-    desc?: Nullable<SortTypeInput>;
-    createdAt?: Nullable<SortTypeInput>;
-    updatedAt?: Nullable<SortTypeInput>;
-}
-
-export interface RolesInput {
-    search?: Nullable<RolesSearchInput>;
-    sort?: Nullable<RolesSortInput>;
-}
-
-export interface RolesSearchInput {
-    seqNo?: Nullable<NonNullableNumberSearchInput>;
-    name?: Nullable<NonNullableStringSearchInput>;
-    identifier?: Nullable<NullableStringSearchInput>;
-}
-
-export interface RolesSortInput {
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
     identifier?: Nullable<SortTypeInput>;
     desc?: Nullable<SortTypeInput>;
     createdAt?: Nullable<SortTypeInput>;
     updatedAt?: Nullable<SortTypeInput>;
-}
-
-export interface RoleGroupsInput {
-    search?: Nullable<RoleGroupsSearchInput>;
-    sort?: Nullable<RoleGroupsSortInput>;
-}
-
-export interface RoleGroupsSearchInput {
-    seqNo?: Nullable<NonNullableNumberSearchInput>;
-    name?: Nullable<NonNullableStringSearchInput>;
-    parentSeqNo?: Nullable<NullableNumberSearchInput>;
-}
-
-export interface RoleGroupsSortInput {
-    seqNo?: Nullable<SortTypeInput>;
-    name?: Nullable<SortTypeInput>;
     parentSeqNo?: Nullable<SortTypeInput>;
-    desc?: Nullable<SortTypeInput>;
-    createdAt?: Nullable<SortTypeInput>;
-    updatedAt?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
 }
 
 export interface IconsInput {
@@ -371,8 +510,22 @@ export interface IconLabelsSearchInput {
 }
 
 export interface IconsSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
     filePath?: Nullable<SortTypeInput>;
 }
 
@@ -382,8 +535,37 @@ export interface IconLabelsInput {
 }
 
 export interface IconLabelsSortInput {
+    id?: Nullable<SortTypeInput>;
+    roleSeqNo?: Nullable<SortTypeInput>;
     seqNo?: Nullable<SortTypeInput>;
     name?: Nullable<SortTypeInput>;
+    identifier?: Nullable<SortTypeInput>;
+    desc?: Nullable<SortTypeInput>;
+    createdAt?: Nullable<SortTypeInput>;
+    updatedAt?: Nullable<SortTypeInput>;
+    parentSeqNo?: Nullable<SortTypeInput>;
+    iconSeqNo?: Nullable<SortTypeInput>;
+    path?: Nullable<SortTypeInput>;
+    frontComponentId?: Nullable<SortTypeInput>;
+    menuSeqNo?: Nullable<SortTypeInput>;
+    code?: Nullable<SortTypeInput>;
+    text?: Nullable<SortTypeInput>;
+    groupCode?: Nullable<SortTypeInput>;
+    filePath?: Nullable<SortTypeInput>;
+}
+
+export interface InsertUserInput {
+    id: string;
+    name: string;
+    email: string;
+    roleSeqNo: number;
+}
+
+export interface UpdateUserInput {
+    id?: Nullable<string>;
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    roleSeqNo?: Nullable<number>;
 }
 
 export interface InsertCodeInput {
@@ -556,8 +738,8 @@ export interface RoleGroupOutput {
     seqNo: number;
     name: string;
     parentSeqNo?: Nullable<number>;
-    roles: RoleOutput[];
-    children: RoleGroupOutput[];
+    roles: RolesOutput;
+    children: RoleGroupsOutput;
     parent?: Nullable<RoleGroupOutput>;
 }
 
@@ -625,6 +807,7 @@ export interface RouteOutput {
     frontComponentId?: Nullable<string>;
     parentSeqNo?: Nullable<number>;
     children: RouteOutput[];
+    menu?: Nullable<MenuOutput>;
     roles: RoleOutput[];
     treeInfo: RouteTreeOutput;
 }
@@ -677,17 +860,24 @@ export interface UserOutput {
     updatedAt: DateTime;
     desc?: Nullable<string>;
     id: string;
+    name: string;
+    email: string;
     roleSeqNo: number;
     role: RoleOutput;
 }
 
-export interface RolesOutput {
-    list: RoleOutput[];
+export interface UsersOutput {
+    list: UserOutput[];
     total: number;
 }
 
 export interface RoleGroupsOutput {
     list: RoleGroupOutput[];
+    total: number;
+}
+
+export interface RolesOutput {
+    list: RoleOutput[];
     total: number;
 }
 
@@ -749,6 +939,7 @@ export interface IconLabelsOutput {
 export interface IQuery {
     authCheck(): boolean | Promise<boolean>;
     user(id: string): UserOutput | Promise<UserOutput>;
+    users(pagingInput?: Nullable<PagingInput>, usersInput?: Nullable<UsersInput>): UsersOutput | Promise<UsersOutput>;
     parentCodes(seqNo: number, pagingInput?: Nullable<PagingInput>): CodesOutput | Promise<CodesOutput>;
     childCodes(seqNo: number, pagingInput?: Nullable<PagingInput>): CodesOutput | Promise<CodesOutput>;
     nonChildCodes(seqNo: number): CodesOutput | Promise<CodesOutput>;
@@ -783,6 +974,8 @@ export interface IQuery {
 }
 
 export interface IMutation {
+    insertUser(insertUserInput: InsertUserInput): UserOutput | Promise<UserOutput>;
+    updateUser(updateUserInput: UpdateUserInput): UserOutput | Promise<UserOutput>;
     insertCode(insertCodeInput: InsertCodeInput): CodeOutput | Promise<CodeOutput>;
     updateCode(updateCodeInput: UpdateCodeInput): CodeOutput | Promise<CodeOutput>;
     insertMenu(insertMenuInput: InsertMenuInput): MenuOutput | Promise<MenuOutput>;

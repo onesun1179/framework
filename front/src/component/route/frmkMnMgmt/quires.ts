@@ -1,6 +1,6 @@
 import { gql, TypedDocumentNode } from "@apollo/client";
 import { makeUseQuery } from "@src/lib/makeUseQuery";
-import { MenusOutput, PagingInput } from "@gqlType";
+import { MenusInput, MenusOutput, PagingInput } from "@gqlType";
 
 export const FRMK_MN_MGMT_QUERY = gql`
 	query MENUS($pagingInput: PagingInput, $menusInput: MenusInput) {
@@ -31,7 +31,7 @@ export const FRMK_MN_MGMT_QUERY = gql`
 	},
 	{
 		pagingInput: PagingInput;
-		menusInput: MenusOutput;
+		menusInput: MenusInput;
 	}
 >;
 

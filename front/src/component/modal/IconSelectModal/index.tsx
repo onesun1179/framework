@@ -1,4 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import React, {
+	ChangeEvent,
+	FC,
+	useCallback,
+	useEffect,
+	useState,
+	useTransition,
+} from "react";
 import {
 	useIconSelectModal1Query,
 	useIconSelectModal2Query,
@@ -11,6 +18,7 @@ import {
 	ModalProps,
 	Row,
 	Segmented,
+	Spin,
 	Tooltip,
 } from "antd";
 import { chunk, isNil } from "lodash";
@@ -29,6 +37,7 @@ const IconSelectModal: FC<IconSelectModalProps> = ({
 }) => {
 	const [iconLabelSeqNo, setIconLabelSeqNo] = useState<number>();
 	const [searchValue, setSearchValue] = useState<string>();
+	const [isPending, startTransition] = useTransition();
 
 	const data1 = useIconSelectModal1Query();
 	const data2 = useIconSelectModal2Query({
@@ -53,50 +62,61 @@ const IconSelectModal: FC<IconSelectModalProps> = ({
 			setIconLabelSeqNo(data1.data.iconLabels.list[0].seqNo);
 	}, [data1.data]);
 
+	const onInputChange = useCallback(
+		(e: ChangeEvent<HTMLInputElement>) => {
+			startTransition(() => {
+				setSearchValue(e.target.value);
+			});
+		},
+		[setSearchValue, startTransition]
+	);
+
 	return (
 		<>
 			<Modal title="아이콘 선택" footer={null} {...props}>
-				<Segmented
-					block
-					value={iconLabelSeqNo}
-					options={(data1.data?.iconLabels.list || []).map((o) => ({
-						value: o.seqNo,
-						label: o.name,
-					}))}
-					onChange={(o) => {
-						setIconLabelSeqNo(o as number);
-					}}
-				/>
-				<Input
-					placeholder={"검색어를 입력해주세요."}
-					value={searchValue}
-					onChange={(o) => setSearchValue(o.target.value)}
-					addonAfter={<SearchOutlined />}
-					allowClear
-				/>
-				{chunk(
-					data2.loading
-						? []
-						: searchValue
-						? data2.data?.icons.list.filter((o) =>
-								o.name.match(new RegExp(searchValue, "g"))
-						  )
-						: data2.data?.icons.list,
-					14
-				).map((o, i) => (
-					<Row key={i}>
-						{o.map((oo, ii) => (
-							<Col key={ii}>
-								<Tooltip title={oo.name}>
-									<Button
-										icon={<SvgPathToIcon filePath={oo.fileFullPath} />}
-										onClick={() => setValue(oo)}
-									/>
-								</Tooltip>
-							</Col>
-						))}
-					</Row>
-				))}
+				<Spin spinning={isPending}>
+					<Segmented
+						block
+						value={iconLabelSeqNo}
+						options={(data1.data?.iconLabels.list || []).map((o) => ({
+							value: o.seqNo,
+							label: o.name,
+						}))}
+						onChange={(o) => {
+							setIconLabelSeqNo(o as number);
+						}}
+					/>
+					<Input
+						placeholder={"검색어를 입력해주세요."}
+						value={searchValue}
+						addonAfter={<SearchOutlined />}
+						allowClear
+						onChange={onInputChange}
+					/>
+					{chunk(
+						data2.loading
+							? []
+							: searchValue
+							? data2.data?.icons.list.filter((o) =>
+									o.name.match(new RegExp(searchValue, "g"))
+							  )
+							: data2.data?.icons.list,
+						14
+					).map((o, i) => (
+						<Row key={i}>
+							{o.map((oo, ii) => (
+								<Col key={ii}>
+									<Tooltip title={oo.name}>
+										<Button
+											icon={<SvgPathToIcon filePath={oo.fileFullPath} />}
+											onClick={() => setValue(oo)}
+										/>
+									</Tooltip>
+								</Col>
+							))}
+						</Row>
+					))}
+				</Spin>
 			</Modal>
 		</>
 	);

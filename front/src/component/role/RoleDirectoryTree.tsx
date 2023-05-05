@@ -1,17 +1,16 @@
-import React, { useMemo } from "react";
+import React, { FC, useContext, useMemo } from "react";
 import { Tree } from "antd";
 import { DataNode } from "antd/es/tree";
-import { DirectoryTreeProps } from "antd/es/tree/DirectoryTree";
-import { useRoleDirectoryTreeQuery } from "@src/component/role/RoleDirectoryTree/quires";
+import { useRoleDirectoryTreeQuery } from "@src/component/role/quires";
 import { RoleGroupOutput } from "@gqlType";
+import { RoleMgmtContext } from "@src/component/route/roleMgmt/RoleMgmt";
 
 type DataNodeType = DataNode & {
 	seqNo: number;
 	type: "group" | "role";
 };
 
-interface RoleDirectoryTreeProps
-	extends Omit<DirectoryTreeProps<DataNodeType>, "treeData"> {}
+interface RoleDirectoryTreeProps {}
 
 function makeRoleTreeData(data: Array<RoleGroupOutput>): Array<DataNodeType> {
 	return data.map((o) => {
@@ -23,8 +22,8 @@ function makeRoleTreeData(data: Array<RoleGroupOutput>): Array<DataNodeType> {
 			seqNo: o.seqNo,
 			type: "group",
 			children: [
-				...makeRoleTreeData(o.children),
-				...o.roles.map((oo) => {
+				...makeRoleTreeData(o.children.list),
+				...o.roles.list.map((oo) => {
 					return {
 						title: oo.name,
 						key: `role-${oo.seqNo}`,
@@ -39,7 +38,8 @@ function makeRoleTreeData(data: Array<RoleGroupOutput>): Array<DataNodeType> {
 	});
 }
 
-function RoleDirectoryTree({ ...props }: RoleDirectoryTreeProps) {
+const RoleDirectoryTree: FC<RoleDirectoryTreeProps> = () => {
+	const { roleSeqNo, setRoleSeqNo } = useContext(RoleMgmtContext);
 	const { data, previousData } = useRoleDirectoryTreeQuery();
 	const _data = useMemo(() => data || previousData, [data, previousData]);
 
@@ -47,16 +47,17 @@ function RoleDirectoryTree({ ...props }: RoleDirectoryTreeProps) {
 		() => (_data ? makeRoleTreeData(_data?.roleGroups.list) : undefined),
 		[_data]
 	);
-	return props.defaultExpandAll ? (
-		_data ? (
-			<Tree.DirectoryTree<DataNodeType>
-				treeData={roleGroupEntities}
-				{...props}
-			/>
-		) : null
-	) : (
-		<Tree.DirectoryTree<DataNodeType> treeData={roleGroupEntities} {...props} />
-	);
-}
+
+	return _data ? (
+		<Tree.DirectoryTree<DataNodeType>
+			treeData={roleGroupEntities}
+			selectedKeys={roleSeqNo ? [`role-${roleSeqNo}`] : undefined}
+			onSelect={(o, b) => {
+				setRoleSeqNo(b.node.seqNo);
+			}}
+			defaultExpandAll
+		/>
+	) : null;
+};
 
 export default RoleDirectoryTree;

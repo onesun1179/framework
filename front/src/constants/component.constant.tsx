@@ -3,6 +3,10 @@ import { FC, lazy } from "react";
 export const All_FRONT_COMPONENT: {
 	[C: string]: FC;
 } = {
+	RoleMgmt: lazy(() => import("@src/component/route/roleMgmt/RoleMgmt")),
+	RoleByUsrMgmt: lazy(
+		() => import("@src/component/route/roleByUsrMgmt/RoleByUsrMgmt")
+	),
 	RoleByMnMgmt: lazy(
 		() => import("@src/component/route/roleByMnMgmt/RoleByMnMgmt")
 	),

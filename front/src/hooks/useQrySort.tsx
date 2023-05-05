@@ -5,6 +5,7 @@ import { useQueryObj } from "@src/hooks/useQueryObj";
 import { SortEnum, SortTypeInput } from "@gqlType";
 import { Nullable } from "@src/types";
 import { ColumnType } from "antd/es/table";
+import { ColumnGroupType } from "antd/es/table/interface";
 
 export function useQrySort<
 	SrtKey extends SortQueryKeyType,
@@ -73,31 +74,36 @@ export function useQrySort<
 	);
 
 	const getColumnSort = useCallback(
-		(column: ColumnType<any>) => {
-			if (cols.includes(column.key as ColKey)) {
-				const colKey = column.key as ColKey;
+		function getColumnSort(column: ColumnType<any> | ColumnGroupType<any>) {
+			if ("children" in column) {
+				return column.children.map((o: ColumnType<any>) => getColumnSort(o));
+			} else {
+				if (cols.includes(column.key as ColKey)) {
+					const colKey = column.key as ColKey;
 
-				const sort = sortMap[colKey];
+					const sort = sortMap[colKey];
 
-				column.sorter = {
-					multiple: 1,
-				};
-				column.sortOrder =
-					sort?.sort === SortEnum.ASC
-						? "ascend"
-						: sort?.sort === SortEnum.DESC
-						? "descend"
-						: undefined;
-
-				column.onHeaderCell = () => {
-					return {
-						onClick() {
-							click(colKey);
-						},
+					column.sorter = {
+						multiple: 1,
 					};
-				};
+					column.showSorterTooltip = false;
+					column.sortOrder =
+						sort?.sort === SortEnum.ASC
+							? "ascend"
+							: sort?.sort === SortEnum.DESC
+							? "descend"
+							: undefined;
+
+					column.onHeaderCell = () => {
+						return {
+							onClick() {
+								click(colKey);
+							},
+						};
+					};
+				}
+				return column;
 			}
-			return column;
 		},
 		[sortMap, click]
 	);

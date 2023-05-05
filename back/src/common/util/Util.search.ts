@@ -29,7 +29,7 @@ export class UtilSearch {
     qb: SelectQueryBuilder<Entity>,
     search: ObjectLiteral,
   ): void {
-    qb.where(this.getSearchWhere(search));
+    qb.andWhere(this.getSearchWhere(search));
   }
 
   static getSearchWhere(search: ObjectLiteral): FindOptionsWhere<any> {
@@ -53,7 +53,7 @@ export class UtilSearch {
     qb: SelectQueryBuilder<Entity>,
     param: NonNullableStringSearchInput | NullableStringSearchInput,
   ): void {
-    qb.where(this.getStringWhere(param));
+    qb.andWhere(this.getStringWhere(param));
   }
 
   static getStringWhere(
@@ -68,30 +68,37 @@ export class UtilSearch {
       param.isNull.value
     )
       where.push(IsNull());
-    if (!isNil(equal))
-      UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
+    UtilCommon.nilToNull(equal, (p) => {
+      UtilCommon.applyFuncWithArg(Equal(p.value), (arg) =>
         where.push(equal!.not ? Not(arg) : arg),
       );
-    if (!isNil(_in))
-      UtilCommon.applyFuncWithArg(In(_in.value), (arg) => {
-        where.push(_in.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(_in, (p) => {
+      UtilCommon.applyFuncWithArg(In(p.value), (arg) => {
+        where.push(p.not ? Not(arg) : arg);
       });
-    if (!isNil(any))
-      UtilCommon.applyFuncWithArg(Any<any>(any.value), (arg) => {
-        where.push(any.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(any, (_any) => {
+      UtilCommon.applyFuncWithArg(Any<any>(_any.value), (arg) => {
+        where.push(_any.not ? Not(arg) : arg);
       });
-    if (!isNil(like))
-      UtilCommon.applyFuncWithArg(Like(like.value), (arg) => {
-        where.push(like.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(like, (_like) => {
+      UtilCommon.applyFuncWithArg(Like(_like.value), (arg) => {
+        where.push(_like.not ? Not(arg) : arg);
       });
-    if (!isNil(ilike))
-      UtilCommon.applyFuncWithArg(ILike(ilike.value), (arg) => {
-        where.push(ilike.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(ilike, (_ilike) => {
+      UtilCommon.applyFuncWithArg(ILike(_ilike.value), (arg) => {
+        where.push(_ilike.not ? Not(arg) : arg);
       });
-    if (!isNil(regex))
-      UtilCommon.applyFuncWithArg(Regexp(regex.value), (arg) => {
-        where.push(regex.not ? Not(arg) : arg);
+    });
+
+    UtilCommon.nilToNull(regex, (_regex) => {
+      UtilCommon.applyFuncWithArg(Regexp(_regex.value), (arg) => {
+        where.push(_regex.not ? Not(arg) : arg);
       });
+    });
 
     return where;
   }
@@ -100,7 +107,7 @@ export class UtilSearch {
     qb: SelectQueryBuilder<Entity>,
     param: NullableNumberSearchInput | NonNullableNumberSearchInput,
   ): void {
-    qb.where(this.getNumberWhere(param));
+    qb.andWhere(this.getNumberWhere(param));
   }
 
   static getNumberWhere(
@@ -123,37 +130,44 @@ export class UtilSearch {
     )
       where.push(IsNull());
 
-    if (!isNil(equal))
-      UtilCommon.applyFuncWithArg(Equal(equal.value), (arg) =>
+    UtilCommon.nilToNull(equal, (_equal) => {
+      UtilCommon.applyFuncWithArg(Equal(_equal.value), (arg) =>
         where.push(
           equal!.not
             ? Raw(
                 (columnAlias) =>
-                  `(${columnAlias} != ${equal.value} OR ${columnAlias} is null)`,
+                  `(${columnAlias} != ${_equal.value} OR ${columnAlias} is null)`,
               )
             : arg,
         ),
       );
-    if (!isNil(moreThan))
-      UtilCommon.applyFuncWithArg(MoreThan(moreThan.value), (arg) =>
-        where.push(equal!.not ? Not(arg) : arg),
+    });
+    UtilCommon.nilToNull(moreThan, (p) => {
+      UtilCommon.applyFuncWithArg(MoreThan(p.value), (arg) =>
+        where.push(p!.not ? Not(arg) : arg),
       );
-    if (!isNil(lessThan))
-      UtilCommon.applyFuncWithArg(LessThan(lessThan.value), (arg) =>
-        where.push(equal!.not ? Not(arg) : arg),
+    });
+    UtilCommon.nilToNull(lessThan, (p) => {
+      UtilCommon.applyFuncWithArg(LessThan(p.value), (arg) =>
+        where.push(p!.not ? Not(arg) : arg),
       );
-    if (!isNil(_in))
-      UtilCommon.applyFuncWithArg(In(_in.value), (arg) => {
-        where.push(_in.not ? Not(arg) : arg);
+    });
+
+    UtilCommon.nilToNull(_in, (p) => {
+      UtilCommon.applyFuncWithArg(In(p.value), (arg) => {
+        where.push(p.not ? Not(arg) : arg);
       });
-    if (!isNil(between))
-      UtilCommon.applyFuncWithArg(Between(between.from, between.to), (arg) => {
-        where.push(between.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(between, (p) => {
+      UtilCommon.applyFuncWithArg(Between(p.from, p.to), (arg) => {
+        where.push(p.not ? Not(arg) : arg);
       });
-    if (!isNil(any))
-      UtilCommon.applyFuncWithArg(Any<any>(any.value), (arg) => {
-        where.push(any.not ? Not(arg) : arg);
+    });
+    UtilCommon.nilToNull(any, (p) => {
+      UtilCommon.applyFuncWithArg(Any<any>(p.value), (arg) => {
+        where.push(p.not ? Not(arg) : arg);
       });
+    });
 
     return where;
   }

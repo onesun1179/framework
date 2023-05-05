@@ -2,8 +2,8 @@ import { SortEnum } from '@common/enum/sort.enum';
 import { FindOptionsOrder, SelectQueryBuilder } from 'typeorm';
 import { Type } from '@nestjs/common';
 import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
-import { Nullable } from '@common/type';
 import { SortTypeInput } from '@common/dto/input/sort-type.input';
+import { SortClassType } from '@common/factory/sort-type';
 
 export class UtilSort {
   static getFindOptionsOrder<Entity extends Type = any>(
@@ -26,17 +26,21 @@ export class UtilSort {
     }, {} as FindOptionsOrder<Entity>);
   }
 
-  static setSortByQB<Entity extends ObjectLiteral>(
-    qb: SelectQueryBuilder<Entity>,
-    sort: ObjectLiteral,
-  ) {
-    return (Object.entries(sort) as Array<[string, Nullable<SortTypeInput>]>)
+  static getSort<S extends SortClassType>(sort: S) {
+    return (Object.entries(sort) as Array<[keyof S, SortTypeInput]>)
       .filter(([, o]) => !!o)
-      .sort((a, b) => a[1]!.order - b[1]!.order)
-      .forEach(([k, v], i) => {
-        i === 0
-          ? qb.orderBy(`${qb.alias}.${k}`, v?.sort)
-          : qb.addOrderBy(`${qb.alias}.${k}`, v?.sort);
-      });
+      .sort((a, b) => a[1]!.order - b[1]!.order);
+  }
+
+  static setSortByQB<Entity extends ObjectLiteral, S extends SortClassType>(
+    qb: SelectQueryBuilder<Entity>,
+    sort: S,
+  ) {
+    return this.getSort(sort).forEach(([k, v], i) => {
+      qb[i === 0 ? 'orderBy' : 'addOrderBy'](
+        `${qb.alias}.${k as string}`,
+        v?.sort,
+      );
+    });
   }
 }

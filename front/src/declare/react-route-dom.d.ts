@@ -8,6 +8,7 @@ module "react-router-dom" {
 		data: unknown;
 		handle: {
 			frontComponentId?: string;
+			menuSeqNo?: number;
 		};
 	}[];
 }

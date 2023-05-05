@@ -3,45 +3,43 @@ import { makeUseQuery } from "@src/lib/makeUseQuery";
 import { RoleGroupsOutput } from "@gqlType";
 
 export const ROLE_DIRECTORY_TREE_QUERY = gql`
+	fragment RoleGroup on RoleGroupOutput {
+		seqNo
+		name
+		roles {
+			list {
+				seqNo
+				name
+			}
+		}
+	}
 	query ROLE_DIRECTORY_TREE {
 		roleGroups(
 			roleGroupsInput: { search: { parentSeqNo: { isNull: { value: true } } } }
 		) {
 			list {
-				seqNo
-				name
-				roles {
-					seqNo
-					name
-				}
+				...RoleGroup
 				children {
-					seqNo
-					name
-					roles {
-						seqNo
-						name
-					}
-					children {
-						seqNo
-						name
-						roles {
-							seqNo
-							name
-						}
+					list {
+						...RoleGroup
 						children {
-							seqNo
-							name
-							roles {
-								seqNo
-								name
-							}
-						}
-						children {
-							seqNo
-							name
-							roles {
-								seqNo
-								name
+							list {
+								...RoleGroup
+								children {
+									list {
+										...RoleGroup
+										children {
+											list {
+												...RoleGroup
+												children {
+													list {
+														...RoleGroup
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}

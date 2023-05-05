@@ -1,22 +1,26 @@
 /**
  * 권한별 컴포넌트
  */
-import React, { FC, memo, useMemo, useState } from "react";
-import { Col, ConfigProvider, Row, Select, Table } from "antd";
+import React, { FC, memo, useContext, useMemo } from "react";
+import { Card, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/roleByFrntCmpntMgmt/quries";
-import RoleDirectoryTree from "@src/component/role/RoleDirectoryTree";
 import { isNil } from "lodash";
 import styled from "styled-components";
 import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/roleByFrntCmpntMgmt/mutations";
 import { refetchQueryMap } from "@src/Util";
 import { FrontComponentOutput } from "@gqlType";
+import { RoleMgmtContext } from "@src/component/route/roleMgmt/RoleMgmt";
 
 const FullWidthSelect = styled(Select)`
 	width: 100%;
 `;
+const FullHeightCard = styled(Card)`
+	height: 100%;
+`;
 const RoleByFrntCmpntMgmt: FC = () => {
-	const [roleSeqNo, setRoleSeqNo] = useState<number>();
+	const { roleSeqNo } = useContext(RoleMgmtContext);
+
 	const { data, loading, previousData } = useRoleByFrntCmpntMgmtQuery({
 		skip: isNil(roleSeqNo),
 		variables: {
@@ -57,7 +61,6 @@ const RoleByFrntCmpntMgmt: FC = () => {
 									allFrontComponentId: o as string,
 								},
 							});
-							console.log(o, record);
 						}}
 						options={record.allFrontComponents.map((o) => ({
 							value: o.id,
@@ -71,27 +74,15 @@ const RoleByFrntCmpntMgmt: FC = () => {
 	);
 
 	return (
-		<Row gutter={[16, 16]} wrap>
-			<Col span={8}>
-				<RoleDirectoryTree
-					defaultExpandAll
-					onSelect={(_, { node: { seqNo } }) => {
-						setRoleSeqNo(seqNo);
-					}}
-				/>
-			</Col>
-			<Col span={16}>
-				<ConfigProvider>
-					<Table
-						bordered
-						columns={columns}
-						dataSource={roleSeqNo ? _data?.frontComponents.list : []}
-						loading={loading}
-						rowKey={"id"}
-					/>
-				</ConfigProvider>
-			</Col>
-		</Row>
+		<FullHeightCard title={"화면 컴포넌트"}>
+			<Table
+				bordered
+				columns={columns}
+				dataSource={roleSeqNo ? _data?.frontComponents.list : []}
+				loading={loading}
+				rowKey={"id"}
+			/>
+		</FullHeightCard>
 	);
 };
 

@@ -65,7 +65,7 @@ export class RoleResolver {
     })
     rolesInput: RolesInput,
   ): Promise<RolesOutput> {
-    return await this.roleRepository.paging(pagingInput, rolesInput);
+    return await this.roleService.roles(pagingInput, rolesInput);
   }
 
   /**************************************

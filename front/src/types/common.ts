@@ -6,3 +6,5 @@ export type PartialRecord<K extends keyof any, T> = {
 	[P in K]?: T;
 };
 export type EntityFormActionType = "update" | "insert";
+export type Func<T = any> = (...args: any[]) => T;
+export type SqlSortType = "ASC" | "DESC";

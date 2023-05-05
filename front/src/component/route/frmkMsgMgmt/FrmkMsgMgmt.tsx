@@ -2,7 +2,7 @@
  * 프레임워크 메뉴 관리
  */
 import React, { FC, useMemo, useState } from "react";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
 import { ColumnsType, ColumnType } from "antd/es/table";
@@ -189,12 +189,12 @@ const FrmkMsgMgmt: FC = () => {
 				form={form}
 			/>
 
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"메세지 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -209,37 +209,36 @@ const FrmkMsgMgmt: FC = () => {
 							}}
 						/>
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.messages.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"seqNo"}
-						dataSource={data?.messages.list || previousData?.messages.list}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.messages.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"seqNo"}
+					dataSource={data?.messages.list || previousData?.messages.list}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 };

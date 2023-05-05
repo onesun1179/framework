@@ -13,7 +13,7 @@ export const INSERT_MENU_MUTATION = gql`
 		menu: MenuOutput;
 	},
 	{
-		input: InsertMenuInput;
+		insertMenuInput: InsertMenuInput;
 	}
 >;
 
@@ -28,7 +28,7 @@ export const UPDATE_MENU_MUTATION = gql`
 		menu: MenuOutput;
 	},
 	{
-		input: UpdateMenuInput;
+		updateMenuInput: UpdateMenuInput;
 	}
 >;
 

@@ -1,9 +1,10 @@
 import { MenuOutput } from "@gqlType";
 import { Menu, MenuProps } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useMatches } from "react-router-dom";
 import React, { FC, useMemo } from "react";
-import { useMenusQuery } from "@src/component/layout/menu/SiderMenu/quires";
-import CustomIcon from "@src/component/common/CustomIcon";
+import { useMenusQuery } from "@src/component/layout/menu/siderMenu/quires";
+import CustomIcon from "@src/component/common/customIcon/CustomIcon";
+import { isNil } from "lodash";
 
 function getItem(menuItem: MenuOutput): Required<MenuProps>["items"][number] {
 	return {
@@ -20,7 +21,15 @@ function getItem(menuItem: MenuOutput): Required<MenuProps>["items"][number] {
 }
 
 const SiderMenu: FC = () => {
-	const { loading, data } = useMenusQuery();
+	const { data } = useMenusQuery();
+	const matches = useMatches();
+	const selectedKeys = useMemo(
+		() =>
+			matches
+				.filter((o) => !isNil(o.handle.menuSeqNo))
+				.map((o) => o.handle.menuSeqNo + ""),
+		[matches]
+	);
 
 	const items = useMemo(() => {
 		if (data) {
@@ -29,7 +38,15 @@ const SiderMenu: FC = () => {
 		return [];
 	}, [data]);
 
-	return <Menu theme={"dark"} mode="inline" items={items} />;
+	return (
+		<Menu
+			defaultOpenKeys={selectedKeys}
+			selectedKeys={selectedKeys}
+			theme={"dark"}
+			mode="inline"
+			items={items}
+		/>
+	);
 };
 
 export default SiderMenu;

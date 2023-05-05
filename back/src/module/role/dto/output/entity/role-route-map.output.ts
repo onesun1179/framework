@@ -3,6 +3,7 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from '@common/entity/common.entity';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
+import { Type } from 'class-transformer';
 
 @Entity('role_route_map')
 @InputType({
@@ -22,11 +23,13 @@ export class RoleRouteMapOutput extends CommonEntity {
   @JoinColumn({
     name: 'role_seq_no',
   })
+  @Type(() => RoleOutput)
   role!: RoleOutput;
 
   @ManyToOne(() => RouteOutput, (o) => o.roleRouteMaps)
   @JoinColumn({
     name: 'route_seq_no',
   })
+  @Type(() => RoleOutput)
   route!: RouteOutput;
 }

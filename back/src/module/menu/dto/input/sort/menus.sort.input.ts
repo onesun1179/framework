@@ -7,5 +7,9 @@ export class MenusSortInput extends SortType([
   'seqNo',
   'name',
   'iconSeqNo',
-  'routeSeqNo',
+  'path',
+  'frontComponentId',
+  'createdAt',
+  'updatedAt',
+  'desc',
 ]) {}

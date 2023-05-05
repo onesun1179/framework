@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
@@ -69,8 +70,8 @@ export class RouteOutput extends CommonEntity {
   })
   roleRouteMaps?: Nullable<RoleRouteMapOutput[]>;
 
-  @OneToMany(() => MenuOutput, (o) => o.route, {
+  @OneToOne(() => MenuOutput, (o) => o.route, {
     nullable: true,
   })
-  menus?: Nullable<Array<MenuOutput>>;
+  menu?: Nullable<MenuOutput>;
 }

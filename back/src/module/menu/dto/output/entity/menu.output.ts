@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Type } from 'class-transformer';
@@ -59,7 +60,7 @@ export class MenuOutput extends CommonEntity {
   })
   routeSeqNo?: Nullable<number>;
 
-  @ManyToOne(() => RouteOutput, (o) => o.menus, {
+  @OneToOne(() => RouteOutput, (o) => o.menu, {
     nullable: true,
   })
   @JoinColumn({

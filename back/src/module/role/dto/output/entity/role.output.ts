@@ -14,6 +14,7 @@ import { UserOutput } from '@modules/user/dto/output/entity/user.output';
 import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
 import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
 import { RoleFrontComponentMapOutput } from '@modules/role/dto/output/entity/role-front-component-map.output';
+import { Type } from 'class-transformer';
 
 @Entity('role')
 @InputType({
@@ -49,23 +50,28 @@ export class RoleOutput extends CommonEntity {
   @JoinColumn({
     name: 'role_group_seq_no',
   })
+  @Type(() => RoleGroupOutput)
   roleGroup!: RoleGroupOutput;
 
   @OneToMany(() => UserOutput, (o) => o.role, {
     nullable: true,
   })
+  @Type(() => UserOutput)
   users?: Nullable<UserOutput[]>;
 
   @OneToMany(() => MenuRoleMapOutput, (o) => o.role)
+  @Type(() => MenuRoleMapOutput)
   menuRoleMaps!: MenuRoleMapOutput[];
 
   @OneToMany(() => RoleRouteMapOutput, (o) => o.route, {
     nullable: true,
   })
+  @Type(() => RoleRouteMapOutput)
   roleRouteMaps?: Nullable<Array<RoleRouteMapOutput>>;
 
   @OneToMany(() => RoleFrontComponentMapOutput, (o) => o.role, {
     nullable: true,
   })
+  @Type(() => RoleFrontComponentMapOutput)
   roleFrontComponentMaps?: Nullable<Array<RoleFrontComponentMapOutput>>;
 }

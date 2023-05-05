@@ -23,7 +23,6 @@ export class GoogleAuthController {
     );
 
     res.cookie(ACCESS_TOKEN_COOKIE_NAME, access_token);
-
     res.redirect(process.env.CLIENT_DOMAIN!);
 
     // // res.cookie('access_token', access_token);

@@ -10,61 +10,33 @@ import { RouteOutput, RoutesOutput } from "@gqlType";
 import AntdConfigProvider from "@src/component/config/AntdConfigProvider";
 
 const ROUTES_QUERY = gql`
+	fragment Route on RouteOutput {
+		seqNo
+		parentSeqNo
+		path
+		treeInfo {
+			depth
+			fullPath
+		}
+		menu {
+			seqNo
+		}
+		frontComponentId
+	}
 	query ROUTES {
 		routes(request: { search: { parentSeqNo: { isNull: { value: true } } } }) {
 			list {
-				seqNo
-				parentSeqNo
-				path
-				treeInfo {
-					depth
-					fullPath
-				}
-				frontComponentId
+				...Route
 				children {
-					seqNo
-					parentSeqNo
-					path
-					treeInfo {
-						depth
-						fullPath
-					}
-					frontComponentId
+					...Route
 					children {
-						seqNo
-						parentSeqNo
-						path
-						treeInfo {
-							depth
-							fullPath
-						}
-						frontComponentId
+						...Route
 						children {
-							seqNo
-							parentSeqNo
-							path
-							treeInfo {
-								depth
-								fullPath
-							}
-							frontComponentId
+							...Route
 							children {
-								seqNo
-								parentSeqNo
-								path
-								treeInfo {
-									depth
-									fullPath
-								}
-								frontComponentId
+								...Route
 								children {
-									seqNo
-									parentSeqNo
-									path
-									treeInfo {
-										depth
-										fullPath
-									}
+									...Route
 								}
 							}
 						}
@@ -92,6 +64,7 @@ function makeRouteObject(routeType: RouteType): NonIndexRouteObject {
 			<FrontCRoute frontComponentId={routeType.frontComponentId!} />
 		) : null,
 		handle: {
+			menuSeqNo: routeType?.menu?.seqNo,
 			frontComponentId: routeType.frontComponentId,
 		},
 		children: routeType.children.map((o) => makeRouteObject(o)),

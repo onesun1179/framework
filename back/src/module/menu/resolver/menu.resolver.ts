@@ -11,14 +11,11 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@auth/guard/gql-auth.guard';
 import { MenuService } from '@modules/menu/menu.service';
 import { MenuRepository } from '@modules/menu/repository/menu.repository';
-import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
 import { MenusOutput } from '@modules/menu/dto/output/menus.output';
 import { PagingInput } from '@common/dto/input/paging.input';
 import { MenusInput } from '@modules/menu/dto/input/menus.input';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
-import { isNil } from 'lodash';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
 import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
@@ -30,6 +27,7 @@ import { AfterAT } from '@auth/interfaces/AfterAT';
 import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
 import { InsertMenuInput } from '@modules/menu/dto/input/insert-menu.input';
 import { UpdateMenuInput } from '@modules/menu/dto/input/update-menu.input';
+import { UtilCommon } from '@common/util/Util.common';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => MenuOutput)
@@ -43,7 +41,6 @@ export class MenuResolver {
     private readonly roleRepository: RoleRepository,
     private readonly iconEntityRepository: IconRepository,
     private readonly routeRepository: RouteRepository,
-    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   /**************************************
@@ -77,7 +74,7 @@ export class MenuResolver {
     })
     menusInput: MenusInput,
   ): Promise<MenusOutput> {
-    return await this.menuRepository.paging(pagingInput, menusInput);
+    return await this.menuService.menus(pagingInput, menusInput);
   }
 
   /**************************************
@@ -99,14 +96,16 @@ export class MenuResolver {
     nullable: true,
   })
   async icon(@Parent() { iconSeqNo }: MenuOutput): Promise<IconOutput | null> {
-    if (!isNil(iconSeqNo)) {
-      return await this.iconEntityRepository.findOne({
-        where: {
-          seqNo: iconSeqNo,
-        },
-      });
-    }
-    return null;
+    return UtilCommon.nilToNull(
+      iconSeqNo,
+      async (iconSeqNo) =>
+        await this.iconEntityRepository
+          .createQueryBuilder(`i`)
+          .where(`i.seq_no = :iconSeqNo`, {
+            iconSeqNo,
+          })
+          .getOne(),
+    );
   }
 
   @ResolveField(() => RouteOutput, {
@@ -115,14 +114,16 @@ export class MenuResolver {
   async route(
     @Parent() { routeSeqNo }: MenuOutput,
   ): Promise<RouteOutput | null> {
-    if (!isNil(routeSeqNo)) {
-      return await this.routeRepository.findOne({
-        where: {
-          seqNo: routeSeqNo!,
-        },
-      });
-    }
-    return null;
+    return UtilCommon.nilToNull(
+      routeSeqNo,
+      async (routeSeqNo) =>
+        await this.routeRepository
+          .createQueryBuilder(`r`)
+          .where(`r.seq_no = :routeSeqNo`, {
+            routeSeqNo,
+          })
+          .getOne(),
+    );
   }
 
   @ResolveField(() => [MenuOutput])

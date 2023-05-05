@@ -9,6 +9,7 @@ import { RouteRepository } from '@modules/route/repository/route.repository';
 import { RoleRouteMapRepository } from '@modules/role/repository/role-route-map.repository';
 import { RoleRepository } from '@modules/role/repository/role.repository';
 import { RouteResolver } from '@modules/route/resolvers/route.resolver';
+import { MenuRepository } from '@modules/menu/repository/menu.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RouteResolver } from '@modules/route/resolvers/route.resolver';
       RouteRepository,
       RoleRouteMapRepository,
       RoleRepository,
+      MenuRepository,
     ]),
   ],
   providers: [RouteResolver, RouteService, RouteResolver],

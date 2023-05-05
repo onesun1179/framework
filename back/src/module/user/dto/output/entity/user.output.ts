@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { MaxLength } from 'class-validator';
+import { IsEmail, IsOptional, MaxLength } from 'class-validator';
 import { CommonEntity } from '@common/entity/common.entity';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 
@@ -17,6 +17,18 @@ export class UserOutput extends CommonEntity {
   })
   @Field()
   id!: string;
+
+  @Column()
+  @Field()
+  name!: string;
+
+  @Column({
+    nullable: true,
+  })
+  @Field()
+  @IsOptional()
+  @IsEmail()
+  email!: string;
 
   @Column()
   @Field(() => Int)
