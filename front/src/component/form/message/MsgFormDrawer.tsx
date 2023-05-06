@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { ChkUniqMessageByCodeInput, MessageOutput } from "@gqlType";
 import { Button, Form, Input, message } from "antd";
-import { Index } from "@src/component/select";
+import { MsgGrpSelect } from "@src/component/select";
 import { EntityFormActionType } from "@src/types";
 import { refetchQueryMap, UtilRefetch } from "@src/Util";
 import FormDrawer, { FormDrawerProps } from "@src/component/common/FormDrawer";
@@ -141,7 +141,7 @@ const MsgFormDrawer: FC<MsgFormDrawerProps> = ({
 							},
 						]}
 					>
-						<Index disabled={updateYn} />
+						<MsgGrpSelect disabled={updateYn} />
 					</Form.Item>
 					<Form.Item
 						label={`코드`}

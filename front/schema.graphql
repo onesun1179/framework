@@ -182,7 +182,6 @@ input RolesSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -247,7 +246,6 @@ input RoleGroupsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -334,21 +332,45 @@ type MenuOutput {
   roles: [RoleOutput!]!
   icon: IconOutput
   route: RouteOutput
-  children: [MenuOutput!]!
+  children(pagingInput: PagingInput, menusInput: MenusInput): MenusOutput!
 }
 
-type MenuRoleMapOutput {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  desc: String
-  seqNo: Int!
-  menuSeqNo: Int!
-  roleSeqNo: Int!
-  parentSeqNo: Int
-  orderNo: Int!
-  menu: MenuOutput!
-  role: RoleOutput!
-  parent: MenuRoleMapOutput
+input MenusInput {
+  search: MenusSearchInput
+  sort: MenusSortInput
+}
+
+input MenusSearchInput {
+  seqNo: NonNullableNumberSearchInput
+  name: NonNullableStringSearchInput
+  iconSeqNo: NullableNumberSearchInput
+  routeSeqNo: NullableNumberSearchInput
+  role: RoleSearchInput
+}
+
+input RoleSearchInput {
+  parentSeqNo: NullableNumberSearchInput
+  orderNo: NonNullableNumberSearchInput
+  roleSeqNo: NonNullableNumberSearchInput
+}
+
+input MenusSortInput {
+  id: SortTypeInput
+  roleSeqNo: SortTypeInput
+  seqNo: SortTypeInput
+  name: SortTypeInput
+  identifier: SortTypeInput
+  desc: SortTypeInput
+  createdAt: SortTypeInput
+  updatedAt: SortTypeInput
+  parentSeqNo: SortTypeInput
+  iconSeqNo: SortTypeInput
+  path: SortTypeInput
+  frontComponentId: SortTypeInput
+  code: SortTypeInput
+  text: SortTypeInput
+  groupCode: SortTypeInput
+  filePath: SortTypeInput
 }
 
 type RoleOutput {
@@ -425,6 +447,7 @@ type RoutesOutput {
 type RouteTreeOutput {
   fullPath: String!
   depth: Int!
+  childCount: Int!
 }
 
 type IconsOutput {
@@ -437,9 +460,14 @@ type MenusOutput {
   total: Int!
 }
 
-type MenuRoleMapsOutput {
-  list: [MenuRoleMapOutput!]!
-  total: Int!
+type MenuByRoleOutput {
+  seqNo: Int!
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+  parentSeqNo: Int
+  orderNo: Int!
+  children: [MenuByRoleOutput!]!
+  menu: MenuOutput!
 }
 
 type IconLabelsOutput {
@@ -458,8 +486,9 @@ type Query {
   codes(pagingInput: PagingInput, codesInput: CodesInput): CodesOutput!
   menu(seqNo: Int!): MenuOutput!
   menus(pagingInput: PagingInput, menusInput: MenusInput): MenusOutput!
-  menuRoleMap(seqNo: Int!): MenuRoleMapOutput!
-  menuRoleMaps(pagingInput: PagingInput, menuByAuthsInput: MenuRoleMapsInput): MenuRoleMapsOutput!
+  menuByRole(seqNo: Int!): MenuByRoleOutput!
+  menusByRole(roleSeqNo: Int!): [MenuByRoleOutput!]!
+  menusByCurr: [MenuByRoleOutput!]!
   route(seqNo: Int!): RouteOutput!
   routes(paging: PagingInput = null, request: RoutesInput): RoutesOutput!
   messageBySeqNo(seqNo: Int!): MessageOutput!
@@ -507,7 +536,6 @@ input UsersSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -543,84 +571,10 @@ input CodesSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
   filePath: SortTypeInput
-}
-
-input MenusInput {
-  search: MenusSearchInput
-  sort: MenusSortInput
-}
-
-input MenusSearchInput {
-  seqNo: NonNullableNumberSearchInput
-  name: NonNullableStringSearchInput
-  iconSeqNo: NullableNumberSearchInput
-  routeSeqNo: NullableNumberSearchInput
-  role: RoleSearchInput
-}
-
-input RoleSearchInput {
-  parentSeqNo: NullableNumberSearchInput
-  orderNo: NonNullableNumberSearchInput
-}
-
-input MenusSortInput {
-  id: SortTypeInput
-  roleSeqNo: SortTypeInput
-  seqNo: SortTypeInput
-  name: SortTypeInput
-  identifier: SortTypeInput
-  desc: SortTypeInput
-  createdAt: SortTypeInput
-  updatedAt: SortTypeInput
-  parentSeqNo: SortTypeInput
-  iconSeqNo: SortTypeInput
-  path: SortTypeInput
-  frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
-  code: SortTypeInput
-  text: SortTypeInput
-  groupCode: SortTypeInput
-  filePath: SortTypeInput
-}
-
-input MenuRoleMapsInput {
-  search: MenuRoleMapsSearchInput
-  sort: MenuRoleMapsSortInput
-}
-
-input MenuRoleMapsSearchInput {
-  seqNo: NonNullableNumberSearchInput
-  roleSeqNo: NonNullableNumberSearchInput
-  menuSeqNo: NonNullableNumberSearchInput
-  orderNo: NonNullableNumberSearchInput
-  parentSeqNo: NullableNumberSearchInput
-  menu: MenusSearchInput
-}
-
-input MenuRoleMapsSortInput {
-  id: SortTypeInput
-  roleSeqNo: SortTypeInput
-  seqNo: SortTypeInput
-  name: SortTypeInput
-  identifier: SortTypeInput
-  desc: SortTypeInput
-  createdAt: SortTypeInput
-  updatedAt: SortTypeInput
-  parentSeqNo: SortTypeInput
-  iconSeqNo: SortTypeInput
-  path: SortTypeInput
-  frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
-  code: SortTypeInput
-  text: SortTypeInput
-  groupCode: SortTypeInput
-  filePath: SortTypeInput
-  menu: MenusSortInput
 }
 
 input RoutesInput {
@@ -667,7 +621,6 @@ input MessagesSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -697,7 +650,6 @@ input MessageGroupsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -727,7 +679,6 @@ input FrontComponentsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -757,7 +708,6 @@ input AllFrontComponentsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -794,7 +744,6 @@ input IconsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -819,7 +768,6 @@ input IconLabelsSortInput {
   iconSeqNo: SortTypeInput
   path: SortTypeInput
   frontComponentId: SortTypeInput
-  menuSeqNo: SortTypeInput
   code: SortTypeInput
   text: SortTypeInput
   groupCode: SortTypeInput
@@ -833,6 +781,9 @@ type Mutation {
   updateCode(updateCodeInput: UpdateCodeInput!): CodeOutput!
   insertMenu(insertMenuInput: InsertMenuInput!): MenuOutput!
   updateMenu(updateMenuInput: UpdateMenuInput!): MenuOutput!
+  insertMenuByRole(insertMenuRoleMapInput: InsertMenuRoleMapInput!): MenuByRoleOutput!
+  updateMenuByRole(updateMenuRoleMapInput: UpdateMenuRoleMapInput!): MenuByRoleOutput!
+  rearrangementMenu(rearrangementMenuInput: RearrangementMenuInput!): MenuByRoleOutput!
   updateMessage(updateMessageInput: UpdateMessageInput!): MessageOutput!
   insertMessage(insertMessageInput: InsertMessageInput!): MessageOutput!
   deleteMessages(seqNos: [Int!]!): Boolean!
@@ -896,6 +847,25 @@ input UpdateMenuInput {
   name: String!
   iconSeqNo: Int
   routeSeqNo: Int
+}
+
+input InsertMenuRoleMapInput {
+  desc: String
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+}
+
+input UpdateMenuRoleMapInput {
+  desc: String
+  menuSeqNo: Int!
+  roleSeqNo: Int!
+  seqNo: Int!
+}
+
+input RearrangementMenuInput {
+  seqNo: Int!
+  parentSeqNo: Int
+  orderNo: Int!
 }
 
 input UpdateMessageInput {

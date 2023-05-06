@@ -1,5 +1,5 @@
-import { isArray, isNil, isString } from "lodash";
-import { Func } from "@src/types";
+import { isArray, isNil, isString, isUndefined } from "lodash";
+import { Func, Nil } from "@src/types";
 
 export type UpperYN = "Y" | "N";
 export class UtilCommon {
@@ -19,16 +19,22 @@ export class UtilCommon {
 		return func(arg);
 	}
 
-	static nilToNull<T, A>(
+	static nilToNull<T, A, I>(
 		arg: T,
-		func: (arg: Exclude<T, null | undefined>) => A
-	): A extends Promise<any> ? Promise<A> : A | null;
+		func: (arg: Exclude<T, Nil>) => A,
+		initial?: I
+	): A extends Promise<any> ? Promise<A> : A | I;
 
-	static nilToNull<T, A>(
+	static nilToNull<T, A, I>(
 		arg: T,
-		func: (arg: Exclude<T, null | undefined>) => A
+		func: (arg: Exclude<T, Nil>) => A,
+		initial: I
 	) {
-		return isNil(arg) ? null : func(arg as Exclude<T, null | undefined>);
+		return isNil(arg)
+			? isUndefined(initial)
+				? null
+				: initial
+			: func(arg as Exclude<T, Nil>);
 	}
 
 	static toArray<T>(arg: T | T[]): T[] {

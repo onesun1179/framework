@@ -16,7 +16,7 @@ import { RoleGroupRepository } from '@modules/role/repository/role-group.reposit
 import { RoleRouteMapRepository } from '@modules/role/repository/role-route-map.repository';
 import { RoleGroupOutput } from '@modules/role/dto/output/entity/role-group.output';
 import { UserOutput } from '@modules/user/dto/output/entity/user.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 import { FrontComponentOutput } from '@modules/front-component/dto/output/entity/front-component.output';
 import { RoleFrontComponentMapOutput } from '@modules/role/dto/output/entity/role-front-component-map.output';
@@ -99,7 +99,7 @@ export class RoleResolver {
       .getMany();
   }
 
-  @ResolveField(() => [MenuOutput])
+  @ResolveField(() => [MenuEntity])
   async menus(@Parent() { seqNo }: RoleOutput) {
     return await RoleOutput.findOne({
       select: ['menuRoleMaps'],

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
 import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { IconRepository } from '@modules/icon/repository/icon.repository';
 import { MenuRepository } from '@modules/menu/repository/menu.repository';
 import { IconLabelOutput } from '@modules/icon/dto/output/entity/icon-label.output';
@@ -55,10 +55,10 @@ export class IconResolver {
    *           RESOLVE_FIELD
    ***************************************/
 
-  @ResolveField(() => [MenuOutput])
+  @ResolveField(() => [MenuEntity])
   async menus(
     @Parent() { seqNo: iconSeqNo }: IconOutput,
-  ): Promise<MenuOutput[]> {
+  ): Promise<MenuEntity[]> {
     return await this.menuRepository.findBy({
       iconSeqNo,
     });

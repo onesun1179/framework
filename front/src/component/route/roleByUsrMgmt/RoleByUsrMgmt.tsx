@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import { Card, Transfer } from "antd";
-import { useRoleByUsrMgmt1Query } from "@src/component/route/roleByUsrMgmt/quires";
+import { useRoleByUsrMgmt1Query } from "@src/component/route/roleByUsrMgmt/roleByUsrMgmt.quires";
 
 const FullHeightCard = styled(Card)`
 	height: 100%;

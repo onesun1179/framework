@@ -1,2 +1,2 @@
-export * from "./quires";
+export * from "./frmkCdMgmt.quires";
 export * from "./FrmkCdMgmt";

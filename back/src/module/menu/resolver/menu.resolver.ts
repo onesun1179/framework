@@ -17,20 +17,18 @@ import { MenusInput } from '@modules/menu/dto/input/menus.input';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
 import { RoleRepository } from '@modules/role/repository/role.repository';
 import { IconRepository } from '@modules/icon/repository/icon.repository';
 import { RouteRepository } from '@modules/route/repository/route.repository';
-import { CurrentUser } from '@common/decorator/CurrentUser';
-import { AfterAT } from '@auth/interfaces/AfterAT';
-import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
 import { InsertMenuInput } from '@modules/menu/dto/input/insert-menu.input';
 import { UpdateMenuInput } from '@modules/menu/dto/input/update-menu.input';
 import { UtilCommon } from '@common/util/Util.common';
 
 @UseGuards(GqlAuthGuard)
-@Resolver(() => MenuOutput)
+@Resolver(() => MenuEntity)
 export class MenuResolver {
   private readonly logger = new Logger(MenuResolver.name);
 
@@ -47,7 +45,7 @@ export class MenuResolver {
    *              QUERY
    ***************************************/
 
-  @Query(() => MenuOutput)
+  @Query(() => MenuEntity)
   async menu(
     @Args('seqNo', {
       type: () => Int,
@@ -82,7 +80,7 @@ export class MenuResolver {
    ***************************************/
 
   @ResolveField(() => [RoleOutput])
-  async roles(@Parent() { seqNo }: MenuOutput): Promise<Array<RoleOutput>> {
+  async roles(@Parent() { seqNo }: MenuEntity): Promise<Array<RoleOutput>> {
     return await this.roleRepository
       .createQueryBuilder(`r`)
       .innerJoin(`r.menuRoleMaps`, `mrm`)
@@ -95,7 +93,7 @@ export class MenuResolver {
   @ResolveField(() => IconOutput, {
     nullable: true,
   })
-  async icon(@Parent() { iconSeqNo }: MenuOutput): Promise<IconOutput | null> {
+  async icon(@Parent() { iconSeqNo }: MenuEntity): Promise<IconOutput | null> {
     return UtilCommon.nilToNull(
       iconSeqNo,
       async (iconSeqNo) =>
@@ -112,7 +110,7 @@ export class MenuResolver {
     nullable: true,
   })
   async route(
-    @Parent() { routeSeqNo }: MenuOutput,
+    @Parent() { routeSeqNo }: MenuEntity,
   ): Promise<RouteOutput | null> {
     return UtilCommon.nilToNull(
       routeSeqNo,
@@ -126,60 +124,66 @@ export class MenuResolver {
     );
   }
 
-  @ResolveField(() => [MenuOutput])
+  @ResolveField(() => MenusOutput)
   async children(
-    @Parent() { seqNo: menuSeqNo }: MenuOutput,
-    @CurrentUser() { roleSeqNo }: AfterAT,
-  ): Promise<Array<MenuOutput>> {
-    return await this.menuRepository
-      .createQueryBuilder('menu')
-      .innerJoin(
-        MenuRoleMapOutput,
-        `child`,
-        `
-      child.menuSeqNo = menu.seqNo AND
-      child.roleSeqNo = :roleSeqNo
+    @Parent() { seqNo: menuSeqNo }: MenuEntity,
+    @Args('pagingInput', {
+      type: () => PagingInput,
+      nullable: true,
+    })
+    pagingInput: PagingInput,
+    @Args('menusInput', {
+      type: () => MenusInput,
+      nullable: true,
+    })
+    menusInput: MenusInput,
+  ): Promise<MenusOutput> {
+    return this.menuService.menus(
+      pagingInput,
+      menusInput,
+      this.menuRepository
+        .createQueryBuilder('menu')
+        .innerJoin(
+          MenuRoleMapEntity,
+          `child`,
+          `
+      child.menuSeqNo = menu.seq_no
       `,
-        {
-          roleSeqNo,
-        },
-      )
-      .innerJoin(
-        MenuRoleMapOutput,
-        `parent`,
-        `
-      parent.menuSeqNo = :parentMenuSeqNo AND
-      parent.roleSeqNo = child.roleSeqNo AND
-      child.parentSeqNo = parent.seq_no
+        )
+        .innerJoin(
+          MenuRoleMapEntity,
+          `parent`,
+          `
+      parent.menu_seq_no = :parentMenuSeqNo AND
+      child.parent_seq_no = parent.seq_no
       `,
-        {
-          parentMenuSeqNo: menuSeqNo,
-          roleSeqNo,
-        },
-      )
-      .getMany();
+          {
+            parentMenuSeqNo: menuSeqNo,
+          },
+        ),
+    );
   }
 
   /**************************************
    *           MUTATION
    ***************************************/
-  @Mutation(() => MenuOutput)
+  @Mutation(() => MenuEntity)
   async insertMenu(
     @Args('insertMenuInput', {
       type: () => InsertMenuInput,
     })
     insertMenuInput: InsertMenuInput,
-  ): Promise<MenuOutput> {
+  ): Promise<MenuEntity> {
     return await this.menuRepository.saveCustom(insertMenuInput);
   }
 
-  @Mutation(() => MenuOutput)
+  @Mutation(() => MenuEntity)
   async updateMenu(
     @Args('updateMenuInput', {
       type: () => UpdateMenuInput,
     })
     updateMenuInput: UpdateMenuInput,
-  ): Promise<MenuOutput> {
+  ): Promise<MenuEntity> {
     return await this.menuRepository.saveCustom(updateMenuInput);
   }
 }

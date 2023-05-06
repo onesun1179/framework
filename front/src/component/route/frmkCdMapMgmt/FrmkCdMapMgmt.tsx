@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from "react";
 import {
 	useFrmkCdMapMgmt1Query,
 	useFrmkCdMapMgmt2Query,
-} from "@src/component/route/frmkCdMapMgmt/quires";
+} from "@src/component/route/frmkCdMapMgmt/frmkCdMapMgmt.quires";
 import {
 	Button,
 	Card,
@@ -15,7 +15,7 @@ import {
 	Transfer,
 } from "antd";
 import { isNil } from "lodash";
-import { useUpdateCodeChildrenMutation } from "@src/component/route/frmkCdMapMgmt/mutations";
+import { useUpdateCodeChildrenMutation } from "@src/component/route/frmkCdMapMgmt/frmkCdMapMgmt.mutations";
 import {
 	refetchQueryMap,
 	SearchQueryKeyType,
@@ -36,6 +36,7 @@ import { useMentionsState } from "@src/hooks/useMentionsState";
 import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
 import { ColumnType } from "antd/es/table";
+import { ReloadOutlined } from "@ant-design/icons";
 
 type SrtQryKey = SortQueryKeyType<"nm" | "no">;
 const srtQryMap: Record<SrtQryKey, keyof CodesSortInput> = {
@@ -75,7 +76,7 @@ const FrmkCdMapMgmt: FC<FrmkCdMapMgmtProps> = () => {
 		[queryObj]
 	);
 	const [selectedCdSeqNo, setSelectedCdSeqNo] = useState<number>();
-	const { data, loading } = useFrmkCdMapMgmt1Query({
+	const { data, loading, refetch } = useFrmkCdMapMgmt1Query({
 		variables: {
 			pagingInput: pagingInput,
 			codesInput: {
@@ -180,7 +181,20 @@ const FrmkCdMapMgmt: FC<FrmkCdMapMgmtProps> = () => {
 			/>
 			<Row gutter={[12, 12]}>
 				<Col span={12}>
-					<Card title={"코드"}>
+					<Card
+						title={"코드"}
+						extra={
+							<Space>
+								<Button
+									icon={<ReloadOutlined />}
+									type={"primary"}
+									onClick={() => {
+										refetch();
+									}}
+								/>
+							</Space>
+						}
+					>
 						<Table
 							loading={loading}
 							bordered

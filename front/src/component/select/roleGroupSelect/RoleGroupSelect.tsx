@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Select } from "antd";
 import { SelectProps } from "antd/es/select";
-import { useRoleGroupsQuery } from "@src/component/select/RoleGroupSelect/quires";
+import { useRoleGroupsQuery } from "@src/component/select/roleGroupSelect/roleGroupSelect.quires";
 
 export interface RoleGroupSelectProps extends SelectProps {}
 

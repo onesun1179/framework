@@ -15,7 +15,7 @@ import {
 import { usePaging } from "@src/hooks/usePaging";
 import { Button, Drawer, Form, Layout, message, Space, Table } from "antd";
 import React, { FC, useCallback, useMemo, useState } from "react";
-import { Index } from "@src/component/form/message/MsgFormDrawer";
+import { MsgGrpSelect } from "@src/component/form/message/MsgFormDrawer";
 import { useMutation, useQuery } from "@apollo/client";
 import { UtilRefetch } from "@src/Util/Util.refetch";
 import { invert, mapValues, pick } from "lodash";

@@ -2,7 +2,7 @@ import React, { FC, useCallback } from "react";
 import { Button, Form, Input, message } from "antd";
 import { EntityFormActionType } from "@src/types";
 import { AllFrontComponentOutput } from "@gqlType";
-import FCSelect from "@src/component/select/FCSelect";
+import FCSelect from "@src/component/select/fCSelect/FCSelect";
 import FormDrawer, { FormDrawerProps } from "@src/component/common/FormDrawer";
 import { FormInstance } from "antd/es/form";
 import { refetchQueryMap } from "@src/Util";

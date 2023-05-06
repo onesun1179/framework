@@ -26,4 +26,5 @@ export class MenusSearchInput extends SearchType({
 class RoleSearchInput extends SearchType({
   parentSeqNo: NullableNumberSearchInput,
   orderNo: NonNullableNumberSearchInput,
+  roleSeqNo: NonNullableNumberSearchInput,
 }) {}

@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 import { PagingOutput } from '@common/dto/output/paging.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 
 @ObjectType()
-export class MenusOutput extends PagingOutput(MenuOutput) {}
+export class MenusOutput extends PagingOutput(MenuEntity) {}

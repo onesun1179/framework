@@ -3,4 +3,10 @@ import { SortType } from '@common/factory/sort-type';
 
 @InputType()
 @ArgsType()
-export class CodesSortInput extends SortType(['seqNo', 'name']) {}
+export class CodesSortInput extends SortType([
+  'seqNo',
+  'name',
+  'createdAt',
+  'updatedAt',
+  'desc',
+]) {}

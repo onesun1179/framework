@@ -1,6 +1,6 @@
 import { FC, memo, useState } from "react";
 import { Button, Space } from "antd";
-import IconSelectModal from "@src/component/modal/IconSelectModal";
+import IconSelectModal from "@src/component/modal/iconSelectModal";
 import { IconOutput } from "@gqlType";
 import CustomIcon from "@src/component/common/customIcon/CustomIcon";
 import { UtilCommon } from "@src/Util";

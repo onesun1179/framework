@@ -1,13 +1,13 @@
 import { CustomRepository } from '@common/decorator/CustomRepository';
 import { Repository } from 'typeorm';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { InsertMenuInput } from '@modules/menu/dto/input/insert-menu.input';
 import { UpdateMenuInput } from '@modules/menu/dto/input/update-menu.input';
 import { GqlError } from '@common/error/GqlError';
 import { MessageConstant } from '@common/constants/message.constant';
 
-@CustomRepository(MenuOutput)
-export class MenuRepository extends Repository<MenuOutput> {
+@CustomRepository(MenuEntity)
+export class MenuRepository extends Repository<MenuEntity> {
   async hasRow(seqNo: number) {
     return await this.exist({
       where: {
@@ -16,9 +16,9 @@ export class MenuRepository extends Repository<MenuOutput> {
     });
   }
 
-  async saveCustom(p: InsertMenuInput | UpdateMenuInput): Promise<MenuOutput> {
+  async saveCustom(p: InsertMenuInput | UpdateMenuInput): Promise<MenuEntity> {
     return await this.save(
-      MenuOutput.create({
+      MenuEntity.create({
         seqNo:
           p instanceof UpdateMenuInput
             ? await (async () => {

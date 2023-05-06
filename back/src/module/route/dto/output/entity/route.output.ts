@@ -12,7 +12,7 @@ import { Nullable } from '@common/type';
 import { CommonEntity } from '@common/entity/common.entity';
 import { FrontComponentOutput } from '@modules/front-component/dto/output/entity/front-component.output';
 import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 
 @Entity('route')
 @InputType({
@@ -70,8 +70,8 @@ export class RouteOutput extends CommonEntity {
   })
   roleRouteMaps?: Nullable<RoleRouteMapOutput[]>;
 
-  @OneToOne(() => MenuOutput, (o) => o.route, {
+  @OneToOne(() => MenuEntity, (o) => o.route, {
     nullable: true,
   })
-  menu?: Nullable<MenuOutput>;
+  menu?: Nullable<MenuEntity>;
 }

@@ -15,11 +15,11 @@ import { useQueryObj } from "@src/hooks";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { usePaging } from "@src/hooks/usePaging";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { EntityFormActionType } from "@src/types";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useFrmkRoleMgmt1Query } from "@src/component/route/frmkRoleMgmt/quires";
+import { useFrmkRoleMgmt1Query } from "@src/component/route/frmkRoleMgmt/frmkRoleMgmt.quires";
 import RoleDesc from "@src/component/descriptions/RoleDesc";
 import RoleFormDrawer from "@src/component/form/role/RoleFormDrawer";
 
@@ -179,12 +179,12 @@ const FrmkRoleMgmt: FC = () => {
 				form={form}
 			/>
 
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"권한 관리"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -199,37 +199,36 @@ const FrmkRoleMgmt: FC = () => {
 							}}
 						/>
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.roles.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"seqNo"}
-						dataSource={data?.roles.list || previousData?.roles.list}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.roles.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"seqNo"}
+					dataSource={data?.roles.list || previousData?.roles.list}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 };

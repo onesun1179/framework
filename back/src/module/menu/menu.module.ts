@@ -6,15 +6,15 @@ import { MenuService } from '@modules/menu/menu.service';
 import { IconRepository } from '@modules/icon/repository/icon.repository';
 import { RouteRepository } from '@modules/route/repository/route.repository';
 import { MenuResolver } from '@modules/menu/resolver/menu.resolver';
-import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { MenuRepository } from '@modules/menu/repository/menu.repository';
 import { MenuRoleMapRepository } from '@modules/menu/repository/menu-role-map.repository';
-import { MenuByAuthResolver } from '@modules/menu/resolver/menu-by-auth.resolver';
+import { MenuByRoleResolver } from '@modules/menu/resolver/menu-by-role.resolver';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MenuRoleMapOutput, MenuOutput]),
+    TypeOrmModule.forFeature([MenuRoleMapEntity, MenuEntity]),
     TypeOrmExModule.forCustomRepository([
       MenuRepository,
       MenuRoleMapRepository,
@@ -23,6 +23,6 @@ import { MenuByAuthResolver } from '@modules/menu/resolver/menu-by-auth.resolver
       RouteRepository,
     ]),
   ],
-  providers: [MenuService, MenuResolver, MenuByAuthResolver, MenuResolver],
+  providers: [MenuService, MenuResolver, MenuByRoleResolver],
 })
 export class MenuModule {}

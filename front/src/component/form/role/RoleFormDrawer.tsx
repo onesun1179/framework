@@ -10,7 +10,7 @@ import {
 	useInsertRoleMutation,
 	useUpdateRoleMutation,
 } from "@src/component/form/role/mutations";
-import RoleGroupSelect from "@src/component/select/RoleGroupSelect/RoleGroupSelect";
+import RoleGroupSelect from "@src/component/select/roleGroupSelect/RoleGroupSelect";
 
 export interface RoleFormDrawerProps extends Omit<FormDrawerProps, "onSave"> {
 	actionType?: EntityFormActionType;

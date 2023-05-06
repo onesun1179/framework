@@ -7,4 +7,7 @@ export class RouteTreeOutput {
 
   @Field(() => Int)
   depth!: number;
+
+  @Field(() => Int)
+  childCount!: number;
 }

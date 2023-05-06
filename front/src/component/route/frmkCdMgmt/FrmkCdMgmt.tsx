@@ -4,7 +4,7 @@
 import React, { useMemo, useState } from "react";
 import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
 import { CodeOutput, CodesSearchInput, CodesSortInput } from "@gqlType";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
@@ -12,14 +12,17 @@ import { usePaging } from "@src/hooks/usePaging";
 import { EntityFormActionType } from "@src/types";
 import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useFrmkCdMgmt1Query } from "@src/component/route/frmkCdMgmt/quires";
+import { useFrmkCdMgmt1Query } from "@src/component/route/frmkCdMgmt/frmkCdMgmt.quires";
 import CdDesc from "@src/component/descriptions/CdDesc";
 import CdFormDrawer from "@src/component/form/code/CdFormDrawer";
 
-type SrtQryKey = SortQueryKeyType<"nm" | "no">;
+type SrtQryKey = SortQueryKeyType<"nm" | "no" | "cat" | "uat" | "dc">;
 const srtQryMap: Record<SrtQryKey, keyof CodesSortInput> = {
 	sort_no: "seqNo",
 	sort_nm: "name",
+	sort_uat: "updatedAt",
+	sort_cat: "createdAt",
+	sort_dc: "desc",
 };
 type SrchQryKey = SearchQueryKeyType<"nm" | "no">;
 const srchQryMap: Record<SrchQryKey, keyof CodesSearchInput> = {
@@ -149,12 +152,12 @@ function FrmkCdMgmt() {
 				setOpen={setFormDrawerOpenYn}
 				form={form}
 			/>
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"코드 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -169,37 +172,36 @@ function FrmkCdMgmt() {
 							}}
 						/>
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.codes.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"seqNo"}
-						dataSource={data?.codes.list || previousData?.codes.list}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.codes.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"seqNo"}
+					dataSource={data?.codes.list || previousData?.codes.list}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 }

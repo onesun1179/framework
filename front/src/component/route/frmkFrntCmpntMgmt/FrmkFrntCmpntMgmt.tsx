@@ -1,6 +1,6 @@
 import React, { FC, memo, useMemo, useState } from "react";
 import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
@@ -10,8 +10,12 @@ import { ColumnType } from "antd/es/table";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import FCDesc from "@src/component/descriptions/FCDesc";
 import FCFormDrawer from "@src/component/form/frontComponent/FCFormDrawer";
-import { FrontComponentOutput, FrontComponentsSearchInput, FrontComponentsSortInput } from "@gqlType";
-import { useFrmkFrntCmpntMgmtQuery } from "@src/component/route/frmkFrntCmpntMgmt/quires";
+import {
+	FrontComponentOutput,
+	FrontComponentsSearchInput,
+	FrontComponentsSortInput,
+} from "@gqlType";
+import { useFrmkFrntCmpntMgmtQuery } from "@src/component/route/frmkFrntCmpntMgmt/frmkFrntCmpntMgmt.quires";
 
 /**
  * 프레임워크 컴포넌트 관리
@@ -145,13 +149,12 @@ const FrmkFrntCmpntMgmt: FC = () => {
 				setOpen={setFormDrawerOpenYn}
 				form={form}
 			/>
-
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"화면 컴포넌트 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -160,39 +163,38 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						/>
 						<Button icon={<ReloadOutlined />} type={"primary"} />
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.frontComponents.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"id"}
-						dataSource={
-							data?.frontComponents.list || previousData?.frontComponents.list
-						}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.frontComponents.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"id"}
+					dataSource={
+						data?.frontComponents.list || previousData?.frontComponents.list
+					}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 };

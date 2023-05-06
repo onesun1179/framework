@@ -1,5 +1,7 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -12,16 +14,16 @@ import { Nullable } from '@common/type';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
 import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 
 @Entity('menu_role_map')
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
+@ObjectType('MenuRoleMapOutput')
 @Unique('SEQ_NO', ['roleSeqNo', 'menuSeqNo'])
-@Unique('ORDER', ['roleSeqNo', 'parentSeqNo', 'orderNo'])
-export class MenuRoleMapOutput extends CommonEntity {
+// @Unique('ORDER', ['roleSeqNo', 'parentSeqNo', 'orderNo'])
+export class MenuRoleMapEntity extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   seqNo!: number;
@@ -42,12 +44,12 @@ export class MenuRoleMapOutput extends CommonEntity {
   })
   parentSeqNo?: Nullable<number>;
 
-  @ManyToOne(() => MenuOutput, (o) => o.menuRoleMaps)
+  @ManyToOne(() => MenuEntity, (o) => o.menuRoleMaps)
   @JoinColumn({
     name: 'menu_seq_no',
   })
-  @Type(() => MenuOutput)
-  menu!: MenuOutput;
+  @Type(() => MenuEntity)
+  menu!: MenuEntity;
 
   @ManyToOne(() => RoleOutput, (o) => o.menuRoleMaps)
   @JoinColumn({
@@ -56,14 +58,14 @@ export class MenuRoleMapOutput extends CommonEntity {
   @Type(() => RoleOutput)
   role!: RoleOutput;
 
-  @ManyToOne(() => MenuRoleMapOutput, (o) => o.children, {
+  @ManyToOne(() => MenuRoleMapEntity, (o) => o.children, {
     nullable: true,
   })
   @JoinColumn({
     name: 'parent_seq_no',
   })
-  @Type(() => MenuRoleMapOutput)
-  parent?: MenuRoleMapOutput;
+  @Type(() => MenuRoleMapEntity)
+  parent?: MenuRoleMapEntity;
 
   @Field(() => Int)
   @Column({
@@ -71,9 +73,20 @@ export class MenuRoleMapOutput extends CommonEntity {
   })
   orderNo!: number;
 
-  @OneToMany(() => MenuRoleMapOutput, (o) => o.parent, {
+  @OneToMany(() => MenuRoleMapEntity, (o) => o.parent, {
     nullable: true,
   })
-  @Type(() => MenuRoleMapOutput)
-  children?: MenuRoleMapOutput[];
+  @Type(() => MenuRoleMapEntity)
+  children?: MenuRoleMapEntity[];
+
+  @BeforeInsert()
+  async beforeInsert() {
+    console.log('beforeInsert');
+    // await this.menuService.sortMenu(this);
+  }
+  @BeforeUpdate()
+  async beforeUpdate() {
+    console.log('beforeUpdate');
+    // await this.menuService.sortMenu(this);
+  }
 }

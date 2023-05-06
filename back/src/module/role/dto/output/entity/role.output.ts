@@ -11,7 +11,7 @@ import { Nullable } from '@common/type';
 import { CommonEntity } from '@common/entity/common.entity';
 import { RoleGroupOutput } from '@modules/role/dto/output/entity/role-group.output';
 import { UserOutput } from '@modules/user/dto/output/entity/user.output';
-import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
 import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
 import { RoleFrontComponentMapOutput } from '@modules/role/dto/output/entity/role-front-component-map.output';
 import { Type } from 'class-transformer';
@@ -59,9 +59,9 @@ export class RoleOutput extends CommonEntity {
   @Type(() => UserOutput)
   users?: Nullable<UserOutput[]>;
 
-  @OneToMany(() => MenuRoleMapOutput, (o) => o.role)
-  @Type(() => MenuRoleMapOutput)
-  menuRoleMaps!: MenuRoleMapOutput[];
+  @OneToMany(() => MenuRoleMapEntity, (o) => o.role)
+  @Type(() => MenuRoleMapEntity)
+  menuRoleMaps!: MenuRoleMapEntity[];
 
   @OneToMany(() => RoleRouteMapOutput, (o) => o.route, {
     nullable: true,

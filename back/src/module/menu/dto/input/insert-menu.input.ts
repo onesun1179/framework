@@ -1,9 +1,9 @@
 import { ArgsType, InputType, PickType } from '@nestjs/graphql';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 
 @ArgsType()
 @InputType()
-export class InsertMenuInput extends PickType(MenuOutput, [
+export class InsertMenuInput extends PickType(MenuEntity, [
   'name',
   'iconSeqNo',
   'routeSeqNo',

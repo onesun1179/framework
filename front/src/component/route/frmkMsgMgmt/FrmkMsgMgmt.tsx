@@ -12,7 +12,7 @@ import { UtilRefetch } from "@src/Util/Util.refetch";
 import { usePaging } from "@src/hooks/usePaging";
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
-import { useFrmkMsgMgmtData } from "@src/component/route/frmkMsgMgmt/quires";
+import { useFrmkMsgMgmtData } from "@src/component/route/frmkMsgMgmt/frmkMsgMgmt.quires";
 import { EntityFormActionType } from "@src/types";
 import MsgFormDrawer from "@src/component/form/message/MsgFormDrawer";
 import {

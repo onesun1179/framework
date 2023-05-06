@@ -23,8 +23,8 @@ import {
 	MenusSortInput,
 	RouteOutput,
 } from "@gqlType";
-import { useFrmkMnMgmtQuery } from "@src/component/route/frmkMnMgmt/quires";
-import MenuDesc from "@src/component/descriptions/MenuDesc";
+import { useFrmkMnMgmtQuery } from "@src/component/route/frmkMnMgmt/frmkMnMgmt.quires";
+import MenuDesc from "@src/component/descriptions/menuDesc/MenuDesc";
 import MenuFormDrawer from "@src/component/form/menu/MenuFormDrawer";
 import CustomIcon from "@src/component/common/customIcon/CustomIcon";
 
@@ -121,6 +121,12 @@ export default function FrmkMenuMgmt({}: FrmkMenuMgmtProps) {
 								render: (route: RouteOutput) => route.path,
 							},
 							{
+								key: "fullPath",
+								title: "풀경로",
+								dataIndex: "route",
+								render: (route: RouteOutput) => route.treeInfo.fullPath,
+							},
+							{
 								key: "frontComponentId",
 								title: "화면 컴포넌트",
 								dataIndex: "route",
@@ -192,7 +198,9 @@ export default function FrmkMenuMgmt({}: FrmkMenuMgmtProps) {
 	return (
 		<>
 			<Drawer onClose={() => setMentionsShowYn(false)} open={mentionsShowYn}>
-				<MenuDesc record={record} />
+				{UtilCommon.nilToNull(record, (r) => (
+					<MenuDesc menuSeqNo={r.seqNo} />
+				))}
 			</Drawer>
 
 			<MenuFormDrawer

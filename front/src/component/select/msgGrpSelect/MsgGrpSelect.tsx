@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import { Select } from "antd";
 import { SelectProps } from "antd/es/select";
-import { useMessageGroupsQuery } from "@src/component/select/MsgGrpSelect/quires";
+import { useMessageGroupsQuery } from "@src/component/select/msgGrpSelect/msgGrpSelect.quires";
 
-export interface MessageGroupEntitiesSelectProp extends SelectProps {}
-export const Index: FC<MessageGroupEntitiesSelectProp> = ({ ...props }) => {
+export interface MsgGrpSelectProps extends SelectProps {}
+export const MsgGrpSelect: FC<MsgGrpSelectProps> = ({ ...props }) => {
 	const { data, loading, refetch } = useMessageGroupsQuery();
 
 	return (

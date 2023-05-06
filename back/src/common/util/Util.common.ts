@@ -1,6 +1,7 @@
 import { Func } from 'src/common/type';
-import { isArray, isNil } from 'lodash';
+import { isArray, isNil, isUndefined } from 'lodash';
 
+type Nil = null | undefined;
 export class UtilCommon {
   static invokeIf<T>(condition: boolean, func: Func<T>): T | undefined {
     if (condition) {
@@ -12,16 +13,22 @@ export class UtilCommon {
     return func(arg);
   }
 
-  static nilToNull<T, A>(
+  static nilToNull<T, A, I>(
     arg: T,
-    func: (arg: Exclude<T, null | undefined>) => A,
-  ): A extends Promise<any> ? Promise<A> : A | null;
+    func: (arg: Exclude<T, Nil>) => A,
+    initial?: I,
+  ): A extends Promise<any> ? Promise<A> : A | I;
 
-  static nilToNull<T, A>(
+  static nilToNull<T, A, I>(
     arg: T,
-    func: (arg: Exclude<T, null | undefined>) => A,
+    func: (arg: Exclude<T, Nil>) => A,
+    initial: I,
   ) {
-    return isNil(arg) ? null : func(arg as Exclude<T, null | undefined>);
+    return isNil(arg)
+      ? isUndefined(initial)
+        ? null
+        : initial
+      : func(arg as Exclude<T, Nil>);
   }
 
   static toArray<T>(arg: T | T[]): T[] {

@@ -9,7 +9,7 @@ import React, {
 import {
 	useIconSelectModal1Query,
 	useIconSelectModal2Query,
-} from "@src/component/select/IconSelect/quires";
+} from "@src/component/select/iconSelect/iconSelect.quires";
 import {
 	Button,
 	Col,

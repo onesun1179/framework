@@ -1,3 +1,3 @@
 export * from "./RoleDirectoryTree";
-export * from "./quires";
+export * from "./role.quires";
 export * from "./RoleSideTree";

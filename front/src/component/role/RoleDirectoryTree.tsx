@@ -1,7 +1,7 @@
 import React, { FC, useContext, useMemo } from "react";
 import { Tree } from "antd";
 import { DataNode } from "antd/es/tree";
-import { useRoleDirectoryTreeQuery } from "@src/component/role/quires";
+import { useRoleDirectoryTreeQuery } from "@src/component/role/role.quires";
 import { RoleGroupOutput } from "@gqlType";
 import { RoleMgmtContext } from "@src/component/route/roleMgmt/RoleMgmt";
 

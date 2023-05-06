@@ -1,2 +1,2 @@
 export * from "./FrmkCdMapMgmt";
-export * from "./quires";
+export * from "./frmkCdMapMgmt.quires";

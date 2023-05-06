@@ -1,1 +1,1 @@
-export * from "./MsgGrpSelect";
+export * from "./msgGrpSelect/MsgGrpSelect";

@@ -3,7 +3,7 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Nullable } from '@common/type';
 import { Type } from 'class-transformer';
 import { CommonEntity } from '@common/entity/common.entity';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { IconsIconLabelsOutput } from '@modules/icon/dto/output/entity/icons-icon-labels.output';
 
 @Entity('icon')
@@ -30,9 +30,9 @@ export class IconOutput extends CommonEntity {
   @Type(() => IconsIconLabelsOutput)
   iconsIconLabelsList?: Array<IconsIconLabelsOutput>;
 
-  @OneToMany(() => MenuOutput, (o) => o.icon, {
+  @OneToMany(() => MenuEntity, (o) => o.icon, {
     nullable: true,
   })
-  @Type(() => MenuOutput)
-  menus?: Nullable<Array<MenuOutput>>;
+  @Type(() => MenuEntity)
+  menus?: Nullable<Array<MenuEntity>>;
 }

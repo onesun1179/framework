@@ -1,21 +1,6 @@
 query {
-    roleGroups {
-        list {
-            seqNo
-            name
-            roles(rolesInput: {search: {seqNo: {equal: {value: 1}}}}) {
-                list {
-                    seqNo
-                    name
-                }
-            }
-        }
+    menuByRole(seqNo: 1) {
+        seqNo
+        name
     }
-#    users {
-#        total
-#        list {
-#            id
-#            roleSeqNo
-#        }
-#    }
 }

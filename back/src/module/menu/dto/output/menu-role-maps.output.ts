@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 import { PagingOutput } from '@common/dto/output/paging.output';
-import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
 
 @ObjectType()
-export class MenuRoleMapsOutput extends PagingOutput(MenuRoleMapOutput) {}
+export class MenuRoleMapsOutput extends PagingOutput(MenuRoleMapEntity) {}

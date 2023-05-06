@@ -1,5 +1,10 @@
 import React, { FC, memo, useMemo, useState } from "react";
-import { SearchQueryKeyType, SortQueryKeyType, UtilRefetch, UtilTable } from "@src/Util";
+import {
+	SearchQueryKeyType,
+	SortQueryKeyType,
+	UtilRefetch,
+	UtilTable,
+} from "@src/Util";
 import { useQueryObj } from "@src/hooks";
 import { usePaging } from "@src/hooks/usePaging";
 import { Button, Card, Drawer, Form, Space, Table } from "antd";
@@ -9,8 +14,12 @@ import MsgGrpFormDrawer from "@src/component/form/messageGroup/MsgGrpFormDrawer"
 import { useMentionsState } from "@src/hooks/useMentionsState";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { EntityFormActionType } from "@src/types";
-import { MessageGroupOutput, MessageGroupsSearchInput, MessageGroupsSortInput } from "@gqlType";
-import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/frmkMsgGrpMgmt/quires";
+import {
+	MessageGroupOutput,
+	MessageGroupsSearchInput,
+	MessageGroupsSortInput,
+} from "@gqlType";
+import { useFrmkMsgGrkMgmtDataQuery } from "@src/component/route/frmkMsgGrpMgmt/frmkMsgGrpMgmt.quires";
 import MsgGrpDesc from "@src/component/descriptions/MsgGrpDesc";
 
 /**

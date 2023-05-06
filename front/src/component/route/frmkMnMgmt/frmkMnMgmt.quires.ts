@@ -20,6 +20,11 @@ export const FRMK_MN_MGMT_QUERY = gql`
 					seqNo
 					path
 					frontComponentId
+					treeInfo {
+						depth
+						fullPath
+						childCount
+					}
 				}
 			}
 			total

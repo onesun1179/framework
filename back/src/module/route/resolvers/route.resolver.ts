@@ -19,7 +19,7 @@ import { RoleOutput } from '@modules/role/dto/output/entity/role.output';
 import { RoleRouteMapOutput } from '@modules/role/dto/output/entity/role-route-map.output';
 import { RouteTreeOutput } from '@modules/route/dto/output/route-tree.output';
 import { MenuRepository } from '@modules/menu/repository/menu.repository';
-import { MenuOutput } from '@modules/menu/dto/output/entity/menu.output';
+import { MenuEntity } from '@modules/menu/dto/output/entity/menu.entity';
 import { Nullable } from '@common/type';
 
 @Resolver(() => RouteOutput)
@@ -83,12 +83,12 @@ export class RouteResolver {
       .getMany();
   }
 
-  @ResolveField(() => MenuOutput, {
+  @ResolveField(() => MenuEntity, {
     nullable: true,
   })
   async menu(
     @Parent() { seqNo: routeSeqNo }: RouteOutput,
-  ): Promise<Nullable<MenuOutput>> {
+  ): Promise<Nullable<MenuEntity>> {
     return await this.menuRepository
       .createQueryBuilder(`m`)
       .where(`m.route_seq_no = :routeSeqNo`, {
@@ -131,10 +131,11 @@ export class RouteResolver {
                                       FROM FullPath f
                                          , route r
                                      WHERE r.parent_seq_no = f.seq_no )
-            SELECT full_path AS fullPath
-                 , depth
-              FROM FullPath
-             WHERE seq_no = ${seqNo}
+            SELECT f.full_path AS fullPath
+                 , f.depth
+                 , (select COUNT(*) from route r where f.seq_no = r.parent_seq_no) as childCount
+              FROM FullPath f
+             WHERE f.seq_no = ${seqNo}
              LIMIT 1
         `,
       )

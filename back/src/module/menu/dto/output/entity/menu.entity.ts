@@ -12,15 +12,15 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Nullable } from '@common/type';
 import { CommonEntity } from '@common/entity/common.entity';
 import { IconOutput } from '@modules/icon/dto/output/entity/icon.output';
-import { MenuRoleMapOutput } from '@modules/menu/dto/output/entity/menu-role-map.output';
+import { MenuRoleMapEntity } from '@modules/menu/dto/output/entity/menu-role-map.entity';
 import { RouteOutput } from '@modules/route/dto/output/entity/route.output';
 
 @Entity('menu')
 @InputType({
   isAbstract: true,
 })
-@ObjectType()
-export class MenuOutput extends CommonEntity {
+@ObjectType('MenuOutput')
+export class MenuEntity extends CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   seqNo!: number;
@@ -46,11 +46,11 @@ export class MenuOutput extends CommonEntity {
   @Type(() => IconOutput)
   icon?: Nullable<IconOutput>;
 
-  @OneToMany(() => MenuRoleMapOutput, (o) => o.menu, {
+  @OneToMany(() => MenuRoleMapEntity, (o) => o.menu, {
     nullable: true,
   })
-  @Type(() => MenuRoleMapOutput)
-  menuRoleMaps?: Array<MenuRoleMapOutput>;
+  @Type(() => MenuRoleMapEntity)
+  menuRoleMaps?: Array<MenuRoleMapEntity>;
 
   @Column({
     nullable: true,

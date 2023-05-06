@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from "react";
 import { Button, Form, Input, message } from "antd";
 import { EntityFormActionType } from "@src/types";
-import IconSelect from "@src/component/select/IconSelect";
+import IconSelect from "@src/component/select/iconSelect/IconSelect";
 import FormDrawer, { FormDrawerProps } from "@src/component/common/FormDrawer";
 import HiddenFormItem from "@src/component/common/HiddenFormItem";
 import { FormInstance } from "antd/es/form";

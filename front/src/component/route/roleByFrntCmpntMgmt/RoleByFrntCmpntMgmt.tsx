@@ -4,10 +4,10 @@
 import React, { FC, memo, useContext, useMemo } from "react";
 import { Card, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/roleByFrntCmpntMgmt/quries";
+import { useRoleByFrntCmpntMgmtQuery } from "@src/component/route/roleByFrntCmpntMgmt/roleByFrntCmpntMgmt.quries";
 import { isNil } from "lodash";
 import styled from "styled-components";
-import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/roleByFrntCmpntMgmt/mutations";
+import { useUpdateAllFrontComponentByRoleFrontComponentMapEntityMutation } from "@src/component/route/roleByFrntCmpntMgmt/roleByFrntCmpntMgmt.mutations";
 import { refetchQueryMap } from "@src/Util";
 import { FrontComponentOutput } from "@gqlType";
 import { RoleMgmtContext } from "@src/component/route/roleMgmt/RoleMgmt";

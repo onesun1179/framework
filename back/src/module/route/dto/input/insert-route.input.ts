@@ -23,8 +23,8 @@ export class InsertRouteInput extends IntersectionType(
   })
   roleSeqNos?: Array<number>;
 
-  @Field(() => [Int], {
+  @Field(() => Int, {
     nullable: true,
   })
-  menuSeqNos?: Array<number>;
+  menuSeqNo?: number;
 }

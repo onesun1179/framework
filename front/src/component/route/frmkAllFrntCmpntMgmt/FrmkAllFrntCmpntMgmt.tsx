@@ -1,6 +1,6 @@
 import React, { FC, memo, useMemo, useState } from "react";
 import { SearchQueryKeyType, SortQueryKeyType, UtilTable } from "@src/Util";
-import { Button, Drawer, Form, Layout, Space, Table } from "antd";
+import { Button, Card, Drawer, Form, Space, Table } from "antd";
 import { useQueryObj } from "@src/hooks";
 import { useQrySort } from "@src/hooks/useQrySort";
 import { useMentionsState } from "@src/hooks/useMentionsState";
@@ -15,9 +15,9 @@ import {
 	AllFrontComponentOutput,
 	AllFrontComponentsSearchInput,
 	AllFrontComponentsSortInput,
-	MessageGroupOutput
+	MessageGroupOutput,
 } from "@gqlType";
-import { useFrmkAllFrntCmpntMgmtQuery } from "@src/component/route/frmkAllFrntCmpntMgmt/quires";
+import { useFrmkAllFrntCmpntMgmtQuery } from "@src/component/route/frmkAllFrntCmpntMgmt/frmkAllFrntCmpntMgmt.quires";
 
 /**
  * 프레임워크 컴포넌트 관리
@@ -152,12 +152,12 @@ const FrmkFrntCmpntMgmt: FC = () => {
 				form={form}
 			/>
 
-			<Layout>
-				<Layout.Header>
+			<Card
+				title={"모든 화면 컴포넌트 리스트"}
+				extra={
 					<Space>
 						<Button
 							icon={<PlusOutlined />}
-							type={"primary"}
 							onClick={() => {
 								form.resetFields();
 								setFormDrawerOpenYn(true);
@@ -166,40 +166,39 @@ const FrmkFrntCmpntMgmt: FC = () => {
 						/>
 						<Button icon={<ReloadOutlined />} type={"primary"} />
 					</Space>
-				</Layout.Header>
-				<Layout.Content>
-					<Table
-						bordered
-						pagination={{
-							showSizeChanger: true,
-							pageSizeOptions: [10, 20, 50],
-							onShowSizeChange: (_, take) => setTake(take),
-							pageSize: pagingInput.take,
-							current,
-							total: data?.allFrontComponents.total,
-							onChange(page, take) {
-								setPagingInput({
-									take,
-									skip: makeSkip(page),
-								});
-							},
-						}}
-						loading={loading}
-						columns={columns}
-						rowKey={"id"}
-						dataSource={
-							data?.allFrontComponents.list ||
-							previousData?.allFrontComponents.list
-						}
-						onRow={(value) => ({
-							onClick: () => {
-								setRecord(value);
-								setMentionsShowYn(true);
-							},
-						})}
-					/>
-				</Layout.Content>
-			</Layout>
+				}
+			>
+				<Table
+					bordered
+					pagination={{
+						showSizeChanger: true,
+						pageSizeOptions: [10, 20, 50],
+						onShowSizeChange: (_, take) => setTake(take),
+						pageSize: pagingInput.take,
+						current,
+						total: data?.allFrontComponents.total,
+						onChange(page, take) {
+							setPagingInput({
+								take,
+								skip: makeSkip(page),
+							});
+						},
+					}}
+					loading={loading}
+					columns={columns}
+					rowKey={"id"}
+					dataSource={
+						data?.allFrontComponents.list ||
+						previousData?.allFrontComponents.list
+					}
+					onRow={(value) => ({
+						onClick: () => {
+							setRecord(value);
+							setMentionsShowYn(true);
+						},
+					})}
+				/>
+			</Card>
 		</>
 	);
 };
